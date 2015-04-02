@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.GlobalContext;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.MainActivity;
 
@@ -38,6 +40,9 @@ public class WorkspaceListActivity extends ActionBarActivity {
         textView.setText("User: " + message);
 
         ListView listview = (ListView) findViewById(R.id.owned_workspaces);
+
+        GlobalContext appContext = (GlobalContext) getApplicationContext();
+        final List<Workspace> ownerWorkspaces = appContext.getAirDesk().getOwnerWorkspaces();
 
         final ArrayList<String> list = new ArrayList<String>();
         list.add("ficheiro1.txt");
