@@ -5,6 +5,7 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
@@ -18,7 +19,7 @@ public class NetworkServiceResponse implements INetworkServiceResponse {
     @Override
     public List<Workspace> getAllowedWorkspacesR(User user, List<String> tags) {
         List<Workspace> allowedWorkspacesR = new ArrayList<Workspace>();
-        for(Workspace workspace: airDesk.getOwnerWorkspaces()){
+        for(OwnerWorkspace workspace: airDesk.getOwnerWorkspaces()){
             if(workspace.userHasPermissions(user)){
                 allowedWorkspacesR.add(workspace);
                 continue;
@@ -33,27 +34,54 @@ public class NetworkServiceResponse implements INetworkServiceResponse {
 
     @Override
     public boolean notifyIntentionR(User user, Workspace workspace, AirDeskFile file, FileState intention) {
-        if(airDesk.getOwnerWorkspace(workspace))
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
+
+        if(ws!=null){
+            AirDeskFile f = ws.getAirDeskFile(file);
+            if(f.getState() != FileState.WRITE){
+                f.setState(intention);
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public int getFileVersionR(Workspace workspace, AirDeskFile file) {
-        return 0;
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
+
+        if(ws!=null) {
+            AirDeskFile f = ws.getAirDeskFile(file);
+            return f.getVersion();
+        }
+
+        return -1;
     }
 
     @Override
     public FileState getFileStateR(Workspace workspace, AirDeskFile file) {
-        return null;
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
+
+        if(ws!=null) {
+            AirDeskFile f = ws.getAirDeskFile(file);
+            return f.getState();
+        }
     }
 
     @Override
     public String getFileR(Workspace workspace, AirDeskFile file) {
-        return null;
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
+
+        if(ws!=null) {
+            AirDeskFile f = ws.getAirDeskFile(file);
+            return f.getContent();
+        }
     }
 
     @Override
     public boolean sendFileR(Workspace workspace, AirDeskFile file, String fileContent) {
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
+        file.setContent(fileContent);
         return false;
     }
 
