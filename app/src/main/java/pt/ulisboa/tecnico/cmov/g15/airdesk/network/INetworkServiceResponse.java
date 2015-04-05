@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.network;
 
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
@@ -22,4 +23,6 @@ public interface INetworkServiceResponse {
     String getFileR(Workspace workspace, AirDeskFile file);
     //returns true if everything's fine
     boolean sendFileR(Workspace workspace, AirDeskFile file, String fileContent);
+
+
 }

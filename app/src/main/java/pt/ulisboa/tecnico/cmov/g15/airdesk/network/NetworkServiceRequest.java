@@ -13,7 +13,13 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
  */
 public class NetworkServiceRequest implements INetworkServiceRequest {
     //TODO when WIFIDirect is implemented, use its handler
-    NetworkServiceResponse networkServiceResponse = new NetworkServiceResponse();
+    private NetworkServiceResponse networkServiceResponse;
+
+    public NetworkServiceRequest(){}
+
+    public NetworkServiceRequest(NetworkServiceResponse networkServiceResponse){
+        this.networkServiceResponse=networkServiceResponse;
+    }
 
     @Override
     public List<Workspace> getAllowedWorkspaces(User user, List<String> tags) {
@@ -49,5 +55,15 @@ public class NetworkServiceRequest implements INetworkServiceRequest {
     @Override
     public boolean sendFile(Workspace workspace, AirDeskFile file, String fileContent) {
         return networkServiceResponse.sendFileR(workspace,file,fileContent);
+    }
+
+    //TEMPORARIO
+    public NetworkServiceResponse getNetworkServiceResponse() {
+        return networkServiceResponse;
+    }
+
+    //TEMPORARIO
+    public void setNetworkServiceResponse(NetworkServiceResponse networkServiceResponse) {
+        this.networkServiceResponse = networkServiceResponse;
     }
 }

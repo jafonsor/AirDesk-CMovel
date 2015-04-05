@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by MSC on 02/04/2015.
  */
-public class Workspace {
+public abstract class Workspace {
     private User owner;
     private String name;
     private double quote;
@@ -35,5 +35,39 @@ public class Workspace {
         return tags;
     }
 
+    public User getOwner() {
+        return owner;
+    }
 
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getQuote() {
+        return quote;
+    }
+
+    public void setQuote(double quote) {
+        this.quote = quote;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public List<AirDeskFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<AirDeskFile> files) {
+        this.files = files;
+    }
 }

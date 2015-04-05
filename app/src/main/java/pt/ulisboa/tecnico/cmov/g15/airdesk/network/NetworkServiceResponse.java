@@ -15,8 +15,15 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
  */
 public class NetworkServiceResponse implements INetworkServiceResponse {
 
-    AirDesk airDesk;
-    @Override
+    private AirDesk airDesk;
+
+    public NetworkServiceResponse(){}
+
+    public NetworkServiceResponse(AirDesk airDesk){
+        this.airDesk=airDesk;
+    }
+
+   @Override
     public List<Workspace> getAllowedWorkspacesR(User user, List<String> tags) {
         List<Workspace> allowedWorkspacesR = new ArrayList<Workspace>();
         for(OwnerWorkspace workspace: airDesk.getOwnerWorkspaces()){
@@ -30,6 +37,8 @@ public class NetworkServiceResponse implements INetworkServiceResponse {
                 continue;
             }
         }
+
+        return allowedWorkspacesR;
     }
 
     @Override
@@ -66,6 +75,8 @@ public class NetworkServiceResponse implements INetworkServiceResponse {
             AirDeskFile f = ws.getAirDeskFile(file);
             return f.getState();
         }
+
+        return null;
     }
 
     @Override
@@ -74,14 +85,17 @@ public class NetworkServiceResponse implements INetworkServiceResponse {
 
         if(ws!=null) {
             AirDeskFile f = ws.getAirDeskFile(file);
-            return f.getContent();
+            //TODO contact storage service and retrieve content of file f
         }
+
+        return null;
     }
 
     @Override
     public boolean sendFileR(Workspace workspace, AirDeskFile file, String fileContent) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
-        file.setContent(fileContent);
+        //TODO contact storage service and set content of file
+        //file.setContent(fileContent);
         return false;
     }
 
@@ -92,5 +106,13 @@ public class NetworkServiceResponse implements INetworkServiceResponse {
             }
         }
         return false;
+    }
+
+    public AirDesk getAirDesk() {
+        return airDesk;
+    }
+
+    public void setAirDesk(AirDesk airDesk) {
+        this.airDesk = airDesk;
     }
 }
