@@ -8,14 +8,14 @@ import java.util.List;
 public abstract class Workspace {
     private User owner;
     private String name;
-    private double quota;
+    private long quota;
     private List<String> tags;
     private List<AirDeskFile> files;
     private String path;
 
     public Workspace(){}
 
-    public Workspace(User owner, String name, double quota){
+    public Workspace(User owner, String name, long quota){
         this.owner = owner;
         this.name = name;
         this.quota = quota;
@@ -31,8 +31,8 @@ public abstract class Workspace {
         return result;
     }
 
-    public int workspaceUsage(){
-        int result = 0;
+    public long workspaceUsage(){
+        long result = 0;
         for(AirDeskFile f : files)
             result += f.getSize();
         return result;
@@ -62,11 +62,11 @@ public abstract class Workspace {
         this.name = name;
     }
 
-    public double getQuota() {
+    public long getQuota() {
         return quota;
     }
 
-    public void setQuota(double quota) {
+    public void setQuota(long quota) {
         this.quota = quota;
     }
 

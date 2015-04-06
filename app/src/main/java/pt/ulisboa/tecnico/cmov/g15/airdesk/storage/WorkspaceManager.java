@@ -23,7 +23,7 @@ public class WorkspaceManager {
     File internal = Environment.getDataDirectory();
     String state = Environment.getExternalStorageState();
 
-    public Workspace createWorkspace(User appUser,User wsOwner, String name, double quota) {
+    public Workspace createWorkspace(User appUser,User wsOwner, String name, long quota) {
         Workspace ws = null;
         if(appUser.getEmail().equals(wsOwner.getEmail()))
             ws = new OwnerWorkspace(wsOwner,name,quota);

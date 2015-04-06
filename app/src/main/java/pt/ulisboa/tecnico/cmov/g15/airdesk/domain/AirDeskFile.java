@@ -7,16 +7,24 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
  */
 public class AirDeskFile {
     private String name;
-    private String path;
+    private String path; // Canonical path
     private int version;
     private FileState state;
-    private int size;
+    private long size;
 
 
     public AirDeskFile(String name, String path){
         this.name = name;
+        this.version = 0;
+        this.path = path;
+        this.size = 0;
+    }
+
+    public AirDeskFile(String name, String path, FileState state) {
+        this.name = name;
         this.version = 1;
         this.path = path;
+        this.state = state;
         this.size = 0;
     }
 
@@ -52,11 +60,11 @@ public class AirDeskFile {
         this.state = state;
     }
 
-    public int getSize() {
+    public long getSize() {
         return this.size;
     }
 
-    public void setSize(int size) {
+    public void setSize(long size) {
         this.size = size;
     }
 }

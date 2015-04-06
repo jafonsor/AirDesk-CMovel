@@ -6,7 +6,7 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 public class ForeignWorkspace extends Workspace {
     String socket;
 
-    public ForeignWorkspace(User owner, String name, double quota) {
+    public ForeignWorkspace(User owner, String name, long quota) {
         super(owner,name,quota);
     }
 }

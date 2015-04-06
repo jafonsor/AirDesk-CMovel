@@ -11,7 +11,7 @@ public class OwnerWorkspace extends Workspace {
     private Map<User, Boolean> accessList;
     private WorkspaceVisibility visibility;
 
-    public OwnerWorkspace(User owner, String name, double quota) {
+    public OwnerWorkspace(User owner, String name, long quota) {
         super(owner,name,quota);
     }
 
@@ -21,7 +21,7 @@ public class OwnerWorkspace extends Workspace {
 
     public void changeVisibilityTo(WorkspaceVisibility status) { this.visibility = status; }
 
-    public void changeQuota(User owner, Double newQuota) {
+    public void changeQuota(User owner, long newQuota) {
         if(this.getOwner().equals(owner.getEmail()))
             if(newQuota >= this.workspaceUsage())
                 this.setQuota(newQuota);
