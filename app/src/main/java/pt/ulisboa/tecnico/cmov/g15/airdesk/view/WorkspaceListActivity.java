@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.GlobalContext;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity;
