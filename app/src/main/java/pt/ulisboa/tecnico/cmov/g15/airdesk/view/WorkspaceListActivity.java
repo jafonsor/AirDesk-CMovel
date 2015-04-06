@@ -1,12 +1,15 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,11 +18,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,93 +37,13 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.MainActivity;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListExpandableListAdapter;
 
 
 public class WorkspaceListActivity extends ActionBarActivity {
 
     public final static String EXTRA_FILE_NAME
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceListActivity.FILE_NAME";
-
-    class WorkspaceListAdapter extends BaseExpandableListAdapter {
-        private Activity context;
-        private List<String> workspaces;
-        private Map<String, List<String>> workspaceFiles;
-
-        public WorkspaceListAdapter(Activity context, List<String> workspaces, Map<String, List<String>> workspaceFiles) {
-            this.context = context;
-            this.workspaces = workspaces;
-            this.workspaceFiles = workspaceFiles;
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            return workspaceFiles.get(workspaces.get(groupPosition)).get(childPosition);
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        @Override
-        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-            final String fileName = (String) getChild(groupPosition, childPosition);
-
-            if(convertView == null) {
-                LayoutInflater inflater = context.getLayoutInflater();
-                convertView = inflater.inflate(R.layout.file_item, null);
-            }
-
-            TextView item = (TextView) convertView.findViewById(R.id.file_name);
-            item.setText(fileName);
-            return convertView;
-        }
-
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            return workspaceFiles.get(workspaces.get(groupPosition)).size();
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-            return workspaces.get(groupPosition);
-        }
-
-        @Override
-        public int getGroupCount() {
-            return workspaces.size();
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-            String workspaceName = (String) getGroup(groupPosition);
-            if(convertView == null) {
-                LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = infalInflater.inflate(R.layout.workspace_item, null);
-            }
-
-            TextView item = (TextView) convertView.findViewById(R.id.workspace_name);
-            item.setTypeface(null, Typeface.BOLD);
-            item.setText(workspaceName);
-            return convertView;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,33 +56,51 @@ public class WorkspaceListActivity extends ActionBarActivity {
         TextView textView = (TextView) findViewById(R.id.user_info);
         textView.setText("User: " + message);
 
-        List<String> workspaces = new ArrayList<String>() {{
-            add("Workspace1");
-            add("Workspace2");
-        }};
 
-        Map<String,List<String>> fileNames = new HashMap<String, List<String>>() {{
-            put("Workspace1", new ArrayList<String>() {{
+        List<Pair<String,List<String>>> elements = new ArrayList<Pair<String,List<String>>>() {{
+            add(new Pair<String,List<String>>("Workspace1", new ArrayList<String>() {{
                 add("file1");
+                add("file2");
+            }}));
+            add(new Pair<String,List<String>>("Workspace2", new ArrayList<String>() {{
                 add("file3");
-            }});
-
-            put("Workspace2", new ArrayList<String>() {{
                 add("file4");
-                add("file5");
-            }});
+            }}));
         }};
 
 
+        ExpandableListAdapter adapter = new ListExpandableListAdapter<String,String>(this, elements,
+                R.layout.workspace_item, R.layout.file_item) {
+            @Override
+            public void editChildView(final String fileName, View convertView) {
+                TextView item = (TextView) convertView.findViewById(R.id.file_name);
+                item.setText(fileName);
 
-        ExpandableListAdapter adapter = new WorkspaceListAdapter(this, workspaces, fileNames);
-        Log.d("adaptorTest:", "groupCount=" + adapter.getGroupCount());
-        Log.d("adaptorTest:", "childrenCount(0)=" + adapter.getChildrenCount(0));
-        Log.d("adaptorTest:", "childrenCount(1)=" + adapter.getChildrenCount(1));
-        Log.d("adaptorTest:", (String)adapter.getGroup(0) + " - " + (String)adapter.getChild(0,0));
-        Log.d("adaptorTest:", (String)adapter.getGroup(0) + " - " + (String)adapter.getChild(0,1));
-        Log.d("adaptorTest:", (String)adapter.getGroup(1) + " - " + (String)adapter.getChild(1,0));
-        Log.d("adaptorTest:", (String)adapter.getGroup(1) + " - " + (String)adapter.getChild(1,1));
+                Button editFileButton = (Button) convertView.findViewById(R.id.edit_file_button);
+                editFileButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onClickEditFileButton(fileName, v);
+                    }
+                });
+
+                Button deleteFileButton = (Button) convertView.findViewById(R.id.delete_file_button);
+                deleteFileButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        onClickDeleteFileButton(fileName, v);
+                    }
+                });
+            }
+
+            @Override
+            public void editGroupView(String workspaceName, View convertView) {
+                TextView item = (TextView) convertView.findViewById(R.id.workspace_name);
+                item.setTypeface(null, Typeface.BOLD);
+                item.setText(workspaceName);
+            }
+        };
+
         ExpandableListView list = (ExpandableListView) findViewById(R.id.owned_workspaces_list);
         list.setAdapter(adapter);
     }
@@ -212,5 +155,31 @@ public class WorkspaceListActivity extends ActionBarActivity {
 
     public void createWorkspace(View view) {
         // TO DO
+    }
+
+    public void onClickEditFileButton(String fileName, View v) {
+        Intent intent = new Intent(this, EditFileActivity.class);
+        intent.putExtra(EXTRA_FILE_NAME, fileName);
+        startActivity(intent);
+    }
+
+    public void onClickDeleteFileButton(String fileName, final View v) {
+        Activity self = this;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
+        alertDialogBuilder
+                .setMessage("Are you sure you want to delete the file '" + fileName + "'?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Toast.makeText(getApplicationContext(), "TO DO: delete file", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog deleteFileDialog = alertDialogBuilder.create();
+        deleteFileDialog.show();
     }
 }
