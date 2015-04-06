@@ -11,6 +11,10 @@ public class OwnerWorkspace extends Workspace {
     private Map<User, Boolean> accessList;
     private WorkspaceVisibility visibility;
 
+    public OwnerWorkspace(User owner, String name, double quota) {
+        super(owner,name,quota);
+    }
+
     public Boolean userHasPermissions(User user) {
         return accessList.get(user);
     }

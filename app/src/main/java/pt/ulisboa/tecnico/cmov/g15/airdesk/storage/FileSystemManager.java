@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.storage;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by diogo on 03-04-2015.
@@ -17,10 +18,20 @@ public class FileSystemManager {
             if(dirPath != null && state.equals(Environment.MEDIA_MOUNTED)) { //by default
                 f = new File(sdcard + "/AirDesk/", name + ".txt");
                 if(!f.exists())
-                    return f;
+                    try {
+                        f.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                return f;
             } else {
                 f = new File(dirPath, name + ".txt");
                 if(!f.exists())
+                    try {
+                        f.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     return f;
             }
         return null; // Já existe um ficheiro com esse nome

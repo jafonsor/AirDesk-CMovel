@@ -8,16 +8,16 @@ import java.util.List;
 public abstract class Workspace {
     private User owner;
     private String name;
-    private double quote;
+    private double quota;
     private List<String> tags;
     private List<AirDeskFile> files;
 
     public Workspace(){}
 
-    public Workspace(User owner, String name, double quote){
+    public Workspace(User owner, String name, double quota){
         this.owner = owner;
         this.name = name;
-        this.quote = quote;
+        this.quota = quota;
     }
 
     public AirDeskFile getAirDeskFile(AirDeskFile file) {
@@ -52,11 +52,11 @@ public abstract class Workspace {
     }
 
     public double getQuote() {
-        return quote;
+        return quota;
     }
 
-    public void setQuote(double quote) {
-        this.quote = quote;
+    public void setQuote(double quota) {
+        this.quota = quota;
     }
 
     public void setTags(List<String> tags) {
