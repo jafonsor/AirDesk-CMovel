@@ -1,13 +1,14 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 
 
@@ -19,6 +20,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AirDesk airDesk = (AirDesk)getApplication();
+
     }
 
 

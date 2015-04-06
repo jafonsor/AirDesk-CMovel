@@ -14,7 +14,7 @@
     <string name="create">+</string>
 
     <string name="title_activity_edit_file">EditFileActivity</string>
-
+    <string name="title_activity_start">StartActivity</string>
     <string name="hello_world">Hello world!</string>
 
 </resources>
