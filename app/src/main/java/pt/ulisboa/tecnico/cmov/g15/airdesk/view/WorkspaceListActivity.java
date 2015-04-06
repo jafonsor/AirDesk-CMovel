@@ -1,20 +1,31 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.GlobalContext;
@@ -29,6 +40,87 @@ public class WorkspaceListActivity extends ActionBarActivity {
     public final static String EXTRA_FILE_NAME
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceListActivity.FILE_NAME";
 
+    class WorkspaceListAdapter extends BaseExpandableListAdapter {
+        private Activity context;
+        private List<String> workspaces;
+        private Map<String, List<String>> workspaceFiles;
+
+        public WorkspaceListAdapter(Activity context, List<String> workspaces, Map<String, List<String>> workspaceFiles) {
+            this.context = context;
+            this.workspaces = workspaces;
+            this.workspaceFiles = workspaceFiles;
+        }
+
+        @Override
+        public Object getChild(int groupPosition, int childPosition) {
+            return workspaceFiles.get(workspaces.get(groupPosition)).get(childPosition);
+        }
+
+        @Override
+        public long getChildId(int groupPosition, int childPosition) {
+            return childPosition;
+        }
+
+        @Override
+        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+            final String fileName = (String) getChild(groupPosition, childPosition);
+
+            if(convertView == null) {
+                LayoutInflater inflater = context.getLayoutInflater();
+                convertView = inflater.inflate(R.layout.file_item, null);
+            }
+
+            TextView item = (TextView) convertView.findViewById(R.id.file_name);
+            item.setText(fileName);
+            return convertView;
+        }
+
+        @Override
+        public int getChildrenCount(int groupPosition) {
+            return workspaceFiles.get(workspaces.get(groupPosition)).size();
+        }
+
+        @Override
+        public Object getGroup(int groupPosition) {
+            return workspaces.get(groupPosition);
+        }
+
+        @Override
+        public int getGroupCount() {
+            return workspaces.size();
+        }
+
+        @Override
+        public long getGroupId(int groupPosition) {
+            return groupPosition;
+        }
+
+        @Override
+        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+            String workspaceName = (String) getGroup(groupPosition);
+            if(convertView == null) {
+                LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = infalInflater.inflate(R.layout.workspace_item, null);
+            }
+
+            TextView item = (TextView) convertView.findViewById(R.id.workspace_name);
+            item.setTypeface(null, Typeface.BOLD);
+            item.setText(workspaceName);
+            return convertView;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
+        @Override
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
+            return true;
+        }
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,35 +132,35 @@ public class WorkspaceListActivity extends ActionBarActivity {
         TextView textView = (TextView) findViewById(R.id.user_info);
         textView.setText("User: " + message);
 
-        ListView listview = (ListView) findViewById(R.id.owned_workspaces);
+        List<String> workspaces = new ArrayList<String>() {{
+            add("Workspace1");
+            add("Workspace2");
+        }};
 
-        GlobalContext appContext = (GlobalContext) getApplicationContext();
-        AirDesk airDesk = appContext.getAirDesk();
-        final List<Workspace> ownerWorkspaces = airDesk.getOwnerWorkspaces();
+        Map<String,List<String>> fileNames = new HashMap<String, List<String>>() {{
+            put("Workspace1", new ArrayList<String>() {{
+                add("file1");
+                add("file3");
+            }});
 
-        final ArrayList<String> list = new ArrayList<String>();
-        list.add("ficheiro1.txt");
-        list.add("ficheiro2.txt");
+            put("Workspace2", new ArrayList<String>() {{
+                add("file4");
+                add("file5");
+            }});
+        }};
 
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_1, list);
-        listview.setAdapter(adapter);
 
-        final WorkspaceListActivity self = this;
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-
-                final String fileName = (String) parent.getItemAtPosition(position);
-
-                Intent intent = new Intent(self, EditFileActivity.class);
-                intent.putExtra(EXTRA_FILE_NAME, fileName);
-                startActivity(intent);
-
-            }
-
-        });
+        ExpandableListAdapter adapter = new WorkspaceListAdapter(this, workspaces, fileNames);
+        Log.d("adaptorTest:", "groupCount=" + adapter.getGroupCount());
+        Log.d("adaptorTest:", "childrenCount(0)=" + adapter.getChildrenCount(0));
+        Log.d("adaptorTest:", "childrenCount(1)=" + adapter.getChildrenCount(1));
+        Log.d("adaptorTest:", (String)adapter.getGroup(0) + " - " + (String)adapter.getChild(0,0));
+        Log.d("adaptorTest:", (String)adapter.getGroup(0) + " - " + (String)adapter.getChild(0,1));
+        Log.d("adaptorTest:", (String)adapter.getGroup(1) + " - " + (String)adapter.getChild(1,0));
+        Log.d("adaptorTest:", (String)adapter.getGroup(1) + " - " + (String)adapter.getChild(1,1));
+        ExpandableListView list = (ExpandableListView) findViewById(R.id.owned_workspaces_list);
+        list.setAdapter(adapter);
     }
 
     private class StableArrayAdapter extends ArrayAdapter<String> {
@@ -117,5 +209,9 @@ public class WorkspaceListActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void createWorkspace(View view) {
+        // TO DO
     }
 }

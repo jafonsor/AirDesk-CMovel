@@ -4,15 +4,41 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/user_info"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true" />
+        <TextView
+            android:id="@+id/user_info"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true" />
 
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/owned_workspaces"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/owned_workspaces"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create"
+                    android:onClick="createWorkspace"/>
+            </LinearLayout>
+
+            <ExpandableListView
+                android:id="@+id/owned_workspaces_list"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"></ExpandableListView>
+
+        </LinearLayout>
 
 </LinearLayout>

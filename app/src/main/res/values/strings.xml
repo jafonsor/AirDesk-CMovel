@@ -6,8 +6,13 @@
     <string name="login_button">Login</string>
     <string name="action_settings">Settings</string>
 
-    <!-- activity titles -->
+    <!-- workspace list -->
     <string name="title_activity_workspace_list">Workspaces</string>
+    <string name="owned_workspaces">Owned Workspaces</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="create">+</string>
+
     <string name="title_activity_edit_file">EditFileActivity</string>
 
     <string name="hello_world">Hello world!</string>
