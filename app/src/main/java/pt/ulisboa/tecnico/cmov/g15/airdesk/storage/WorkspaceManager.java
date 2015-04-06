@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.acl.Owner;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
@@ -41,7 +42,11 @@ public class WorkspaceManager {
             newDir = new File(internal + "/AirDesk/", name);
         }
         newDir.mkdir();
-
+        try {
+            ws.setPath(newDir.getCanonicalPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return ws;
     }
 

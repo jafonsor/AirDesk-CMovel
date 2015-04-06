@@ -10,13 +10,14 @@ public class AirDeskFile {
     private String path;
     private int version;
     private FileState state;
+    private int size;
 
 
-    public AirDeskFile(String name, String path, FileState state){
+    public AirDeskFile(String name, String path){
         this.name = name;
         this.version = 1;
         this.path = path;
-        this.state = state;
+        this.size = 0;
     }
 
     public String getName() {
@@ -49,5 +50,13 @@ public class AirDeskFile {
 
     public void setState(FileState state) {
         this.state = state;
+    }
+
+    public int getSize() {
+        return this.size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 }

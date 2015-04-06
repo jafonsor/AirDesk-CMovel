@@ -20,4 +20,10 @@ public class OwnerWorkspace extends Workspace {
     }
 
     public void changeVisibilityTo(WorkspaceVisibility status) { this.visibility = status; }
+
+    public void changeQuota(User owner, Double newQuota) {
+        if(this.getOwner().equals(owner.getEmail()))
+            if(newQuota >= this.workspaceUsage())
+                this.setQuota(newQuota);
+    }
 }

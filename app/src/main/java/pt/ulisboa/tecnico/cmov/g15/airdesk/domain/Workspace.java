@@ -11,6 +11,7 @@ public abstract class Workspace {
     private double quota;
     private List<String> tags;
     private List<AirDeskFile> files;
+    private String path;
 
     public Workspace(){}
 
@@ -30,6 +31,16 @@ public abstract class Workspace {
         return result;
     }
 
+    public int workspaceUsage(){
+        int result = 0;
+        for(AirDeskFile f : files)
+            result += f.getSize();
+        return result;
+    }
+
+    public String getPath() { return this.path; }
+
+    public void setPath(String path) { this.path = path; }
 
     public List<String> getTags(){
         return tags;
@@ -51,11 +62,11 @@ public abstract class Workspace {
         this.name = name;
     }
 
-    public double getQuote() {
+    public double getQuota() {
         return quota;
     }
 
-    public void setQuote(double quota) {
+    public void setQuota(double quota) {
         this.quota = quota;
     }
 
