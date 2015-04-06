@@ -9,8 +9,10 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.network.INetworkServiceRequest;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.network.INetworkServiceResponse;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.INetworkServiceClient;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.INetworkServiceServer;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
 
 /**
  * Created by MSC on 02/04/2015.
@@ -22,11 +24,12 @@ public class AirDesk extends Application {
     private List<OwnerWorkspace> ownerWorkspaces;
     private List<ForeignWorkspace> foreignWorkspaces;
 
-    private INetworkServiceRequest networkServiceRequest;
-    private INetworkServiceResponse networkServiceResponse;
+    private INetworkServiceClient networkServiceClient;
 
     public AirDesk(){
-
+        ownerWorkspaces = new ArrayList<OwnerWorkspace>();
+        foreignWorkspaces = new ArrayList<ForeignWorkspace>();
+        this.networkServiceClient = new NetworkServiceClient(new NetworkServiceServer(this));
     }
 
     public AirDesk(User user){
@@ -69,19 +72,11 @@ public class AirDesk extends Application {
         return null;
     }
 
-    public INetworkServiceRequest getNetworkServiceRequest() {
-        return networkServiceRequest;
+    public INetworkServiceClient getNetworkServiceClient() {
+        return networkServiceClient;
     }
 
-    public void setNetworkServiceRequest(INetworkServiceRequest networkServiceRequest) {
-        this.networkServiceRequest = networkServiceRequest;
-    }
-
-    public INetworkServiceResponse getNetworkServiceResponse() {
-        return networkServiceResponse;
-    }
-
-    public void setNetworkServiceResponse(INetworkServiceResponse networkServiceResponse) {
-        this.networkServiceResponse = networkServiceResponse;
+    public void setNetworkServiceClient(INetworkServiceClient networkServiceClient) {
+        this.networkServiceClient = networkServiceClient;
     }
 }

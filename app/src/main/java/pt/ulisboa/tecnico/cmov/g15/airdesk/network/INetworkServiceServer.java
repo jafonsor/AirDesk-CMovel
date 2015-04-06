@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 /**
  * Created by MSC on 02/04/2015.
  */
-public interface INetworkServiceResponse {
+public interface INetworkServiceServer {
     List<Workspace> getAllowedWorkspacesR(User user, List<String> tags);
 
     //returns true if the intention can be fullfilled
