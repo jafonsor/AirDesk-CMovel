@@ -12,12 +12,14 @@
         android:paddingLeft="70dp"/>
 
     <Button
+        android:id="@+id/delete_file_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="0dp" android:minWidth="0dp"
         android:text="@string/delete"/>
 
     <Button
+        android:id="@+id/edit_file_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="0dp" android:minWidth="0dp"

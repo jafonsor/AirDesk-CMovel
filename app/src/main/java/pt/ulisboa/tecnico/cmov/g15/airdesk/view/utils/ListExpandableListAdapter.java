@@ -108,7 +108,7 @@ public abstract class ListExpandableListAdapter<GroupClass, ChildClass> extends 
         return convertView;
     }
 
-    public abstract void editChildView(ChildClass child, View convertView);
-    public abstract void editGroupView(GroupClass group, View convertView);
+    public abstract void editChildView(final ChildClass child, View convertView);
+    public abstract void editGroupView(final GroupClass group, View convertView);
 
 }

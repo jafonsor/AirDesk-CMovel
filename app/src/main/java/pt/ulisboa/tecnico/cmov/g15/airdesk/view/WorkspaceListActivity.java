@@ -1,7 +1,9 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
@@ -16,11 +18,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,10 +72,25 @@ public class WorkspaceListActivity extends ActionBarActivity {
         ExpandableListAdapter adapter = new ListExpandableListAdapter<String,String>(this, elements,
                 R.layout.workspace_item, R.layout.file_item) {
             @Override
-            public void editChildView(String fileName, View convertView) {
+            public void editChildView(final String fileName, View convertView) {
                 TextView item = (TextView) convertView.findViewById(R.id.file_name);
                 item.setText(fileName);
-                convertView.callOnClick(new Runnable());
+
+                Button editFileButton = (Button) convertView.findViewById(R.id.edit_file_button);
+                editFileButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onClickEditFileButton(fileName, v);
+                    }
+                });
+
+                Button deleteFileButton = (Button) convertView.findViewById(R.id.delete_file_button);
+                deleteFileButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        onClickDeleteFileButton(fileName, v);
+                    }
+                });
             }
 
             @Override
@@ -136,5 +155,31 @@ public class WorkspaceListActivity extends ActionBarActivity {
 
     public void createWorkspace(View view) {
         // TO DO
+    }
+
+    public void onClickEditFileButton(String fileName, View v) {
+        Intent intent = new Intent(this, EditFileActivity.class);
+        intent.putExtra(EXTRA_FILE_NAME, fileName);
+        startActivity(intent);
+    }
+
+    public void onClickDeleteFileButton(String fileName, final View v) {
+        Activity self = this;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
+        alertDialogBuilder
+                .setMessage("Are you sure you want to delete the file '" + fileName + "'?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Toast.makeText(getApplicationContext(), "TO DO: delete file", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog deleteFileDialog = alertDialogBuilder.create();
+        deleteFileDialog.show();
     }
 }
