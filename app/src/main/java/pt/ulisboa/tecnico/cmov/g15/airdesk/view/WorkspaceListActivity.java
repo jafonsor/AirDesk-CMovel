@@ -41,87 +41,6 @@ public class WorkspaceListActivity extends ActionBarActivity {
     public final static String EXTRA_FILE_NAME
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceListActivity.FILE_NAME";
 
-    class WorkspaceListAdapter extends BaseExpandableListAdapter {
-        private Activity context;
-        private List<String> workspaces;
-        private Map<String, List<String>> workspaceFiles;
-
-        public WorkspaceListAdapter(Activity context, List<String> workspaces, Map<String, List<String>> workspaceFiles) {
-            this.context = context;
-            this.workspaces = workspaces;
-            this.workspaceFiles = workspaceFiles;
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            return workspaceFiles.get(workspaces.get(groupPosition)).get(childPosition);
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        @Override
-        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-            final String fileName = (String) getChild(groupPosition, childPosition);
-
-            if(convertView == null) {
-                LayoutInflater inflater = context.getLayoutInflater();
-                convertView = inflater.inflate(R.layout.file_item, null);
-            }
-
-            TextView item = (TextView) convertView.findViewById(R.id.file_name);
-            item.setText(fileName);
-            return convertView;
-        }
-
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            return workspaceFiles.get(workspaces.get(groupPosition)).size();
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-            return workspaces.get(groupPosition);
-        }
-
-        @Override
-        public int getGroupCount() {
-            return workspaces.size();
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-            String workspaceName = (String) getGroup(groupPosition);
-            if(convertView == null) {
-                LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = infalInflater.inflate(R.layout.workspace_item, null);
-            }
-
-            TextView item = (TextView) convertView.findViewById(R.id.workspace_name);
-            item.setTypeface(null, Typeface.BOLD);
-            item.setText(workspaceName);
-            return convertView;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,6 +71,7 @@ public class WorkspaceListActivity extends ActionBarActivity {
             public void editChildView(String fileName, View convertView) {
                 TextView item = (TextView) convertView.findViewById(R.id.file_name);
                 item.setText(fileName);
+                convertView.callOnClick(new Runnable());
             }
 
             @Override
@@ -162,13 +82,6 @@ public class WorkspaceListActivity extends ActionBarActivity {
             }
         };
 
-        Log.d("adaptorTest:", "groupCount=" + adapter.getGroupCount());
-        Log.d("adaptorTest:", "childrenCount(0)=" + adapter.getChildrenCount(0));
-        Log.d("adaptorTest:", "childrenCount(1)=" + adapter.getChildrenCount(1));
-        Log.d("adaptorTest:", (String)adapter.getGroup(0) + " - " + (String)adapter.getChild(0,0));
-        Log.d("adaptorTest:", (String)adapter.getGroup(0) + " - " + (String)adapter.getChild(0,1));
-        Log.d("adaptorTest:", (String)adapter.getGroup(1) + " - " + (String)adapter.getChild(1,0));
-        Log.d("adaptorTest:", (String)adapter.getGroup(1) + " - " + (String)adapter.getChild(1,1));
         ExpandableListView list = (ExpandableListView) findViewById(R.id.owned_workspaces_list);
         list.setAdapter(adapter);
     }
