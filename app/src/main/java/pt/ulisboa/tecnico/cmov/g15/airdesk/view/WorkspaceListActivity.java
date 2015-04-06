@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.MainActivity;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListExpandableListAdapter;
 
 
 public class WorkspaceListActivity extends ActionBarActivity {
@@ -131,26 +133,35 @@ public class WorkspaceListActivity extends ActionBarActivity {
         TextView textView = (TextView) findViewById(R.id.user_info);
         textView.setText("User: " + message);
 
-        List<String> workspaces = new ArrayList<String>() {{
-            add("Workspace1");
-            add("Workspace2");
-        }};
 
-        Map<String,List<String>> fileNames = new HashMap<String, List<String>>() {{
-            put("Workspace1", new ArrayList<String>() {{
+        List<Pair<String,List<String>>> elements = new ArrayList<Pair<String,List<String>>>() {{
+            add(new Pair<String,List<String>>("Workspace1", new ArrayList<String>() {{
                 add("file1");
+                add("file2");
+            }}));
+            add(new Pair<String,List<String>>("Workspace2", new ArrayList<String>() {{
                 add("file3");
-            }});
-
-            put("Workspace2", new ArrayList<String>() {{
                 add("file4");
-                add("file5");
-            }});
+            }}));
         }};
 
 
+        ExpandableListAdapter adapter = new ListExpandableListAdapter<String,String>(this, elements,
+                R.layout.workspace_item, R.layout.file_item) {
+            @Override
+            public void editChildView(String fileName, View convertView) {
+                TextView item = (TextView) convertView.findViewById(R.id.file_name);
+                item.setText(fileName);
+            }
 
-        ExpandableListAdapter adapter = new WorkspaceListAdapter(this, workspaces, fileNames);
+            @Override
+            public void editGroupView(String workspaceName, View convertView) {
+                TextView item = (TextView) convertView.findViewById(R.id.workspace_name);
+                item.setTypeface(null, Typeface.BOLD);
+                item.setText(workspaceName);
+            }
+        };
+
         Log.d("adaptorTest:", "groupCount=" + adapter.getGroupCount());
         Log.d("adaptorTest:", "childrenCount(0)=" + adapter.getChildrenCount(0));
         Log.d("adaptorTest:", "childrenCount(1)=" + adapter.getChildrenCount(1));
