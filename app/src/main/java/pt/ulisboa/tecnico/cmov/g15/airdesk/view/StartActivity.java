@@ -1,8 +1,5 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -14,6 +11,7 @@ public class StartActivity extends FragmentActivity {
 
     MyAdapter mAdapter;
     ViewPager mPager;
+    String[] tabs = {"Owner WS", "Foreign WS"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,4 +23,5 @@ public class StartActivity extends FragmentActivity {
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
     }
+
 }

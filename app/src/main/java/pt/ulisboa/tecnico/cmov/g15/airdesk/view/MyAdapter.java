@@ -17,23 +17,25 @@ public class MyAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch(0){
+        switch(position){
             case 0: return new OwnerFragment();
             case 1: return new ForeignFragment();
+            case 2: return new SettingsFragment();
             default: return null;
         }
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        switch(0){
+        switch(position){
             case 0: return "Owner WS";
             case 1: return "Foreign WS";
+            case 2: return "Settings";
             default: return "Invalid Title";
         }
     }
