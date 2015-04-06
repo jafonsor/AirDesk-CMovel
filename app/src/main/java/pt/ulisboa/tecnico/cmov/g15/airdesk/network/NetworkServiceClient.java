@@ -11,13 +11,13 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 /**
  * Created by MSC on 05/04/2015.
  */
-public class NetworkServiceRequest implements INetworkServiceRequest {
+public class NetworkServiceClient implements INetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
-    private NetworkServiceResponse networkServiceResponse;
+    private NetworkServiceServer networkServiceResponse;
 
-    public NetworkServiceRequest(){}
+    public NetworkServiceClient(){}
 
-    public NetworkServiceRequest(NetworkServiceResponse networkServiceResponse){
+    public NetworkServiceClient(NetworkServiceServer networkServiceResponse){
         this.networkServiceResponse=networkServiceResponse;
     }
 
@@ -58,12 +58,12 @@ public class NetworkServiceRequest implements INetworkServiceRequest {
     }
 
     //TEMPORARIO
-    public NetworkServiceResponse getNetworkServiceResponse() {
+    public NetworkServiceServer getNetworkServiceResponse() {
         return networkServiceResponse;
     }
 
     //TEMPORARIO
-    public void setNetworkServiceResponse(NetworkServiceResponse networkServiceResponse) {
+    public void setNetworkServiceResponse(NetworkServiceServer networkServiceResponse) {
         this.networkServiceResponse = networkServiceResponse;
     }
 }

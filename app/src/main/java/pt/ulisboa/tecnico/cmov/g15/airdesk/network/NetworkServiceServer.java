@@ -13,13 +13,13 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 /**
  * Created by MSC on 02/04/2015.
  */
-public class NetworkServiceResponse implements INetworkServiceResponse {
+public class NetworkServiceServer implements INetworkServiceServer {
 
     private AirDesk airDesk;
 
-    public NetworkServiceResponse(){}
+    public NetworkServiceServer(){}
 
-    public NetworkServiceResponse(AirDesk airDesk){
+    public NetworkServiceServer(AirDesk airDesk){
         this.airDesk=airDesk;
     }
 
