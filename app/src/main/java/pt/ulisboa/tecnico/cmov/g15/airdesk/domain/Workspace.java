@@ -1,16 +1,20 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import java.util.HashMap;
 
 /**
  * Created by MSC on 02/04/2015.
  */
 public abstract class Workspace {
     private User owner;
+    private Integer id = Workspace.generateId(this);
     private String name;
     private long quota;
     private List<String> tags;
@@ -18,6 +22,17 @@ public abstract class Workspace {
     private String path;
     private Map<User, Boolean> accessList;
     private WorkspaceVisibility visibility;
+
+    private static Integer currentId = 0;
+    private static Map<Integer,Workspace> instanceMap = new HashMap<Integer,Workspace>();
+    synchronized private static Integer generateId(Workspace newInstance) {
+        Integer newId = Workspace.currentId++;
+        Workspace.instanceMap.put(newId, newInstance);
+        return newId;
+    }
+    synchronized public static Workspace getById(Integer workspaceId) {
+        return Workspace.instanceMap.get(workspaceId);
+    }
 
     public Workspace(){}
 
@@ -55,6 +70,7 @@ public abstract class Workspace {
         return result;
     }
 
+
     public Boolean userHasPermissions(User user) {
         return accessList.get(user);
     }
@@ -69,6 +85,8 @@ public abstract class Workspace {
         if(userHasPermissions(owner))
             this.visibility = status;
     }
+
+    public Integer getId() { return this.id; }
 
     public String getPath() { return this.path; }
 

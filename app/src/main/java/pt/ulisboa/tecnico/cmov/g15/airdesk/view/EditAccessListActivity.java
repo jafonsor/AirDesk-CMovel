@@ -7,13 +7,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
 public class EditAccessListActivity extends ActionBarActivity {
 
-    public final static String EXTRA_WORKSPACE_NAME
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity.FILE_NAME";
+    public final static String EXTRA_WORKSPACE_ID
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity.EXTRA_WORKSPACE_ID";
+
+    private AirDesk mAirDesk = (AirDesk)getApplication();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +26,11 @@ public class EditAccessListActivity extends ActionBarActivity {
 
         Intent intent = getIntent();
 
-        String workspacName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
+        Integer workspaceId = intent.getIntExtra(EXTRA_WORKSPACE_ID, -1);
+        Workspace workspace = mAirDesk.getWorkspaceById(workspaceId);
 
         TextView workspaceNameView = (TextView) findViewById(R.id.workspace_name);
-        workspaceNameView.setText(workspacName);
+        workspaceNameView.setText(workspace.getName());
     }
 
 

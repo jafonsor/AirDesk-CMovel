@@ -1,17 +1,31 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 
 /**
  * Created by MSC on 02/04/2015.
  */
 public class AirDeskFile {
+    private Integer id = AirDeskFile.generateId(this);
     private String name;
     private String path; // Must be a canonical path
     private int version;
     private FileState state;
     private long size;
 
+    private static Integer currentId = 0;
+    private static Map<Integer,AirDeskFile> instanceMap = new HashMap<Integer,AirDeskFile>();
+    synchronized private static Integer generateId(AirDeskFile newInstance) {
+        Integer newId = AirDeskFile.currentId++;
+        AirDeskFile.instanceMap.put(newId, newInstance);
+        return newId;
+    }
+    synchronized public static AirDeskFile getById(Integer workspaceId) {
+        return AirDeskFile.instanceMap.get(workspaceId);
+    }
 
     public AirDeskFile(String name, String path){ // When a empty AirFile is created
         this.name = name;
@@ -27,6 +41,8 @@ public class AirDeskFile {
         this.state = state;
         this.size = 0;
     }
+
+    public Integer getId() { return id; }
 
     public String getName() {
         return name;

@@ -39,7 +39,7 @@ public class ForeignFragment extends Fragment {
 
         final ListAdapter<String> listAdapter = new ListAdapter<String>(getActivity(), R.layout.foreign_workspace_item, elements) {
             @Override
-            public void initItemView(final String workspaceName, View view) {
+            public void initItemView(final String workspaceName, View view, int position) {
                 TextView textView = (TextView) view.findViewById(R.id.workspace_name);
                 textView.setText(workspaceName);
 
@@ -79,8 +79,8 @@ public class ForeignFragment extends Fragment {
 
     public void onClickListWorkspaceFiles(String workspaceName, View v) {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
-        intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, workspaceName);
-        intent.putExtra(FileListActivity.EXTRA_IS_OWNER, false);
+        //intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, workspaceName);
+        //intent.putExtra(FileListActivity.EXTRA_IS_OWNER, false);
         startActivity(intent);
     }
 

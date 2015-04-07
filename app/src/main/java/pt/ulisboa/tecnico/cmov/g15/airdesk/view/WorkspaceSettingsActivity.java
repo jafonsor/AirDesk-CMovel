@@ -9,15 +9,20 @@ import android.widget.TextView;
 
 import java.security.acl.Owner;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
 
 public class WorkspaceSettingsActivity extends ActionBarActivity {
 
 
-    public final static String EXTRA_WORKSPACE_NAME
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceSettingsActivity.EXTRA_WORKSPACE_NAME";
+    public final static String EXTRA_WORKSPACE_ID
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceSettingsActivity.EXTRA_WORKSPACE_ID";
+
+    private AirDesk mAirDesk;
+    private Workspace mWorkspace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +30,12 @@ public class WorkspaceSettingsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_workspace_settings);
 
         Intent intent = getIntent();
-        String workspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
+        Integer workspaceId = intent.getIntExtra(EXTRA_WORKSPACE_ID, -1);
+        mAirDesk = (AirDesk) getApplication();
+        mWorkspace = mAirDesk.getWorkspaceById(workspaceId);
 
         TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
-        workspaceNameView.setText(workspaceName);
+        workspaceNameView.setText(mWorkspace.getName());
     }
 
 

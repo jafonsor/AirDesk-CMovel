@@ -20,56 +20,48 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
 public class FileListActivity extends ActionBarActivity {
 
-    public final static String EXTRA_FILE_NAME
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity.FILE_NAME";
+    public final static String EXTRA_WORKSPACE_ID
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity.WORKSPACE_ID";
 
-    public final static String EXTRA_WORKSPACE_NAME
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity.WORKSPACE_NAME";
-
-    public final static String EXTRA_IS_OWNER
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity.EXTRA_IS_OWNER";
-
-    private String mWorkspaceName;
-    private boolean mIsOwner;
+    private AirDesk mAirDesk;
+    private Integer mWorkspaceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_list);
-
+        mAirDesk = (AirDesk) getApplication();
         Intent intent = getIntent();
-        mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
-        mIsOwner = intent.getBooleanExtra(EXTRA_IS_OWNER, false);
-        Log.d("on filelist create:", "workspace name = " + mWorkspaceName);
-        Log.d("on filelist create:", "is owner = " + mWorkspaceName);
+        mWorkspaceId = intent.getIntExtra(EXTRA_WORKSPACE_ID, -1);
+
         TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
 
-        String workspaceBelonging = (mIsOwner)? "Owner" : "Foreign";
-        workspaceNameView.setText(workspaceBelonging + ": " + mWorkspaceName);
+        workspaceNameView.setText(mWorkspaceId);
 
         ListView fileList = (ListView) findViewById(R.id.file_list);
-        List<String> files = new ArrayList<String>() {{
-            add("file1");
-            add("file2");
-        }};
 
-        final ListAdapter<String> listAdapter = new ListAdapter<String>(this, R.layout.file_item, files) {
+        List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mWorkspaceId);
+
+        final ListAdapter<AirDeskFile> listAdapter = new ListAdapter<AirDeskFile>(this, R.layout.file_item, files) {
             @Override
-            public void initItemView(final String fileName, View view) {
+            public void initItemView(final AirDeskFile file, View view, final int poisition) {
                 TextView fileNameView = (TextView) view.findViewById(R.id.file_name);
-                fileNameView.setText(fileName);
+                fileNameView.setText(file.getName());
 
                 Button deleteButton = (Button) view.findViewById(R.id.delete_file_button);
                 deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onClickDeleteFile(fileName, v);
+                        onClickDeleteFile(file, v);
                     }
                 });
             }
@@ -79,8 +71,7 @@ public class FileListActivity extends ActionBarActivity {
         fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String fileName = listAdapter.getItem(position);
-                onClickShowFile(fileName, view);
+                onClickShowFile(listAdapter.getItem(position), view);
             }
         });
 
@@ -117,15 +108,18 @@ public class FileListActivity extends ActionBarActivity {
     }
 
 
-    public void onClickDeleteFile(String fileName, View v) {
-        Toast.makeText(this, "TO DO: delete file " + fileName, Toast.LENGTH_SHORT).show();
+    public void onClickDeleteFile(AirDeskFile file, View v) {
+        Toast.makeText(this, "deleting file " + file.getName(), Toast.LENGTH_SHORT).show();
+        mAirDesk.deleteFile(file.getId());
     }
 
-    public void onClickShowFile(String fileName, View v) {
+    public void onClickShowFile(AirDeskFile file, View v) {
         Intent intent = new Intent(this, ShowFileActivity.class);
+        /*
+        intent.putExtra(ShowFileActivity.EXTRA_)
         intent.putExtra(ShowFileActivity.EXTRA_FILE_NAME, fileName);
         intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
-        intent.putExtra(ShowFileActivity.EXTRA_IS_OWNER, mIsOwner);
+        intent.putExtra(ShowFileActivity.EXTRA_IS_OWNER, mIsOwner);*/
         startActivity(intent);
     }
 
@@ -163,10 +157,11 @@ public class FileListActivity extends ActionBarActivity {
         } else {
             Toast.makeText(this, "TO DO: check if file exists", Toast.LENGTH_SHORT).show();
             Toast.makeText(this, "TO DO: create file", Toast.LENGTH_SHORT).show();
+
+            Integer fileId = mAirDesk.createFile(fileName);
+
             Intent intent = new Intent(this, EditFileActivity.class);
-            intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
-            intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
-            intent.putExtra(EditFileActivity.EXTRA_IS_OWNER, mIsOwner);
+            intent.putExtra(EditFileActivity.EXTRA_FILE_ID, fileId);
             startActivity(intent);
         }
     }

@@ -7,36 +7,32 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 
 
 public class EditFileActivity extends ActionBarActivity {
 
-    public final static String EXTRA_FILE_NAME
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.FILE_NAME";
+    public final static String EXTRA_FILE_ID
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.FILE_ID";
 
-    public final static String EXTRA_WORKSPACE_NAME
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.WORKSPACE_NAME";
-
-    public final static String EXTRA_IS_OWNER
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.EXTRA_IS_OWNER";
-
-    private String mFileName;
-    private String mWorkspaceName;
-    private boolean mIsOwner;
+    private AirDesk mAirDesk;
+    private Integer mFileId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_file);
 
+        mAirDesk = (AirDesk) getApplication();
         Intent intent = getIntent();
-        mFileName      = intent.getStringExtra(EXTRA_FILE_NAME);
-        mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
-        mIsOwner       = intent.getBooleanExtra(EXTRA_IS_OWNER, false);
+        mFileId = intent.getIntExtra(EXTRA_FILE_ID, -1);
+
+        AirDeskFile file = mAirDesk.getFileById(mFileId);
 
         TextView fileNameView = (TextView) findViewById(R.id.file_name);
-        fileNameView.setText("isOwner="+mIsOwner+"; "+mWorkspaceName+": "+mFileName);
+        fileNameView.setText(file.getName());
     }
 
 

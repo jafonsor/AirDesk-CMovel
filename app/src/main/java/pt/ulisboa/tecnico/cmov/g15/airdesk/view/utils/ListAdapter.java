@@ -42,10 +42,14 @@ public abstract class ListAdapter<Item> extends BaseAdapter {
             convertView = mInflater.inflate(mItemLayout, null);
         }
 
-        initItemView(getItem(position), convertView);
+        initItemView(getItem(position), convertView, position);
 
         return convertView;
     }
 
-    public abstract void initItemView(Item item, View view);
+    public void remove(int position) {
+        mItemList.remove(position);
+    }
+
+    public abstract void initItemView(Item item, View view, int position);
 }
