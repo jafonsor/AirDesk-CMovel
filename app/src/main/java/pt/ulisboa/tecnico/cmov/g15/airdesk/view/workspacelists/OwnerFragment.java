@@ -28,8 +28,6 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 
 public class OwnerFragment extends Fragment {
-    public final static String EXTRA_WORKSPACE_NAME
-        = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.ForeignFragment.FILE_NAME";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,6 +102,7 @@ public class OwnerFragment extends Fragment {
     public void onClickListWorkspaceFiles(String workspaceName, View v) {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
         intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, workspaceName);
+        intent.putExtra(FileListActivity.EXTRA_IS_OWNER, true);
         startActivity(intent);
     }
 
@@ -128,13 +127,13 @@ public class OwnerFragment extends Fragment {
 
     public void onClickWorkspaceSettings(String workspaceName, View v) {
         Intent intent = new Intent(getActivity(), WorkspaceSettingsActivity.class);
-        intent.putExtra(EXTRA_WORKSPACE_NAME, workspaceName);
+        intent.putExtra(WorkspaceSettingsActivity.EXTRA_WORKSPACE_NAME, workspaceName);
         startActivity(intent);
     }
 
     public void onClickEditAccessList(String workspaceName, View v) {
         Intent intent = new Intent(getActivity(), EditAccessListActivity.class);
-        intent.putExtra(EXTRA_WORKSPACE_NAME, workspaceName);
+        intent.putExtra(EditAccessListActivity.EXTRA_WORKSPACE_NAME, workspaceName);
         startActivity(intent);
     }
 }

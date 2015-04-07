@@ -29,5 +29,6 @@
     <string name="title_activity_file_list">FileListActivity</string>
     <string name="title_activity_workspace_settings">WorkspaceSettingsActivity</string>
     <string name="title_activity_edit_access_list">EditAccessListActivity</string>
+    <string name="title_activity_show_file">ShowFileActivity</string>
 
 </resources>
