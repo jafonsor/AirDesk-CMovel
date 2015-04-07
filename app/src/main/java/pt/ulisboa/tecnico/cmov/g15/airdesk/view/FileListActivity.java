@@ -45,7 +45,9 @@ public class FileListActivity extends ActionBarActivity {
 
         TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
 
-        workspaceNameView.setText(mWorkspaceId);
+        Workspace workspace = mAirDesk.getWorkspaceById(mWorkspaceId);
+
+        workspaceNameView.setText(workspace.getName());
 
         ListView fileList = (ListView) findViewById(R.id.file_list);
 
