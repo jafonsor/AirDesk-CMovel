@@ -20,26 +20,27 @@ public class FileSystemManager {
 
     public File createFile(String dirPath, String name) {
         File f = null;
-        if (name != null)
-            if (dirPath != null && state.equals(Environment.MEDIA_MOUNTED)) { //by default
-                f = new File(sdcard + "/AirDesk/", name + ".txt");
-                if (!f.exists())
-                    try {
-                        f.createNewFile();
-                    } catch (IOException e) {
-                        Log.e("Error", "Already exists the file with name: " + e.toString());
-                    }
-                return f;
-            } else {
+        if (name != null && dirPath != null) {
+            //if (state.equals(Environment.MEDIA_MOUNTED)) { //by default
                 f = new File(dirPath, name + ".txt");
                 if (!f.exists())
                     try {
                         f.createNewFile();
+
                     } catch (IOException e) {
                         Log.e("Error", "Already exists the file with name: " + e.toString());
                     }
-                return f;
-            }
+            return f;
+           /* } else {
+                f = new File(dirPath, name + ".txt");
+                if (!f.exists())
+                    try {
+                        f.createNewFile();
+                        return f;
+                    } catch (IOException e) {
+                        Log.e("Error", "Already exists the file with name: " + e.toString());
+                    }*/
+        }
         return null; // Já existe um ficheiro com esse nome
     }
 
