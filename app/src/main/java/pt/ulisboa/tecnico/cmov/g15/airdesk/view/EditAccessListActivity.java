@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.g15.airdesk;
+package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -7,30 +7,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.security.acl.Owner;
-
+import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
-
-public class WorkspaceSettingsActivity extends ActionBarActivity {
+public class EditAccessListActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workspace_settings);
+        setContentView(R.layout.activity_edit_access_list);
 
         Intent intent = getIntent();
-        String workspaceName = intent.getStringExtra(OwnerFragment.EXTRA_WORKSPACE_NAME);
 
-        TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
-        workspaceNameView.setText(workspaceName);
+        String workspacName = intent.getStringExtra(OwnerFragment.EXTRA_WORKSPACE_NAME);
+
+        TextView workspaceNameView = (TextView) findViewById(R.id.workspace_name);
+        workspaceNameView.setText(workspacName);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_workspace_setings, menu);
+        getMenuInflater().inflate(R.menu.menu_edit_access_list, menu);
         return true;
     }
 

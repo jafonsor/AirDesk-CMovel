@@ -42,8 +42,18 @@
             android:label="@string/title_activity_workspace_file_list" >
         </activity>
         <activity
-            android:name=".WorkspaceSettingsActivity"
-            android:label="@string/title_activity_workspace_setings" >
+            android:name=".view.WorkspaceSettingsActivity"
+            android:label="@string/title_activity_workspace_settings" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.workspacelists.WorkspacesListActivity" />
+        </activity>
+        <activity
+            android:name=".view.EditAccessListActivity"
+            android:label="@string/title_activity_workspace_settings" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.workspacelists.WorkspacesListActivity" />
         </activity>
     </application>
 

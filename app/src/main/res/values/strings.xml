@@ -25,6 +25,7 @@
 
     <string name="title_activity_create_owner_workspace">CreateOwnerWorkspaceActivity</string>
     <string name="title_activity_workspace_file_list">WorkspaceFileListActivity</string>
-    <string name="title_activity_workspace_setings">WorkspaceSetingsActivity</string>
+    <string name="title_activity_workspace_settings">WorkspaceSettingsActivity</string>
+    <string name="title_activity_edit_access_list">EditAccessListActivity</string>
 
 </resources>

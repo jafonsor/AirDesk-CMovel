@@ -3,19 +3,15 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists;
 /**
  * Created by MSC on 06/04/2015.
  */
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.WorkspaceSettingsActivity;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceSettingsActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.CreateOwnerWorkspaceActivity;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceFileListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 
@@ -65,6 +61,14 @@ public class OwnerFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         onClickWorkspaceSettings(workspaceName, v);
+                    }
+                });
+
+                Button editAccessListbutton = (Button) view.findViewById(R.id.edit_access_list_button);
+                editAccessListbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onClickEditAccessList(workspaceName, v);
                     }
                 });
             }
@@ -121,6 +125,12 @@ public class OwnerFragment extends Fragment {
 
     public void onClickWorkspaceSettings(String workspaceName, View v) {
         Intent intent = new Intent(getActivity(), WorkspaceSettingsActivity.class);
+        intent.putExtra(EXTRA_WORKSPACE_NAME, workspaceName);
+        startActivity(intent);
+    }
+
+    public void onClickEditAccessList(String workspaceName, View v) {
+        Intent intent = new Intent(getActivity(), EditAccessListActivity.class);
         intent.putExtra(EXTRA_WORKSPACE_NAME, workspaceName);
         startActivity(intent);
     }
