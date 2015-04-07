@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceSettingsActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.CreateOwnerWorkspaceActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceFileListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 
 public class OwnerFragment extends Fragment {
@@ -37,10 +37,13 @@ public class OwnerFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.owner_layout, container, false);
 
         ListView listView = (ListView) rootView.findViewById(R.id.owner_workspaces_list);
+
+        // TO DO: fetch the owner workspaces
         List<String> elements = new ArrayList<String>() {{
             add("workspace1");
             add("workspace2");
         }};
+        // --------------------------------
 
         final ListAdapter<String> listAdapter = new ListAdapter<String>(getActivity(), R.layout.owner_workspace_item, elements) {
             @Override
@@ -64,8 +67,8 @@ public class OwnerFragment extends Fragment {
                     }
                 });
 
-                Button editAccessListbutton = (Button) view.findViewById(R.id.edit_access_list_button);
-                editAccessListbutton.setOnClickListener(new View.OnClickListener() {
+                Button editAccessListButton = (Button) view.findViewById(R.id.edit_access_list_button);
+                editAccessListButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         onClickEditAccessList(workspaceName, v);
@@ -99,8 +102,8 @@ public class OwnerFragment extends Fragment {
     }
 
     public void onClickListWorkspaceFiles(String workspaceName, View v) {
-        Intent intent = new Intent(getActivity(), WorkspaceFileListActivity.class);
-        intent.putExtra(EXTRA_WORKSPACE_NAME, workspaceName);
+        Intent intent = new Intent(getActivity(), FileListActivity.class);
+        intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, workspaceName);
         startActivity(intent);
     }
 

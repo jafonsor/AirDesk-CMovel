@@ -11,23 +11,24 @@ import android.widget.TextView;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
-public class WorkspaceFileListActivity extends ActionBarActivity {
+public class FileListActivity extends ActionBarActivity {
 
     public final static String EXTRA_FILE_NAME
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceFileListActivity.FILE_NAME";
+
+    public final static String EXTRA_WORKSPACE_NAME
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceFileListActivity.FILE_NAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workspace_file_list);
+        setContentView(R.layout.activity_file_list);
 
         Intent intent = getIntent();
-        String workspaceName = intent.getStringExtra(OwnerFragment.EXTRA_WORKSPACE_NAME);
+        String workspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
         Log.d("click:", "workspace name = " + workspaceName);
         TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
-        Log.d("click:", "workspace name = " + workspaceName);
         workspaceNameView.setText(workspaceName);
-        Log.d("click:", "workspace name = " + workspaceName);
     }
 
 
