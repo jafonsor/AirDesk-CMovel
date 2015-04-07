@@ -1,14 +1,18 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +83,14 @@ public class FileListActivity extends ActionBarActivity {
                 onClickShowFile(fileName, view);
             }
         });
+
+        Button createFileButton = (Button) findViewById(R.id.create_file_button);
+        createFileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickCreateFile(v);
+            }
+        });
     }
 
 
@@ -115,5 +127,47 @@ public class FileListActivity extends ActionBarActivity {
         intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
         intent.putExtra(ShowFileActivity.EXTRA_IS_OWNER, mIsOwner);
         startActivity(intent);
+    }
+
+    public void onClickCreateFile(final View v) {
+        final EditText input = new EditText(this);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+            .setTitle("New File")
+            .setMessage("File name: ")
+            .setView(input)
+            .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface di, int which) {
+                    String fileName = input.getText().toString();
+                    createAndEditFile(fileName, v);
+                    di.dismiss();
+                }
+            })
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface di, int which) {
+                    di.dismiss();
+                }
+            })
+            .create();
+        dialog.show();
+    }
+
+    // returns false if it fails to create the file
+    public void createAndEditFile(String fileName, View v) {
+        if(fileName == null || fileName.isEmpty()) {
+            Toast.makeText(this, "invalid file name", Toast.LENGTH_SHORT).show();
+            onClickCreateFile(v);
+            // TO DO: check if there is already a file with that name
+        } else {
+            Toast.makeText(this, "TO DO: check if file exists", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "TO DO: create file", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, EditFileActivity.class);
+            intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
+            intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
+            intent.putExtra(EditFileActivity.EXTRA_IS_OWNER, mIsOwner);
+            startActivity(intent);
+        }
     }
 }

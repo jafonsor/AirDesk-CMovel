@@ -30,9 +30,6 @@
         <activity
             android:name=".view.EditFileActivity"
             android:label="@string/title_activity_edit_file" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.workspacelists.SwipeActivity" />
         </activity>
         <activity
             android:name=".view.CreateOwnerWorkspaceActivity"
