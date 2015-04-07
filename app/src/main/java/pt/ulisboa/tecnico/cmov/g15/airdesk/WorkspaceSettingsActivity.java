@@ -1,40 +1,36 @@
-package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
+package pt.ulisboa.tecnico.cmov.g15.airdesk;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import java.security.acl.Owner;
+
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
-public class WorkspaceFileListActivity extends ActionBarActivity {
 
-    public final static String EXTRA_FILE_NAME
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceFileListActivity.FILE_NAME";
+public class WorkspaceSettingsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workspace_file_list);
+        setContentView(R.layout.activity_workspace_settings);
 
         Intent intent = getIntent();
         String workspaceName = intent.getStringExtra(OwnerFragment.EXTRA_WORKSPACE_NAME);
-        Log.d("click:", "workspace name = " + workspaceName);
+
         TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
-        Log.d("click:", "workspace name = " + workspaceName);
         workspaceNameView.setText(workspaceName);
-        Log.d("click:", "workspace name = " + workspaceName);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_workspace_file_list, menu);
+        getMenuInflater().inflate(R.menu.menu_workspace_setings, menu);
         return true;
     }
 

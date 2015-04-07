@@ -12,6 +12,7 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="create">Add</string>
+    <string name="settings">Edit</string>
 
     <string name="title_activity_workspace_list">Workspaces</string>
     <string name="title_activity_edit_file">EditFileActivity</string>
@@ -24,5 +25,6 @@
 
     <string name="title_activity_create_owner_workspace">CreateOwnerWorkspaceActivity</string>
     <string name="title_activity_workspace_file_list">WorkspaceFileListActivity</string>
+    <string name="title_activity_workspace_setings">WorkspaceSetingsActivity</string>
 
 </resources>

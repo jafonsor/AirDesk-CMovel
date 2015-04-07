@@ -41,6 +41,10 @@
             android:name=".view.WorkspaceFileListActivity"
             android:label="@string/title_activity_workspace_file_list" >
         </activity>
+        <activity
+            android:name=".WorkspaceSettingsActivity"
+            android:label="@string/title_activity_workspace_setings" >
+        </activity>
     </application>
 
 </manifest>
