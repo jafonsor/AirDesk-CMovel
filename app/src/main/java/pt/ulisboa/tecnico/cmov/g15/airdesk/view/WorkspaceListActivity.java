@@ -10,37 +10,28 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.view.MainActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListExpandableListAdapter;
 
 
 public class WorkspaceListActivity extends ActionBarActivity {
+
+    private AirDesk airDesk;
 
     public final static String EXTRA_FILE_NAME
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceListActivity.FILE_NAME";
@@ -50,8 +41,12 @@ public class WorkspaceListActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_LOGIN_EMAIL);
+        String message = intent.getStringExtra(LoginActivity.EXTRA_LOGIN_EMAIL);
         setContentView(R.layout.activity_workspace_list);
+
+        airDesk = (AirDesk)getApplication();
+        Log.d("AirDeskApp", "airDesk.User.email:"+airDesk.getUser().getEmail());
+        Log.d("AirDeskApp", "airDesk.User.nickname:"+airDesk.getUser().getUserName());
 
         TextView textView = (TextView) findViewById(R.id.user_info);
         textView.setText("User: " + message);

@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">AirDesk</string>
-    <string name="login_email_hint">email</string>
+    <string name="login_email_hint">E-mail</string>
     <string name="login_button">Login</string>
     <string name="action_settings">Settings</string>
 
@@ -16,5 +16,8 @@
     <string name="title_activity_edit_file">EditFileActivity</string>
     <string name="title_activity_start">StartActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="nickname">Nickname</string>
+    <string name="email">E-mail</string>
+    <string name="save">Save</string>
 
 </resources>

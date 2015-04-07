@@ -7,7 +7,7 @@ import android.support.v4.view.ViewPager;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 
 
-public class StartActivity extends FragmentActivity {
+public class SwipeActivity extends FragmentActivity {
 
     MyAdapter mAdapter;
     ViewPager mPager;
@@ -16,7 +16,7 @@ public class StartActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start);
+        setContentView(R.layout.activity_swipe);
 
         mAdapter = new MyAdapter(getSupportFragmentManager());
 

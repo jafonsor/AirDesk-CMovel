@@ -7,21 +7,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 
 
-public class MainActivity extends ActionBarActivity {
+public class LoginActivity extends ActionBarActivity {
+
+    private AirDesk airDesk;
     public final static String EXTRA_LOGIN_EMAIL
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.MainActivity.LOGIN_EMAIL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
-        AirDesk airDesk = (AirDesk)getApplication();
+        airDesk = (AirDesk)getApplication();
 
     }
 
@@ -53,10 +57,20 @@ public class MainActivity extends ActionBarActivity {
      * Reads email from text box and opens the workspace list activity.
      */
     public void login(View view) {
-        Intent intent = new Intent(this, WorkspaceListActivity.class);
+        Intent intent = new Intent(this, SwipeActivity.class);
         EditText editText = (EditText) findViewById(R.id.login_email_box);
-        String login_email = editText.getText().toString();
-        intent.putExtra(EXTRA_LOGIN_EMAIL, login_email);
-        startActivity(intent);
+        String login_email = editText.getText().toString().trim();
+        editText = (EditText) findViewById(R.id.login_nickname_box);
+        String login_nickname = editText.getText().toString().trim();
+
+        if(login_email != null && !login_email.equals("")) {
+            //TODO verificar que email é unico
+            User user = new User(login_nickname, login_email);
+            airDesk.setUser(user);
+            startActivity(intent);
+            finish();
+        }else{
+            Toast.makeText(getApplicationContext(),"E-mail is required", Toast.LENGTH_SHORT).show();
+        }
     }
 }
