@@ -51,30 +51,14 @@ public class WorkspaceManager {
     }
 
     public void deleteWorkspace(Workspace workspace) {
-        /*
-            If it is to delete all the files when a workspace is destroyed, uncomment the follow code.
-         */
+        File ws = new File(workspace.getPath());
+        if (ws.isDirectory()) {
+            String[] children = ws.list();
+            for (int i = 0; i < children.length; i++)
+                new File(ws, children[i]).delete();
+            ws.delete();
+        }
 
-        /*
-        File ws = null;
-
-        if(state.equals(Environment.MEDIA_MOUNTED)) { // If has memory card
-            ws = new File(sdcard + "/AirDesk/", workspace.getName());
-            if(ws.isDirectory()) {
-                String[] children = dir.list();
-                for (int i = 0; i < children.length; i++) {
-                    new File(dir, children[i]).delete();
-                ws.delete();
-            }
-        } else {
-            ws = new File(internal + "/AirDesk/", workspace.getName());
-            if(ws.isDirectory()){
-                String[] children = dir.list();
-                for (int i = 0; i < children.length; i++) {
-                    new File(dir, children[i]).delete();
-                ws.delete();
-            }
-        }*/
     }
 
 }
