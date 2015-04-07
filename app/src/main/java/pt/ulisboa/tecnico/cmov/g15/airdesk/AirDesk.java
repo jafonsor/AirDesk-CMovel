@@ -5,6 +5,7 @@ import android.app.Application;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AccessListItem;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
@@ -36,8 +37,13 @@ public class AirDesk extends Application {
         this.networkServiceClient = new NetworkServiceClient(new NetworkServiceServer(this));
 
         // fake init
-        mOwnerWorkspaces.add(new OwnerWorkspace(mUser,"workspace1", 4));
+        OwnerWorkspace ow = new OwnerWorkspace(mUser,"workspace1", 4);
+        ow.getAccessList().add(new AccessListItem(new User("xpto","xpto@gmail.com"), true));
+        ow.getAccessList().add(new AccessListItem(new User("joao","joao@gmail.com"), true));
+        ow.getAccessList().add(new AccessListItem(new User("marco","marco@gmail.com"), false));
+        mOwnerWorkspaces.add(ow);
         mOwnerWorkspaces.add(new OwnerWorkspace(mUser,"workspace2", 4));
+
 
     }
 

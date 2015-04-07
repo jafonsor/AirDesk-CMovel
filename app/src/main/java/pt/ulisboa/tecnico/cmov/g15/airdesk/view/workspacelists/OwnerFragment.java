@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists;
 /**
  * Created by MSC on 06/04/2015.
  */
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,7 +39,7 @@ public class OwnerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.owner_layout, container, false);
-        mAirDesk = (AirDesk)getActivity().getApplication();
+        mAirDesk = (AirDesk) getActivity().getApplication();
 
         ListView listView = (ListView) rootView.findViewById(R.id.owner_workspaces_list);
 
@@ -86,7 +87,7 @@ public class OwnerFragment extends Fragment {
             }
         });
 
-        Button button = (Button)rootView.findViewById(R.id.create_workspace_button);
+        Button button = (Button) rootView.findViewById(R.id.create_workspace_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +111,7 @@ public class OwnerFragment extends Fragment {
 
     public void onClickDeleteWorkspace(OwnerWorkspace workspace, final View v, final int position) {
         final String workspaceName = workspace.getName();
-        final Integer workspaceId  = workspace.getId();
+        final Integer workspaceId = workspace.getId();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
         alertDialogBuilder
@@ -124,7 +125,7 @@ public class OwnerFragment extends Fragment {
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
+                    public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 });

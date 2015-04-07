@@ -1,8 +1,10 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,23 +22,30 @@ public abstract class Workspace {
     private List<String> tags;
     private List<AirDeskFile> files;
     private String path;
-    private Map<User, Boolean> accessList;
+    private List<AccessListItem> accessList;
     private WorkspaceVisibility visibility;
 
     private static Integer currentId = 0;
-    private static Map<Integer,Workspace> instanceMap = new HashMap<Integer,Workspace>();
+    private static Map<Integer, Workspace> instanceMap = new HashMap<Integer, Workspace>();
+
     synchronized private static Integer generateId(Workspace newInstance) {
         Integer newId = Workspace.currentId++;
         Workspace.instanceMap.put(newId, newInstance);
         return newId;
     }
+
     synchronized public static Workspace getById(Integer workspaceId) {
         return Workspace.instanceMap.get(workspaceId);
     }
 
-    public Workspace(){}
+    public Workspace() {
+        tags = new ArrayList<String>();
+        files = new ArrayList<AirDeskFile>();
+        accessList = new ArrayList<AccessListItem>();
+    }
 
-    public Workspace(User owner, String name, long quota){
+    public Workspace(User owner, String name, long quota) {
+        this();
         this.owner = owner;
         this.name = name;
         this.quota = quota;
@@ -44,15 +53,15 @@ public abstract class Workspace {
 
     public AirDeskFile getAirDeskFile(AirDeskFile file) {
         AirDeskFile result = null;
-        for(AirDeskFile f : files){
-            if(f.getName().equals(file.getName())) {
+        for (AirDeskFile f : files) {
+            if (f.getName().equals(file.getName())) {
                 result = f;
             }
         }
         return result;
     }
 
-    public boolean removeAirDeskFile(AirDeskFile file){
+    public boolean removeAirDeskFile(AirDeskFile file) {
         for (Iterator<AirDeskFile> iter = this.files.listIterator(); iter.hasNext(); ) {
             AirDeskFile aFile = iter.next();
             if (file.getName().equals(aFile.getName())) {
@@ -63,36 +72,47 @@ public abstract class Workspace {
         return false;
     }
 
-    public long workspaceUsage(){
+    public long workspaceUsage() {
         long result = 0;
-        for(AirDeskFile f : files)
+        for (AirDeskFile f : files)
             result += f.getSize();
         return result;
     }
 
 
     public Boolean userHasPermissions(User user) {
-        return accessList.get(user);
+        for (AccessListItem aci : accessList) {
+            if (aci.getUser().getEmail().equals(user.getEmail())) {
+                return aci.getAllowed();
+            }
+        }
+        return false;
     }
 
     public void changeQuota(User owner, long newQuota) {
-        if(userHasPermissions(owner))
-            if(newQuota >= this.workspaceUsage())
+        if (userHasPermissions(owner))
+            if (newQuota >= this.workspaceUsage())
                 this.quota = newQuota;
     }
 
     public void changeVisibilityTo(User owner, WorkspaceVisibility status) {
-        if(userHasPermissions(owner))
+        if (userHasPermissions(owner))
             this.visibility = status;
     }
 
-    public Integer getId() { return this.id; }
+    public Integer getId() {
+        return this.id;
+    }
 
-    public String getPath() { return this.path; }
+    public String getPath() {
+        return this.path;
+    }
 
-    public void setPath(String path) { this.path = path; }
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-    public List<String> getTags(){
+    public List<String> getTags() {
         return tags;
     }
 
@@ -128,4 +148,27 @@ public abstract class Workspace {
         this.files = files;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setQuota(long quota) {
+        this.quota = quota;
+    }
+
+    public List<AccessListItem> getAccessList() {
+        return accessList;
+    }
+
+    public void setAccessList(List<AccessListItem> accessList) {
+        this.accessList = accessList;
+    }
+
+    public WorkspaceVisibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(WorkspaceVisibility visibility) {
+        this.visibility = visibility;
+    }
 }
