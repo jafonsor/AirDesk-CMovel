@@ -9,4 +9,5 @@ public class ForeignWorkspace extends Workspace {
     public ForeignWorkspace(User owner, String name, long quota) {
         super(owner,name,quota);
     }
+
 }

@@ -12,5 +12,5 @@ public class OwnerWorkspace extends Workspace {
     public OwnerWorkspace(User owner, String name, long quota) {
         super(owner,name,quota);
     }
-
+    
 }

@@ -68,7 +68,5 @@ public class AirDeskFile {
         this.size = size;
     }
 
-    public void incrementVersion() {
-        this.version += 1;
-    }
+    public void incrementVersion() { this.version += 1; }
 }

@@ -110,5 +110,6 @@ public class StorageService {
             Log.e("exception", e.toString());
         }
         return false;
+
     }
 }

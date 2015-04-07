@@ -109,4 +109,5 @@ public abstract class Workspace {
     public void setFiles(List<AirDeskFile> files) {
         this.files = files;
     }
+
 }
