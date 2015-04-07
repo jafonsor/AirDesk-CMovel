@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.workspacelists.WorkspacesListActivity"
+            android:name=".view.workspacelists.SwipeActivity"
             android:label="@string/title_activity_workspace_list" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -31,7 +31,7 @@
             android:label="@string/title_activity_edit_file" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.workspacelists.WorkspacesListActivity" />
+                android:value=".view.workspacelists.SwipeActivity" />
         </activity>
         <activity
             android:name=".view.CreateOwnerWorkspaceActivity"
@@ -46,14 +46,14 @@
             android:label="@string/title_activity_workspace_settings" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.workspacelists.WorkspacesListActivity" />
+                android:value=".view.workspacelists.SwipeActivity" />
         </activity>
         <activity
             android:name=".view.EditAccessListActivity"
             android:label="@string/title_activity_workspace_settings" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.workspacelists.WorkspacesListActivity" />
+                android:value=".view.workspacelists.SwipeActivity" />
         </activity>
     </application>
 
