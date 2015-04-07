@@ -8,31 +8,37 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
-public class EditAccessListActivity extends ActionBarActivity {
+public class ShowFileActivity extends ActionBarActivity {
+
+    public final static String EXTRA_FILE_NAME
+        = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.FILE_NAME";
 
     public final static String EXTRA_WORKSPACE_NAME
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity.FILE_NAME";
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.WORKSPACE_NAME";
+
+    public final static String EXTRA_IS_OWNER
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.EXTRA_IS_OWNER";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_access_list);
+        setContentView(R.layout.activity_show_file);
 
         Intent intent = getIntent();
+        String fileName      = intent.getStringExtra(EXTRA_FILE_NAME);
+        String workspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
+        boolean isOwner = intent.getBooleanExtra(EXTRA_IS_OWNER, false);
 
-        String workspacName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
-
-        TextView workspaceNameView = (TextView) findViewById(R.id.workspace_name);
-        workspaceNameView.setText(workspacName);
+        TextView fileNameView = (TextView) findViewById(R.id.file_name);
+        fileNameView.setText( "isOwner=" + isOwner + "; " + workspaceName + ": " + fileName);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_access_list, menu);
+        getMenuInflater().inflate(R.menu.menu_show_file, menu);
         return true;
     }
 

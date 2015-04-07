@@ -15,6 +15,7 @@
     <string name="settings">Edit</string>
     <string name="remove_workspace">Remove</string>
     <string name="edit_tags">Edit Tags</string>
+    <string name="create_file">Create File</string>
 
     <string name="title_activity_workspace_list">Workspaces</string>
     <string name="title_activity_edit_file">EditFileActivity</string>
@@ -29,5 +30,6 @@
     <string name="title_activity_file_list">FileListActivity</string>
     <string name="title_activity_workspace_settings">WorkspaceSettingsActivity</string>
     <string name="title_activity_edit_access_list">EditAccessListActivity</string>
+    <string name="title_activity_show_file">ShowFileActivity</string>
 
 </resources>

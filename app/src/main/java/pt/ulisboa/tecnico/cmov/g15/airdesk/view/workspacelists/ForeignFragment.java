@@ -80,6 +80,7 @@ public class ForeignFragment extends Fragment {
     public void onClickListWorkspaceFiles(String workspaceName, View v) {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
         intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, workspaceName);
+        intent.putExtra(FileListActivity.EXTRA_IS_OWNER, false);
         startActivity(intent);
     }
 

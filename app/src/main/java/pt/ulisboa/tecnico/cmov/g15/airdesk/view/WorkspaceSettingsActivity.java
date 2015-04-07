@@ -15,13 +15,17 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
 public class WorkspaceSettingsActivity extends ActionBarActivity {
 
+
+    public final static String EXTRA_WORKSPACE_NAME
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceSettingsActivity.EXTRA_WORKSPACE_NAME";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workspace_settings);
 
         Intent intent = getIntent();
-        String workspaceName = intent.getStringExtra(OwnerFragment.EXTRA_WORKSPACE_NAME);
+        String workspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
 
         TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
         workspaceNameView.setText(workspaceName);
