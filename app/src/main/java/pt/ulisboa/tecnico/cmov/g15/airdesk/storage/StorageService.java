@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 
 /**
  * Created by diogo on 03-04-2015.
@@ -26,7 +27,7 @@ public class StorageService {
 
         AirDeskFile airFile = null;
         try {
-            airFile = new AirDeskFile(fileName, file.getCanonicalPath()); //This constructor has version as 0
+            airFile = new AirDeskFile(fileName, file.getCanonicalPath()); //This constructor has AirDeskFile version 0
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -35,6 +36,7 @@ public class StorageService {
 
     /*  Creates an AirDeskFile for a specified local file chosen by the user
      *  Return an airDeskFile with the direct canonical path setted to the real file
+     *  Note: The receive path as argument has to be canonical.
      */
     public AirDeskFile createAirDeskFile(Workspace wsTarget, String fileName, String path) {
         long remainingSize = wsTarget.getQuota()-wsTarget.workspaceUsage();
@@ -47,5 +49,15 @@ public class StorageService {
                 airFile = new AirDeskFile(fileName,path);
         }
         return airFile;
+    }
+
+    /*  From a AirDeskFile access to the real File and reads his content
+     *  Return a String with the content of the file specified on the AirDeskFile path
+     */
+    public String readAirDeskFile(AirDeskFile file) {
+        FileSystemManager FS = new FileSystemManager();
+        File f = FS.getFile(file.getPath());
+
+        return FS.readFile(f);
     }
 }
