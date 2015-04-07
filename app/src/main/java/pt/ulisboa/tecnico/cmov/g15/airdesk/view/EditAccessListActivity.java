@@ -53,7 +53,6 @@ public class EditAccessListActivity extends ActionBarActivity {
 
         List<AccessListItem> elements = workspace.getAccessList();
 
-
         mListAdapter = new ListAdapter<AccessListItem>(getApplicationContext(), R.layout.accesslist_user_item, elements) {
             @Override
             public void initItemView(final AccessListItem accessListItem, View view, final int position) {

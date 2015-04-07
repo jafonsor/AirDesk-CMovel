@@ -34,6 +34,9 @@
         <activity
             android:name=".view.CreateOwnerWorkspaceActivity"
             android:label="@string/title_activity_create_owner_workspace" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.workspacelists.SwipeActivity" />
         </activity>
         <activity
             android:name=".view.FileListActivity"

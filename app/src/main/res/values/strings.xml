@@ -26,7 +26,12 @@
     <string name="email">E-mail</string>
     <string name="save">Save</string>
 
-    <string name="title_activity_create_owner_workspace">CreateOwnerWorkspaceActivity</string>
+    <string name="workspace_name_desc">Name</string>
+    <string name="workspace_quota_desc">Quota</string>
+    <string name="workspace_visibility_desc">Visibility</string>
+    <string name="workspace_tags_desc">Tags</string>
+
+    <string name="title_activity_create_owner_workspace">Create Workspace</string>
     <string name="title_activity_file_list">FileListActivity</string>
     <string name="title_activity_workspace_settings">WorkspaceSettingsActivity</string>
     <string name="title_activity_edit_access_list">EditAccessListActivity</string>

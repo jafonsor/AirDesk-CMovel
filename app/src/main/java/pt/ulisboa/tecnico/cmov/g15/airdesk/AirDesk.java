@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.INetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
@@ -115,5 +116,13 @@ public class AirDesk extends Application {
 
     public List<AirDeskFile> getWorkspaceFiles(Integer workspaceId) {
         return new ArrayList<AirDeskFile>();
+    }
+
+    public void createOwnerWorkspace(String workspaceName, int workspaceQuota, WorkspaceVisibility workspaceVisibility, ArrayList<String> workspaceTags) {
+        OwnerWorkspace ownerWorkspace = new OwnerWorkspace(getUser(), workspaceName, workspaceQuota);
+        ownerWorkspace.changeVisibilityTo(getUser(), workspaceVisibility);
+        ownerWorkspace.setTags(workspaceTags);
+
+        getOwnerWorkspaces().add(ownerWorkspace);
     }
 }
