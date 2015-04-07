@@ -1,11 +1,13 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.storage;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 
 /**
  * Created by diogo on 03-04-2015.
@@ -15,12 +17,12 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
  * on an external (by default) or an internal storage.
  */
 public class StorageService {
+    private FileSystemManager FS = new FileSystemManager();
 
     /*  Creates a totally new empty File on the target Workspace (which is a real Directory)
      *  Return an airDeskFile with the direct canonical path setted to the real file
      */
     public AirDeskFile newAirDeskFile(Workspace wsTarget, String fileName) {
-        FileSystemManager FS = new FileSystemManager();
         String dirPath = wsTarget.getPath();
 
         File file = FS.createFile(dirPath, fileName);
@@ -29,7 +31,7 @@ public class StorageService {
         try {
             airFile = new AirDeskFile(fileName, file.getCanonicalPath()); //This constructor has AirDeskFile version 0
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("exception", e.toString());
         }
         return airFile;
     }
@@ -39,25 +41,74 @@ public class StorageService {
      *  Note: The receive path as argument has to be canonical.
      */
     public AirDeskFile createAirDeskFile(Workspace wsTarget, String fileName, String path) {
-        long remainingSize = wsTarget.getQuota()-wsTarget.workspaceUsage();
-        FileSystemManager FS = new FileSystemManager();
-
-        File file = FS.getFile(path);
+        long remainingSpace = wsTarget.getQuota() - wsTarget.workspaceUsage();
+        File file;
         AirDeskFile airFile = null;
-        if(file!=null){
-            if(remainingSize >= file.length())
+
+        try {
+            file = FS.getFile(path);
+
+            if(remainingSpace >= file.length())
                 airFile = new AirDeskFile(fileName,path);
+        }  catch (IOException e) {
+            Log.e("exception", e.toString());
         }
         return airFile;
     }
 
-    /*  From a AirDeskFile access to the real File and reads his content
+    /*  From a AirDeskFile, accesses the real stored File and reads his content
      *  Return a String with the content of the file specified on the AirDeskFile path
      */
-    public String readAirDeskFile(AirDeskFile file) {
-        FileSystemManager FS = new FileSystemManager();
-        File f = FS.getFile(file.getPath());
+    public String readAirDeskFile(AirDeskFile airFile) {
+        File file;
 
-        return FS.readFile(f);
+        try {
+            file = FS.getFile(airFile.getPath());
+
+            return FS.readFile(file);
+
+        } catch (IOException e) {
+            Log.e("exception", e.toString());
+        }
+
+        return null;
+    }
+
+    /*  From a AirDeskFile, accesses the real stored File and deletes it
+     *  Return true if the AirFile it was successful removed from the specified Workspace
+     */
+    public boolean deleteAirDeskFile(AirDeskFile airFile, Workspace ws) {
+        File file;
+
+        try {
+            file = FS.getFile(airFile.getPath());
+
+            //if(FS.deleteFile(file))                   // If is to remove the file locally uncomment this line
+            return ws.removeAirDeskFile(airFile);
+
+        } catch (IOException e) {
+            Log.e("exception", e.toString());
+        }
+
+        return false;
+    }
+
+    /*  Write the new content on the desired local file and increments the AirFile version
+     *  Return true if it was successful
+     */
+    public boolean writeAirDeskFile(AirDeskFile airFile, String content) {
+        File file;
+
+        try {
+            file = FS.getFile(airFile.getPath());
+
+            FS.writeFile(file, content);
+            airFile.incrementVersion();
+
+            return true;
+        } catch (IOException e) {
+            Log.e("exception", e.toString());
+        }
+        return false;
     }
 }

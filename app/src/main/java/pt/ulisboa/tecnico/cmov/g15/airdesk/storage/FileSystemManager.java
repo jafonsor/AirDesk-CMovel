@@ -1,11 +1,15 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.storage;
 
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Created by diogo on 03-04-2015.
@@ -23,7 +27,7 @@ public class FileSystemManager {
                     try {
                         f.createNewFile();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e("Error", "Already exists the file with name: " + e.toString());
                     }
                 return f;
             } else {
@@ -32,20 +36,25 @@ public class FileSystemManager {
                     try {
                         f.createNewFile();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e("Error", "Already exists the file with name: " + e.toString());
                     }
                 return f;
             }
         return null; // Já existe um ficheiro com esse nome
     }
 
-    public File getFile(String filePath) {
+    public File getFile(String filePath) throws IOException {
         File file = new File(filePath);
 
-        if (filePath != null)
+        if (filePath != null) {
             if (file.exists())
                 return file;
-        return null; // O file que procura não existe ou não foi introduzido nenhum file path
+            else
+                throw new IOException("The desired file does not exist.");
+        } else
+            throw new IOException("Missing the file path.");
+
+        //return null; // O file que procura não existe ou não foi introduzido nenhum file path
     }
 
     public boolean deleteFile(File file) {
@@ -65,9 +74,22 @@ public class FileSystemManager {
             }
             br.close();
         } catch (IOException e) {
-           //TODO
+            Log.e("read", "Can not read file: " + e.toString());
         }
 
         return text.toString();
+    }
+
+    public boolean writeFile(File file, String content) {
+        try {
+        Writer writer = new BufferedWriter(new FileWriter(file));
+        writer.write(content);
+        writer.close();
+
+        return true;
+        } catch (IOException e) {
+            Log.e("write", "Can not write file: " + e.toString());
+        }
+        return false;
     }
 }
