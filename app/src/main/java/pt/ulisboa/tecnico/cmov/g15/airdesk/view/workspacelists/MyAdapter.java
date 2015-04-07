@@ -1,10 +1,9 @@
-package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
+package pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists;
 
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 
 /**
  * Created by MSC on 06/04/2015.

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
+package pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists;
 
 /**
  * Created by MSC on 06/04/2015.

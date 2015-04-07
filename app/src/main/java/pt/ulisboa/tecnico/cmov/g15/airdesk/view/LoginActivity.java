@@ -12,6 +12,7 @@ import android.widget.Toast;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.WorkspacesListActivity;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -57,7 +58,7 @@ public class LoginActivity extends ActionBarActivity {
      * Reads email from text box and opens the workspace list activity.
      */
     public void login(View view) {
-        Intent intent = new Intent(this, SwipeActivity.class);
+        Intent intent = new Intent(this, WorkspacesListActivity.class);
         EditText editText = (EditText) findViewById(R.id.login_email_box);
         String login_email = editText.getText().toString().trim();
         editText = (EditText) findViewById(R.id.login_nickname_box);

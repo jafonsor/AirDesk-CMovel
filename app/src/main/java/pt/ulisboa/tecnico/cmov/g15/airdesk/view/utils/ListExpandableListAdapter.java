@@ -7,9 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListAdapter;
 
-import java.security.acl.Group;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
@@ -24,11 +22,11 @@ public abstract class ListExpandableListAdapter<GroupClass, ChildClass> extends 
     private int groupLayout;
     private int childLayout;
 
-    public ListExpandableListAdapter(Activity context, List<Pair<GroupClass, List<ChildClass>>> elements, int groupLayout, int childLayout) {
+    public ListExpandableListAdapter(Activity context, int groupLayout, int childLayout, List<Pair<GroupClass, List<ChildClass>>> elements) {
         this.context = context;
-        this.elements = elements;
         this.groupLayout = groupLayout;
         this.childLayout = childLayout;
+        this.elements = elements;
     }
 
     public Activity getContext() { return context; }
@@ -90,7 +88,7 @@ public abstract class ListExpandableListAdapter<GroupClass, ChildClass> extends 
             convertView = inflater.inflate(R.layout.file_item, null);
         }
 
-        editChildView(child, convertView);
+        initChildView(child, convertView);
 
         return convertView;
     }
@@ -100,15 +98,15 @@ public abstract class ListExpandableListAdapter<GroupClass, ChildClass> extends 
         GroupClass group = getGroupT(groupPosition);
         if(convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.workspace_item, null);
+            convertView = infalInflater.inflate(R.layout.owner_workspace_item, null);
         }
 
-        editGroupView(group, convertView);
+        initGroupView(group, convertView);
 
         return convertView;
     }
 
-    public abstract void editChildView(final ChildClass child, View convertView);
-    public abstract void editGroupView(final GroupClass group, View convertView);
+    public abstract void initChildView(final ChildClass child, View convertView);
+    public abstract void initGroupView(final GroupClass group, View convertView);
 
 }
