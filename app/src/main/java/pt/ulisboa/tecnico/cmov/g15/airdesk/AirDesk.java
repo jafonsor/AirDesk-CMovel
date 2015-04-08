@@ -45,6 +45,8 @@ public class AirDesk extends Application {
         mOwnerWorkspaces.add(ow);
         mOwnerWorkspaces.add(new OwnerWorkspace(mUser,"workspace2", 4));
 
+        mForeignWorkspaces.add(new ForeignWorkspace(mUser,"workspace2", 4));
+        mForeignWorkspaces.add(new ForeignWorkspace(mUser,"workspace4", 4));
 
     }
 
@@ -109,7 +111,7 @@ public class AirDesk extends Application {
         // TO DO: verificar workspace id
         Workspace workspace = getWorkspaceById(workspaceId);
         getForeignWorkspaces().remove(workspace);
-        mWorkspaceManager.deleteWorkspace(workspace);
+        //mWorkspaceManager.deleteWorkspace(workspace);
     }
 
     public void deleteFile(Integer fileId) {
@@ -128,7 +130,7 @@ public class AirDesk extends Application {
     public void createOwnerWorkspace(String workspaceName, int workspaceQuota, WorkspaceVisibility workspaceVisibility, ArrayList<String> workspaceTags) {
         OwnerWorkspace ownerWorkspace = new OwnerWorkspace(getUser(), workspaceName, workspaceQuota);
         ownerWorkspace.changeVisibilityTo(getUser(), workspaceVisibility);
-        ownerWorkspace.changeTags(mUser,workspaceTags);
+        ownerWorkspace.changeTags(mUser, workspaceTags);
 
         getOwnerWorkspaces().add(ownerWorkspace);
     }
