@@ -1,48 +1,35 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 /**
  * Created by MSC on 02/04/2015.
  */
 public class AirDeskFile {
-    private Integer id = AirDeskFile.generateId(this);
     private String name;
     private String path; // Must be a canonical path
     private int version;
     private FileState state;
     private long size;
+    private Workspace workspace;
 
-    private static Integer currentId = 0;
-    private static Map<Integer,AirDeskFile> instanceMap = new HashMap<Integer,AirDeskFile>();
-    synchronized private static Integer generateId(AirDeskFile newInstance) {
-        Integer newId = AirDeskFile.currentId++;
-        AirDeskFile.instanceMap.put(newId, newInstance);
-        return newId;
-    }
-    synchronized public static AirDeskFile getById(Integer workspaceId) {
-        return AirDeskFile.instanceMap.get(workspaceId);
-    }
-
-    public AirDeskFile(String name, String path){ // When a empty AirFile is created
+    public AirDeskFile(String name, String path, Workspace workspace ) { // When a empty AirFile is created
         this.name = name;
         this.version = 0;
         this.path = path;
         this.size = 0;
+        this.state = FileState.IDLE;
+        this.workspace = workspace;
     }
 
-    public AirDeskFile(String name, String path, FileState state) { // When a AirFile with content is created
-        this.name = name;
-        this.version = 1;
-        this.path = path;
-        this.state = state;
-        this.size = 0;
+    public Workspace getWorkspace() {
+        return workspace;
     }
 
-    public Integer getId() { return id; }
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
 
     public String getName() {
         return name;
@@ -77,12 +64,33 @@ public class AirDeskFile {
     }
 
     public long getSize() {
-        return this.size;
+        return size;
     }
 
     public void setSize(long size) {
         this.size = size;
     }
 
-    public void incrementVersion() { this.version += 1; }
+    public void incrementVersion() {
+        this.version += 1;
+    }
+
+    public boolean delete(){
+        //TODO network
+        return FileSystemManager.deleteFile(getPath());
+    }
+
+    public boolean write(String content) {
+        int contentSize = content.getBytes().length;
+
+        if(getWorkspace().remainingSpace()+getSize() < contentSize) return false;
+        //TODO network
+        return FileSystemManager.setFileContent(getPath(),content);
+    }
+
+    public String read() {
+        //TODO network
+        return FileSystemManager.getFileContent(getPath());
+    }
+
 }

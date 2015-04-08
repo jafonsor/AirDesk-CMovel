@@ -21,7 +21,6 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
  */
 public class StorageService {
     private FileSystemManager FS = new FileSystemManager();
-    private WorkspaceManager WM = new WorkspaceManager();
 
                           /****                              ****
                             **      AirDeskFile Methods       **
@@ -110,24 +109,20 @@ public class StorageService {
      */
     public boolean writeAirDeskFile(AirDeskFile airFile, String content, Workspace ws) {
         File file;
-        long remainingSpace = ws.remainingSpace();
+       // long remainingSpace = ws.remainingSpace();
 
-        //TODO - Needs to know if someone is editing this file
-
-        if(Integer.parseInt(content.getBytes().toString()) <= remainingSpace) { // If the content fits in the remaining quota space
+     //  if(Integer.parseInt(content.getBytes().toString()) <= remainingSpace) { // If the content fits in the remaining quota space
             try {
                 file = FS.getFile(airFile.getPath());
 
                 FS.writeFile(file, content);
                 airFile.incrementVersion();
 
-                //TODO - BROADCAST to the network
-
                 return true;
             } catch (IOException e) {
                 Log.e("exception", e.toString());
             }
-        }
+      //  }
         return false;
 
     }

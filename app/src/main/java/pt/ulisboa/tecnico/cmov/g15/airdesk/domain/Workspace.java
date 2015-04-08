@@ -1,47 +1,22 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
-import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
-
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import java.util.HashMap;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 /**
  * Created by MSC on 02/04/2015.
  */
 public abstract class Workspace {
+    protected long quota;
     private User owner;
-    private Integer id = Workspace.generateId(this);
     private String name;
-    private long quota;
-    private List<String> tags;
     private List<AirDeskFile> files;
     private String path;
-    private List<AccessListItem> accessList;
-    private WorkspaceVisibility visibility;
-
-    private static Integer currentId = 0;
-    private static Map<Integer, Workspace> instanceMap = new HashMap<Integer, Workspace>();
-
-    synchronized private static Integer generateId(Workspace newInstance) {
-        Integer newId = Workspace.currentId++;
-        Workspace.instanceMap.put(newId, newInstance);
-        return newId;
-    }
-
-    synchronized public static Workspace getById(Integer workspaceId) {
-        return Workspace.instanceMap.get(workspaceId);
-    }
 
     public Workspace() {
-        tags = new ArrayList<String>();
         files = new ArrayList<AirDeskFile>();
-        accessList = new ArrayList<AccessListItem>();
     }
 
     public Workspace(User owner, String name, long quota) {
@@ -51,87 +26,19 @@ public abstract class Workspace {
         this.quota = quota;
     }
 
-    public AirDeskFile getAirDeskFile(AirDeskFile file) {
-        AirDeskFile result = null;
-        for (AirDeskFile f : files) {
-            if (f.getName().equals(file.getName())) {
-                result = f;
-            }
-        }
-        return result;
+    public boolean create() {
+        String path = FileSystemManager.createWorkspace(getOwner().getEmail(), getName());
+
+        if (path == null) return false;
+
+        setPath(path);
+        //TODO Network
+        return true;
     }
 
-    public boolean removeAirDeskFile(AirDeskFile file) {
-        for (Iterator<AirDeskFile> iter = this.files.listIterator(); iter.hasNext(); ) {
-            AirDeskFile aFile = iter.next();
-            if (file.getName().equals(aFile.getName())) {
-                iter.remove();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public long workspaceUsage() {
-        long result = 0;
-        for (AirDeskFile f : files)
-            result += f.getSize();
-        return result;
-    }
-
-    public long remainingSpace(){
-        return getQuota()-workspaceUsage();
-    }
-
-
-    public boolean userHasPermissions(User user) {
-        for (AccessListItem aci : accessList) {
-            if (aci.getUser().getEmail().equals(user.getEmail())) {
-                return aci.getAllowed();
-            }
-        }
-        return false;
-    }
-
-    public boolean changeQuota(User owner, long newQuota) {
-        if (userHasPermissions(owner))
-            if (newQuota >= this.workspaceUsage()) {
-                this.quota = newQuota;
-                return true;
-            }
-        return false;
-    }
-
-    public boolean changeVisibilityTo(User owner, WorkspaceVisibility status) {
-        if (userHasPermissions(owner)) {
-            this.visibility = status;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean changeTags(User owner, List<String> tags) {
-        if (userHasPermissions(owner)) {
-            this.tags = tags;
-            return true;
-        }
-        return false;
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public String getPath() {
-        return this.path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public List<String> getTags() {
-        return tags;
+    public boolean delete() {
+        //TODO Network
+        return FileSystemManager.deleteWorkspace(getPath());
     }
 
     public User getOwner() {
@@ -162,27 +69,44 @@ public abstract class Workspace {
         this.files = files;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public String getPath() {
+        return path;
     }
 
-    public void setQuota(long quota) {
-        this.quota = quota;
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    public List<AccessListItem> getAccessList() {
-        return accessList;
+    public long workspaceUsage() {
+        long result = 0;
+        for (AirDeskFile f : files)
+            result += f.getSize();
+        return result;
     }
 
-    public void setAccessList(List<AccessListItem> accessList) {
-        this.accessList = accessList;
+    public AirDeskFile createFile(String filename) {
+        if (remainingSpace() <= 0) return null;
+
+        if (getFile(filename) != null) return null;
+
+        String path = FileSystemManager.createFile(getPath(), filename);
+        if (path != null)
+            return new AirDeskFile(filename, path, this);
+        //TODO network
+        return null;
     }
 
-    public WorkspaceVisibility getVisibility() {
-        return visibility;
+
+
+    public AirDeskFile getFile(String filename) {
+        for (AirDeskFile af : files)
+            if (af.getName().equals(filename))
+                return af;
+        return null;
     }
 
-    public void setVisibility(WorkspaceVisibility visibility) {
-        this.visibility = visibility;
+    public long remainingSpace() {
+        return getQuota() - workspaceUsage();
     }
+
 }

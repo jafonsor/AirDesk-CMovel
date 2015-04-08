@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by MSC on 02/04/2015.
@@ -44,5 +45,14 @@ public class User {
 
     public void setUserTags(List<String> userTags) {
         this.userTags = userTags;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if(object instanceof User) {
+            User u = (User) object;
+            return this.getEmail().equals(u.getEmail());
+        }
+        return false;
     }
 }

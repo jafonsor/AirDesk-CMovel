@@ -15,54 +15,49 @@ import java.io.Writer;
  * Created by diogo on 03-04-2015.
  */
 public class FileSystemManager {
-    File sdcard = Environment.getExternalStorageDirectory();
-    String state = Environment.getExternalStorageState();
+    private static File internal = Environment.getDataDirectory();
 
-    public File createFile(String dirPath, String name) {
+    public static String createFile(String dirPath, String filename) {
         File f = null;
-        if (name != null && dirPath != null) {
-            //if (state.equals(Environment.MEDIA_MOUNTED)) { //by default
-                f = new File(dirPath, name + ".txt");
-                if (!f.exists())
-                    try {
-                        f.createNewFile();
+        if (filename != null && dirPath != null && !filename.isEmpty() && !dirPath.isEmpty()) {
+            f = new File(dirPath, filename + ".txt");
+            if (!f.exists()) {
+                try {
+                    f.createNewFile();
 
-                    } catch (IOException e) {
-                        Log.e("Error", "Already exists the file with name: " + e.toString());
-                    }
-            return f;
-           /* } else {
-                f = new File(dirPath, name + ".txt");
-                if (!f.exists())
-                    try {
-                        f.createNewFile();
-                        return f;
-                    } catch (IOException e) {
-                        Log.e("Error", "Already exists the file with name: " + e.toString());
-                    }*/
+                } catch (IOException e) {
+                    Log.e("Error", "Already exists the file with name: " + e.toString());
+                    return null;
+                }
+            }
+            try {
+                return f.getCanonicalPath();
+            } catch (IOException e) {
+                Log.e("Error", e.toString());
+            }
         }
         return null; // Já existe um ficheiro com esse nome
     }
 
-    public File getFile(String filePath) throws IOException {
+    private static File getFile(String filePath) {
         File file = new File(filePath);
 
-        if (filePath != null) {
+        if (filePath != null && !filePath.isEmpty()) {
             if (file.exists())
                 return file;
             else
-                throw new IOException("The desired file does not exist.");
+                return null;
         } else
-            throw new IOException("Missing the file path.");
-
+            return null;
         //return null; // O file que procura não existe ou não foi introduzido nenhum file path
     }
 
-    public boolean deleteFile(File file) {
-        return file.delete();
-    }
+    public static String getFileContent(String filePath) {
+        File file = getFile(filePath);
 
-    public String readFile(File file) {
+        if (file == null)
+            return null;
+
         StringBuilder text = new StringBuilder();
 
         try {
@@ -76,20 +71,70 @@ public class FileSystemManager {
             br.close();
         } catch (IOException e) {
             Log.e("read", "Can not read file: " + e.toString());
+            return null;
         }
 
         return text.toString();
     }
 
-    public boolean writeFile(File file, String content) {
-        try {
-        Writer writer = new BufferedWriter(new FileWriter(file));
-        writer.write(content);
-        writer.close();
+    public static boolean setFileContent(String filePath, String content) {
+        File file = getFile(filePath);
 
-        return true;
+        if (file == null)
+            return false;
+
+        try {
+            Writer writer = new BufferedWriter(new FileWriter(file));
+            writer.write(content);
+            writer.close();
+
+            return true;
         } catch (IOException e) {
             Log.e("write", "Can not write file: " + e.toString());
+        }
+        return false;
+    }
+
+    public static String createWorkspace(String userEmail, String wsName) {
+        /*
+            Creates a directory inside /sdcard/AirDesk/ with the Workspace name
+            Note: This approach is useful to have different files with the
+                  same name in different workspaces.
+         */
+        String dirName = userEmail + "/" + wsName;
+
+        File newDir = new File(internal + "/AirDesk/", dirName);
+        newDir.mkdir();
+
+        String result = null;
+
+        try {
+            result = newDir.getCanonicalPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static boolean deleteWorkspace(String dirPath) {
+        File ws = new File(dirPath);
+        if (ws.isDirectory()) {
+            String[] children = ws.list();
+            for (int i = 0; i < children.length; i++) {
+                if (!new File(ws, children[i]).delete()) {
+                    return false;
+                }
+            }
+            return ws.delete();
+        }
+        return false;
+    }
+
+    public static boolean deleteFile(String filePath) {
+        File file = getFile(filePath);
+
+        if (file != null) {
+            return file.delete();
         }
         return false;
     }

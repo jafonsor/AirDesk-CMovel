@@ -11,18 +11,13 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 /**
  * Created by MSC on 05/04/2015.
  */
-public class NetworkServiceClient implements INetworkServiceClient {
+public class NetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
-    private NetworkServiceServer networkServiceResponse;
+    private static NetworkServiceServer networkServiceResponse = new NetworkServiceServer();
 
     public NetworkServiceClient(){}
 
-    public NetworkServiceClient(NetworkServiceServer networkServiceResponse){
-        this.networkServiceResponse=networkServiceResponse;
-    }
-
-    @Override
-    public List<Workspace> getAllowedWorkspaces(User user, List<String> tags) {
+    public static List<Workspace> getAllowedWorkspaces(User user, List<String> tags) {
         List<Workspace> allowedWorkspaces = new ArrayList<Workspace>();
 
         //broadcast this message and collects all workspaces
@@ -31,46 +26,34 @@ public class NetworkServiceClient implements INetworkServiceClient {
         }
         return allowedWorkspaces;
     }
-
-    @Override
-    public boolean notifyIntention(User user, Workspace workspace, AirDeskFile file, FileState intention) {
+    
+    public static boolean notifyIntention(User user, Workspace workspace, AirDeskFile file, FileState intention) {
         return networkServiceResponse.notifyIntentionS(user, workspace, file, intention);
     }
 
-    @Override
-    public int getFileVersion(Workspace workspace, AirDeskFile file) {
+    
+    public static int getFileVersion(Workspace workspace, AirDeskFile file) {
         return networkServiceResponse.getFileVersionS(workspace, file);
     }
 
-    @Override
-    public FileState getFileState(Workspace workspace, AirDeskFile file) {
+    
+    public static FileState getFileState(Workspace workspace, AirDeskFile file) {
         return networkServiceResponse.getFileStateS(workspace, file);
     }
 
-    @Override
-    public String getFile(Workspace workspace, AirDeskFile file) {
+    
+    public static String getFile(Workspace workspace, AirDeskFile file) {
         return networkServiceResponse.getFileS(workspace, file);
     }
 
-    @Override
-    public boolean sendFile(Workspace workspace, AirDeskFile file, String fileContent) {
+    
+    public static boolean sendFile(Workspace workspace, AirDeskFile file, String fileContent) {
         return networkServiceResponse.sendFileS(workspace, file, fileContent);
     }
 
-    @Override
-    public boolean changeQuota(Workspace workspace, long quota) {
-        //TODO contact Storage Service to check if is possible to change quota.
-        //If it is, change and return true, otherwise return false
-        return false;
+    
+    public static boolean changeQuota(Workspace workspace, long quota) {
+        return networkServiceResponse.changeQuotaS(workspace, quota);
     }
 
-    //TEMPORARIO
-    public NetworkServiceServer getNetworkServiceResponse() {
-        return networkServiceResponse;
-    }
-
-    //TEMPORARIO
-    public void setNetworkServiceResponse(NetworkServiceServer networkServiceResponse) {
-        this.networkServiceResponse = networkServiceResponse;
-    }
 }

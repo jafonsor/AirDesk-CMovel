@@ -8,12 +8,6 @@ public class AccessListItem {
     private boolean allowed;
     private boolean invited;
 
-    public AccessListItem(User user, boolean allowed) {
-        this.user = user;
-        this.allowed = allowed;
-        this.invited = false;
-    }
-
     public AccessListItem(User user) {
         this.user = user;
         this.allowed = true;
