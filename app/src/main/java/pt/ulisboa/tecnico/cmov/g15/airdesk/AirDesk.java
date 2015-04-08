@@ -32,21 +32,18 @@ public class AirDesk extends Application {
 
     private INetworkServiceClient networkServiceClient;
 
-    public AirDesk() {
+    public AirDesk(){
         mOwnerWorkspaces = new ArrayList<OwnerWorkspace>();
         mForeignWorkspaces = new ArrayList<ForeignWorkspace>();
         this.networkServiceClient = new NetworkServiceClient(new NetworkServiceServer(this));
 
         // fake init
-        OwnerWorkspace ow = new OwnerWorkspace(mUser, "workspace1", 4);
-        ow.getAccessList().add(new AccessListItem(new User("xpto", "xpto@gmail.com"), true));
-        ow.getAccessList().add(new AccessListItem(new User("joao", "joao@gmail.com"), true));
-        ow.getAccessList().add(new AccessListItem(new User("marco", "marco@gmail.com"), false));
+        OwnerWorkspace ow = new OwnerWorkspace(mUser,"workspace1", 4);
+        ow.getAccessList().add(new AccessListItem(new User("xpto","xpto@gmail.com"), true));
+        ow.getAccessList().add(new AccessListItem(new User("joao","joao@gmail.com"), true));
+        ow.getAccessList().add(new AccessListItem(new User("marco","marco@gmail.com"), false));
         mOwnerWorkspaces.add(ow);
-        mOwnerWorkspaces.add(new OwnerWorkspace(mUser, "workspace2", 4));
-
-        mForeignWorkspaces.add(new ForeignWorkspace(mUser, "workspace2", 4));
-        mForeignWorkspaces.add(new ForeignWorkspace(mUser, "workspace3", 4));
+        mOwnerWorkspaces.add(new OwnerWorkspace(mUser,"workspace2", 4));
 
 
     }
@@ -75,10 +72,10 @@ public class AirDesk extends Application {
         this.mForeignWorkspaces = foreignWorkspaces;
     }
 
-    public OwnerWorkspace getOwnerWorkspace(Workspace ow) {
-        for (OwnerWorkspace ows : getOwnerWorkspaces()) {
-            if (ows.getName().equals(ow.getName()))
-                if (ows.getOwner().getEmail().equals(ow.getOwner().getEmail()))
+    public OwnerWorkspace getOwnerWorkspace(Workspace ow){
+        for(OwnerWorkspace ows: getOwnerWorkspaces()){
+            if(ows.getName().equals(ow.getName()))
+                if(ows.getOwner().getEmail().equals(ow.getOwner().getEmail()))
                     return ows;
         }
 
@@ -112,7 +109,7 @@ public class AirDesk extends Application {
         // TO DO: verificar workspace id
         Workspace workspace = getWorkspaceById(workspaceId);
         getForeignWorkspaces().remove(workspace);
-        //mWorkspaceManager.deleteWorkspace(workspace);
+        mWorkspaceManager.deleteWorkspace(workspace);
     }
 
     public void deleteFile(Integer fileId) {
@@ -131,7 +128,7 @@ public class AirDesk extends Application {
     public void createOwnerWorkspace(String workspaceName, int workspaceQuota, WorkspaceVisibility workspaceVisibility, ArrayList<String> workspaceTags) {
         OwnerWorkspace ownerWorkspace = new OwnerWorkspace(getUser(), workspaceName, workspaceQuota);
         ownerWorkspace.changeVisibilityTo(getUser(), workspaceVisibility);
-        ownerWorkspace.setTags(workspaceTags);
+        ownerWorkspace.changeTags(mUser,workspaceTags);
 
         getOwnerWorkspaces().add(ownerWorkspace);
     }
