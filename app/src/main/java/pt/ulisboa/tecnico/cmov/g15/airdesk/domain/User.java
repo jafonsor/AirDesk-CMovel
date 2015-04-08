@@ -9,14 +9,17 @@ import java.util.List;
 public class User {
     private String userName;
     private String email;
+    private List<String> userTags;
 
     public User(String email) {
         this.email = email;
+        userTags = new ArrayList<String>();
     }
 
     public User(String userName, String email) {
         this.userName = userName;
         this.email = email;
+        userTags = new ArrayList<String>();
     }
 
     public String getUserName() {
@@ -33,5 +36,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<String> getUserTags() {
+        return userTags;
+    }
+
+    public void setUserTags(List<String> userTags) {
+        this.userTags = userTags;
     }
 }

@@ -105,6 +105,13 @@ public class AirDesk extends Application {
         mWorkspaceManager.deleteWorkspace(workspace);
     }
 
+    public void deleteForeignWorkspace(Integer workspaceId) {
+        // TO DO: verificar workspace id
+        Workspace workspace = getWorkspaceById(workspaceId);
+        getForeignWorkspaces().remove(workspace);
+        mWorkspaceManager.deleteWorkspace(workspace);
+    }
+
     public void deleteFile(Integer fileId) {
         // TO DO
     }
