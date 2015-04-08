@@ -79,6 +79,10 @@ public abstract class Workspace {
         return result;
     }
 
+    public long remainingSpace(){
+        return getQuota()-workspaceUsage();
+    }
+
 
     public Boolean userHasPermissions(User user) {
         for (AccessListItem aci : accessList) {

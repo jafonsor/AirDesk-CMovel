@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 
 /**
@@ -18,6 +20,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
  */
 public class StorageService {
     private FileSystemManager FS = new FileSystemManager();
+    private WorkspaceManager WM = new WorkspaceManager();
 
     /*  Creates a totally new empty File on the target Workspace (which is a real Directory)
      *  Return an airDeskFile with the direct canonical path setted to the real file
@@ -41,7 +44,7 @@ public class StorageService {
      *  Note: The receive path as argument has to be canonical.
      */
     public AirDeskFile createAirDeskFile(Workspace wsTarget, String fileName, String path) {
-        long remainingSpace = wsTarget.getQuota() - wsTarget.workspaceUsage();
+        long remainingSpace = wsTarget.remainingSpace();
         File file;
         AirDeskFile airFile = null;
 
@@ -96,20 +99,42 @@ public class StorageService {
     /*  Write the new content on the desired local file and increments the AirFile version
      *  Return true if it was successful
      */
-    public boolean writeAirDeskFile(AirDeskFile airFile, String content) {
+    public boolean writeAirDeskFile(AirDeskFile airFile, String content, Workspace ws) {
         File file;
+        long remainingSpace = ws.remainingSpace();
 
-        try {
-            file = FS.getFile(airFile.getPath());
+        if(Integer.parseInt(content.getBytes().toString()) <= remainingSpace) { // If the content fits in the remaining quota space
+            try {
+                file = FS.getFile(airFile.getPath());
 
-            FS.writeFile(file, content);
-            airFile.incrementVersion();
+                FS.writeFile(file, content);
+                airFile.incrementVersion();
 
-            return true;
-        } catch (IOException e) {
-            Log.e("exception", e.toString());
+                return true;
+            } catch (IOException e) {
+                Log.e("exception", e.toString());
+            }
         }
         return false;
 
     }
+
+    public Workspace createWorkspace(User appUser,User wsOwner, String name, long quota) {
+        return WM.createWorkspace(appUser,wsOwner, name, quota);
+
+    }
+
+    public void deleteWorkspace(Workspace workspace) {
+        if(workspace instanceof OwnerWorkspace) {
+            //TODO - tem que enviar para rede que o Workspace já não existe
+        } else {
+            // Se for Foreign apenas remove localmente
+        }
+
+        WM.deleteWorkspace(workspace);
+
+    }
+
+
+
 }
