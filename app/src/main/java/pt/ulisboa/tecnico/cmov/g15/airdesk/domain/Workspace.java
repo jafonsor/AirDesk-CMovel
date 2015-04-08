@@ -84,7 +84,7 @@ public abstract class Workspace {
     }
 
 
-    public Boolean userHasPermissions(User user) {
+    public boolean userHasPermissions(User user) {
         for (AccessListItem aci : accessList) {
             if (aci.getUser().getEmail().equals(user.getEmail())) {
                 return aci.getAllowed();
@@ -93,15 +93,21 @@ public abstract class Workspace {
         return false;
     }
 
-    public void changeQuota(User owner, long newQuota) {
+    public boolean changeQuota(User owner, long newQuota) {
         if (userHasPermissions(owner))
-            if (newQuota >= this.workspaceUsage())
+            if (newQuota >= this.workspaceUsage()) {
                 this.quota = newQuota;
+                return true;
+            }
+        return false;
     }
 
-    public void changeVisibilityTo(User owner, WorkspaceVisibility status) {
-        if (userHasPermissions(owner))
+    public boolean changeVisibilityTo(User owner, WorkspaceVisibility status) {
+        if (userHasPermissions(owner)) {
             this.visibility = status;
+            return true;
+        }
+        return false;
     }
 
     public Integer getId() {

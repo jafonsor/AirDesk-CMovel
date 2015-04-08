@@ -22,6 +22,10 @@ public class StorageService {
     private FileSystemManager FS = new FileSystemManager();
     private WorkspaceManager WM = new WorkspaceManager();
 
+                          /****                              ****
+                            **      AirDeskFile Methods       **
+                             ****                          ****/
+
     /*  Creates a totally new empty File on the target Workspace (which is a real Directory)
      *  Return an airDeskFile with the direct canonical path setted to the real file
      */
@@ -53,6 +57,7 @@ public class StorageService {
 
             if(remainingSpace >= file.length())
                 airFile = new AirDeskFile(fileName,path);
+            //TODO - BROADCAST to the network
         }  catch (IOException e) {
             Log.e("exception", e.toString());
         }
@@ -67,7 +72,7 @@ public class StorageService {
 
         try {
             file = FS.getFile(airFile.getPath());
-
+            //TODO - BROADCAST to the network
             return FS.readFile(file);
 
         } catch (IOException e) {
@@ -86,8 +91,11 @@ public class StorageService {
         try {
             file = FS.getFile(airFile.getPath());
 
-            //if(FS.deleteFile(file))                   // If is to remove the file locally uncomment this line
-            return ws.removeAirDeskFile(airFile);
+            if(FS.deleteFile(file)) {
+
+                //TODO - BROADCAST to the network
+                return ws.removeAirDeskFile(airFile);
+            }
 
         } catch (IOException e) {
             Log.e("exception", e.toString());
@@ -103,12 +111,16 @@ public class StorageService {
         File file;
         long remainingSpace = ws.remainingSpace();
 
+        //TODO - Needs to know if someone is editing this file
+
         if(Integer.parseInt(content.getBytes().toString()) <= remainingSpace) { // If the content fits in the remaining quota space
             try {
                 file = FS.getFile(airFile.getPath());
 
                 FS.writeFile(file, content);
                 airFile.incrementVersion();
+
+                //TODO - BROADCAST to the network
 
                 return true;
             } catch (IOException e) {
@@ -119,9 +131,13 @@ public class StorageService {
 
     }
 
+
+                             /****                           ****
+                               **     Workspace Methods       **
+                                ****                       ****/
+
     public Workspace createWorkspace(User appUser,User wsOwner, String name, long quota) {
         return WM.createWorkspace(appUser,wsOwner, name, quota);
-
     }
 
     public void deleteWorkspace(Workspace workspace) {
@@ -135,6 +151,14 @@ public class StorageService {
 
     }
 
+    public boolean changeWorkspaceQuota(Workspace ws, long newQuota, User owner) {
+        boolean bool= ws.changeQuota(owner, newQuota);;
 
+        if(bool) {
+            //TODO - broadcast the newQuota to the network
+        }
+
+        return bool;
+    }
 
 }
