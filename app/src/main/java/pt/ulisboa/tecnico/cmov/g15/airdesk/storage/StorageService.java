@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
@@ -156,6 +157,16 @@ public class StorageService {
 
         if(bool) {
             //TODO - broadcast the newQuota to the network
+        }
+
+        return bool;
+    }
+
+    public boolean updateWorkspaceTags(List<String> tags, Workspace ws, User owner) {
+        boolean bool = ws.changeTags(owner,tags);
+
+        if(bool) {
+            //TODO - broadcast the new Tags to the network
         }
 
         return bool;

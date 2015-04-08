@@ -110,6 +110,14 @@ public abstract class Workspace {
         return false;
     }
 
+    public boolean changeTags(User owner, List<String> tags) {
+        if (userHasPermissions(owner)) {
+            this.tags = tags;
+            return true;
+        }
+        return false;
+    }
+
     public Integer getId() {
         return this.id;
     }
@@ -144,10 +152,6 @@ public abstract class Workspace {
 
     public long getQuota() {
         return quota;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
     }
 
     public List<AirDeskFile> getFiles() {
