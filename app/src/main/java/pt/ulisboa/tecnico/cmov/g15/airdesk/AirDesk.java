@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.INetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.StorageService;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.WorkspaceManager;
 
 
@@ -28,6 +29,7 @@ public class AirDesk extends Application {
     private List<OwnerWorkspace> mOwnerWorkspaces;
     private List<ForeignWorkspace> mForeignWorkspaces;
 
+    private StorageService SS = new StorageService();
     private WorkspaceManager mWorkspaceManager = new WorkspaceManager();
 
     private INetworkServiceClient networkServiceClient;
@@ -48,6 +50,10 @@ public class AirDesk extends Application {
         mForeignWorkspaces.add(new ForeignWorkspace(mUser,"workspace2", 4));
         mForeignWorkspaces.add(new ForeignWorkspace(mUser,"workspace4", 4));
 
+    }
+
+    public StorageService StorageService() {
+        return this.SS;
     }
 
     public User getUser() {

@@ -28,8 +28,9 @@ public class EditFileActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_file);
 
-        //SS = mAirDesk.
         mAirDesk = (AirDesk) getApplication();
+        SS = mAirDesk.StorageService();
+
         Intent intent = getIntent();
         mFileId = intent.getIntExtra(EXTRA_FILE_ID, -1);
 
@@ -39,7 +40,7 @@ public class EditFileActivity extends ActionBarActivity {
         fileNameView.setText(file.getName());
 
         TextView fileContentView = (TextView) findViewById(R.id.file_content_box);
-        fileContentView.setText("");
+        fileContentView.setText(SS.readAirDeskFile(file));
     }
 
 
