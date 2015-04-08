@@ -153,7 +153,7 @@ public class StorageService {
     }
 
     public boolean changeWorkspaceQuota(Workspace ws, long newQuota, User owner) {
-        boolean bool= ws.changeQuota(owner, newQuota);;
+        boolean bool= ws.changeQuota(owner, newQuota);
 
         if(bool) {
             //TODO - broadcast the newQuota to the network
