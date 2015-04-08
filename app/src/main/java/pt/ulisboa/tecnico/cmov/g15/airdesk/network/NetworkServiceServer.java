@@ -24,7 +24,7 @@ public class NetworkServiceServer implements INetworkServiceServer {
     }
 
    @Override
-    public List<Workspace> getAllowedWorkspacesR(User user, List<String> tags) {
+    public List<Workspace> getAllowedWorkspacesS(User user, List<String> tags) {
         List<Workspace> allowedWorkspacesR = new ArrayList<Workspace>();
         for(OwnerWorkspace workspace: airDesk.getOwnerWorkspaces()){
             if(workspace.userHasPermissions(user)){
@@ -42,7 +42,7 @@ public class NetworkServiceServer implements INetworkServiceServer {
     }
 
     @Override
-    public boolean notifyIntentionR(User user, Workspace workspace, AirDeskFile file, FileState intention) {
+    public boolean notifyIntentionS(User user, Workspace workspace, AirDeskFile file, FileState intention) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
         if(ws!=null){
@@ -56,7 +56,7 @@ public class NetworkServiceServer implements INetworkServiceServer {
     }
 
     @Override
-    public int getFileVersionR(Workspace workspace, AirDeskFile file) {
+    public int getFileVersionS(Workspace workspace, AirDeskFile file) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
         if(ws!=null) {
@@ -68,7 +68,7 @@ public class NetworkServiceServer implements INetworkServiceServer {
     }
 
     @Override
-    public FileState getFileStateR(Workspace workspace, AirDeskFile file) {
+    public FileState getFileStateS(Workspace workspace, AirDeskFile file) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
         if(ws!=null) {
@@ -80,7 +80,7 @@ public class NetworkServiceServer implements INetworkServiceServer {
     }
 
     @Override
-    public String getFileR(Workspace workspace, AirDeskFile file) {
+    public String getFileS(Workspace workspace, AirDeskFile file) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
         if(ws!=null) {
@@ -92,10 +92,16 @@ public class NetworkServiceServer implements INetworkServiceServer {
     }
 
     @Override
-    public boolean sendFileR(Workspace workspace, AirDeskFile file, String fileContent) {
+    public boolean sendFileS(Workspace workspace, AirDeskFile file, String fileContent) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
         //TODO contact storage service and set content of file
         //file.setContent(fileContent);
+        return false;
+    }
+
+    @Override
+    public boolean changeQuotaS(Workspace workspace, long quota) {
+        //TODO Broadcast new quota --> all clients
         return false;
     }
 

@@ -22,4 +22,10 @@ public interface INetworkServiceClient {
     String getFile(Workspace workspace, AirDeskFile file);
     //returns true if everything's fine
     boolean sendFile(Workspace workspace, AirDeskFile file, String fileContent);
+
+    /*
+    Contact Storage Service to check if is possible to change quota.
+    If yes return true, otherwise return false
+    */
+    boolean changeQuota(Workspace workspace, long quota);
 }

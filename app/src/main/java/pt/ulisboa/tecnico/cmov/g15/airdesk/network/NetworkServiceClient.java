@@ -26,7 +26,7 @@ public class NetworkServiceClient implements INetworkServiceClient {
         List<Workspace> allowedWorkspaces = new ArrayList<Workspace>();
 
         //broadcast this message and collects all workspaces
-        for(Workspace workspace: networkServiceResponse.getAllowedWorkspacesR(user, tags)){
+        for(Workspace workspace: networkServiceResponse.getAllowedWorkspacesS(user, tags)){
             allowedWorkspaces.add(workspace);
         }
         return allowedWorkspaces;
@@ -34,27 +34,34 @@ public class NetworkServiceClient implements INetworkServiceClient {
 
     @Override
     public boolean notifyIntention(User user, Workspace workspace, AirDeskFile file, FileState intention) {
-        return networkServiceResponse.notifyIntentionR(user,workspace,file,intention);
+        return networkServiceResponse.notifyIntentionS(user, workspace, file, intention);
     }
 
     @Override
     public int getFileVersion(Workspace workspace, AirDeskFile file) {
-        return networkServiceResponse.getFileVersionR(workspace,file);
+        return networkServiceResponse.getFileVersionS(workspace, file);
     }
 
     @Override
     public FileState getFileState(Workspace workspace, AirDeskFile file) {
-        return networkServiceResponse.getFileStateR(workspace,file);
+        return networkServiceResponse.getFileStateS(workspace, file);
     }
 
     @Override
     public String getFile(Workspace workspace, AirDeskFile file) {
-        return networkServiceResponse.getFileR(workspace,file);
+        return networkServiceResponse.getFileS(workspace, file);
     }
 
     @Override
     public boolean sendFile(Workspace workspace, AirDeskFile file, String fileContent) {
-        return networkServiceResponse.sendFileR(workspace,file,fileContent);
+        return networkServiceResponse.sendFileS(workspace, file, fileContent);
+    }
+
+    @Override
+    public boolean changeQuota(Workspace workspace, long quota) {
+        //TODO contact Storage Service to check if is possible to change quota.
+        //If it is, change and return true, otherwise return false
+        return false;
     }
 
     //TEMPORARIO
