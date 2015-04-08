@@ -23,10 +23,8 @@ import java.util.List;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.CreateEditOwnerWorkspaceActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.view.WorkspaceSettingsActivity;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.view.CreateOwnerWorkspaceActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 
@@ -99,14 +97,16 @@ public class OwnerFragment extends Fragment {
     }
 
     public void onClickCreateWorkspace(View v) {
-        Intent intent = new Intent(getActivity(), CreateOwnerWorkspaceActivity.class);
+        Intent intent = new Intent(getActivity(), CreateEditOwnerWorkspaceActivity.class);
         startActivity(intent);
+        getActivity().finish();
     }
 
     public void onClickListWorkspaceFiles(OwnerWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
         intent.putExtra(FileListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
         startActivity(intent);
+        getActivity().finish();
     }
 
     public void onClickDeleteWorkspace(OwnerWorkspace workspace, final View v, final int position) {
@@ -122,6 +122,7 @@ public class OwnerFragment extends Fragment {
                         Toast.makeText(getActivity(), "TO DO: delete workspace", Toast.LENGTH_SHORT).show();
                         mAirDesk.deleteOwnerWorkspace(workspaceId);
                         mListAdapter.notifyDataSetChanged();
+                        dialog.dismiss();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -134,14 +135,16 @@ public class OwnerFragment extends Fragment {
     }
 
     public void onClickWorkspaceSettings(OwnerWorkspace workspace, View v) {
-        Intent intent = new Intent(getActivity(), WorkspaceSettingsActivity.class);
-        intent.putExtra(WorkspaceSettingsActivity.EXTRA_WORKSPACE_ID, workspace.getId());
+        Intent intent = new Intent(getActivity(), CreateEditOwnerWorkspaceActivity.class);
+        intent.putExtra(CreateEditOwnerWorkspaceActivity.EXTRA_WORKSPACE_ID, workspace.getId());
         startActivity(intent);
+        getActivity().finish();
     }
 
     public void onClickEditAccessList(OwnerWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), EditAccessListActivity.class);
         intent.putExtra(EditAccessListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
         startActivity(intent);
+        getActivity().finish();
     }
 }

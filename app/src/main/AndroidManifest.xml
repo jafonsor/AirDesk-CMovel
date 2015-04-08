@@ -32,7 +32,7 @@
             android:label="@string/title_activity_edit_file" >
         </activity>
         <activity
-            android:name=".view.CreateOwnerWorkspaceActivity"
+            android:name=".view.CreateEditOwnerWorkspaceActivity"
             android:label="@string/title_activity_create_owner_workspace" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -41,13 +41,6 @@
         <activity
             android:name=".view.FileListActivity"
             android:label="@string/title_activity_file_list" >
-        </activity>
-        <activity
-            android:name=".view.WorkspaceSettingsActivity"
-            android:label="@string/title_activity_workspace_settings" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.workspacelists.SwipeActivity" />
         </activity>
         <activity
             android:name=".view.EditAccessListActivity"

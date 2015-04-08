@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.INetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
@@ -41,7 +42,7 @@ public class AirDesk extends Application {
 
         // fake init
         OwnerWorkspace ow = new OwnerWorkspace(mUser,"workspace1", 4);
-        ow.getAccessList().add(new AccessListItem(new User("xpto","xpto@gmail.com"), true));
+        ow.getAccessList().add(new AccessListItem(new User("xpto", "xpto@gmail.com"), true));
         ow.getAccessList().add(new AccessListItem(new User("joao","joao@gmail.com"), true));
         ow.getAccessList().add(new AccessListItem(new User("marco","marco@gmail.com"), false));
         mOwnerWorkspaces.add(ow);
@@ -133,11 +134,33 @@ public class AirDesk extends Application {
         return new ArrayList<AirDeskFile>();
     }
 
-    public void createOwnerWorkspace(String workspaceName, int workspaceQuota, WorkspaceVisibility workspaceVisibility, ArrayList<String> workspaceTags) {
-        OwnerWorkspace ownerWorkspace = new OwnerWorkspace(getUser(), workspaceName, workspaceQuota);
-        ownerWorkspace.changeVisibilityTo(getUser(), workspaceVisibility);
-        ownerWorkspace.changeTags(mUser, workspaceTags);
+    public OwnerWorkspace getOwnerWorkspaceByName(String name) {
+        for(OwnerWorkspace workspace : getOwnerWorkspaces()) {
+            if(workspace.getName().equals(name)) {
+                return workspace;
+            }
+        }
+        return null;
+    }
+
+    public void createOwnerWorkspace(String name, int quota, WorkspaceVisibility visibility, ArrayList<String> tags)
+        throws  WorkspaceAlreadyExistsException
+    {
+        if(getOwnerWorkspaceByName(name) != null) {
+            throw new WorkspaceAlreadyExistsException();
+        }
+        OwnerWorkspace ownerWorkspace = new OwnerWorkspace(getUser(), name, quota);
+        ownerWorkspace.changeVisibilityTo(getUser(), visibility);
+        ownerWorkspace.setTags(tags);
 
         getOwnerWorkspaces().add(ownerWorkspace);
+    }
+
+    public void editOwnerWorkspace(Integer id, String name, int quota, WorkspaceVisibility visibility, ArrayList<String> tags) {
+        Workspace workspace = getWorkspaceById(id);
+        workspace.setName(name);
+        workspace.setQuota(quota);
+        workspace.setTags(tags);
+        workspace.changeVisibilityTo(getUser(), visibility);
     }
 }

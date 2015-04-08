@@ -5,7 +5,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="pt.ulisboa.tecnico.cmov.g15.airdesk.view.CreateOwnerWorkspaceActivity">
+    tools:context="pt.ulisboa.tecnico.cmov.g15.airdesk.view.CreateEditOwnerWorkspaceActivity">
 
 
     <TableRow>
@@ -67,6 +67,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:textAlignment="center"
-        android:text="@string/create_workspace"/>
+        android:text="@string/save_workspace"/>
 
 </TableLayout>

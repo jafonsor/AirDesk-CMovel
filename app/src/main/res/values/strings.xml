@@ -6,7 +6,8 @@
     <string name="login_button">Login</string>
     <string name="action_settings">Settings</string>
 
-    <string name="create_workspace">Add Workspace</string>
+    <string name="create_workspace">Create Workspace</string>
+    <string name="save_workspace">Save</string>
     <string name="owned_workspaces">Owned Workspaces</string>
     <string name="edit_access_list">AL</string>
     <string name="edit">Edit</string>
