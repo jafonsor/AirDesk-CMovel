@@ -20,13 +20,14 @@ public class MyAdapter extends FragmentPagerAdapter {
             case 0: return new OwnerFragment();
             case 1: return new ForeignFragment();
             case 2: return new SettingsFragment();
+            case 3: return new AuxiliaryFragment();
             default: return null;
         }
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -35,6 +36,7 @@ public class MyAdapter extends FragmentPagerAdapter {
             case 0: return "Owner WS";
             case 1: return "Foreign WS";
             case 2: return "Settings";
+            case 3: return "Auxiliary";
             default: return "Invalid Title";
         }
     }

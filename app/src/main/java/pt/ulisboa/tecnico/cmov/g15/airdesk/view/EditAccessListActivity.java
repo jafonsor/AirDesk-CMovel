@@ -102,7 +102,9 @@ public class EditAccessListActivity extends ActionBarActivity {
                     public void onClick(DialogInterface di, int which) {
                         String email = input.getText().toString();
                         if (!email.equals("")) {
-                            workspace.getAccessList().add(new AccessListItem(new User(email)));
+                            AccessListItem acl = new AccessListItem(new User(email));
+                            acl.setInvited(true);
+                            workspace.getAccessList().add(acl);
                             mListAdapter.notifyDataSetChanged();
                             Toast.makeText(getApplicationContext(), "User has been added", Toast.LENGTH_SHORT).show();
                         } else {

@@ -43,5 +43,7 @@
     <string name="edit_file">Edit File</string>
     <string name="content">Content</string>
     <string name="tagsHint">Tags separated by ;</string>
+    <string name="populate">Populate</string>
+    <string name="disconnect">Disconnect</string>
 
 </resources>

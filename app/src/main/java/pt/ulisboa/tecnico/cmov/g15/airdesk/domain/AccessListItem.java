@@ -4,17 +4,20 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
  * Created by MSC on 07/04/2015.
  */
 public class AccessListItem {
-    User user;
-    Boolean allowed;
+    private User user;
+    private boolean allowed;
+    private boolean invited;
 
-    public AccessListItem(User user, Boolean allowed) {
+    public AccessListItem(User user, boolean allowed) {
         this.user = user;
         this.allowed = allowed;
+        this.invited = false;
     }
 
     public AccessListItem(User user) {
         this.user = user;
         this.allowed = true;
+        this.invited = false;
     }
 
     public User getUser() {
@@ -25,11 +28,19 @@ public class AccessListItem {
         this.user = user;
     }
 
-    public Boolean getAllowed() {
+    public boolean isAllowed() {
         return allowed;
     }
 
-    public void setAllowed(Boolean allowed) {
+    public void setAllowed(boolean allowed) {
         this.allowed = allowed;
+    }
+
+    public boolean isInvited() {
+        return invited;
+    }
+
+    public void setInvited(boolean invited) {
+        this.invited = invited;
     }
 }
