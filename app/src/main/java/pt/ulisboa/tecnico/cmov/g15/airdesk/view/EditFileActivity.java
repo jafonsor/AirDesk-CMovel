@@ -23,7 +23,7 @@ public class EditFileActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_file);
+        setContentView(R.layout.activity_view_file);
 
         mAirDesk = (AirDesk) getApplication();
         Intent intent = getIntent();

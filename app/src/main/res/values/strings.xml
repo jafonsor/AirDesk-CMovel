@@ -38,4 +38,8 @@
     <string name="title_activity_show_file">ShowFileActivity</string>
     <string name="addUserAccessList">Add User</string>
 
+    <string name="filename">Filename</string>
+    <string name="edit_file">Edit File</string>
+    <string name="content">Content</string>
+
 </resources>
