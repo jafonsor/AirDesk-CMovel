@@ -29,6 +29,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.Utils;
 
 public class ForeignFragment extends Fragment {
 
@@ -115,12 +116,7 @@ public class ForeignFragment extends Fragment {
         User user = mAirDesk.getUser();
         final EditText input = new EditText(v.getContext());
         input.setHint("Tags separated by ;");
-        String tags = "";
-        for(int i=0; i<user.getUserTags().size(); i++){
-            tags+=user.getUserTags().get(i);
-            if( (i+1) != user.getUserTags().size()) tags+=";";
-        }
-        input.setText(tags);
+        input.setText(Utils.generateStringTagsFromList(user.getUserTags()));
         AlertDialog dialog = new AlertDialog.Builder(v.getContext())
                 .setTitle("Edit Tags")
                 .setMessage("Tags: ")
@@ -129,11 +125,8 @@ public class ForeignFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface di, int which) {
                         String new_tags = input.getText().toString();
-                        if (!new_tags.equals("")) {
-                            String[] split = new_tags.split(";");
-                            List<String> tagList = mAirDesk.getUser().getUserTags();
-                            tagList.clear();
-                            for(String s: split) tagList.add(s.trim());
+                        List<String> tagList = Utils.retrieveTagsFromInputText(new_tags);
+                        if (tagList!=null) {
                             mAirDesk.getUser().setUserTags(tagList);
                             mListAdapter.notifyDataSetChanged();
                             Toast.makeText(getActivity().getApplicationContext(), "Tags have been updated", Toast.LENGTH_SHORT).show();

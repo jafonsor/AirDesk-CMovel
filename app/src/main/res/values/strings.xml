@@ -41,5 +41,6 @@
     <string name="filename">Filename</string>
     <string name="edit_file">Edit File</string>
     <string name="content">Content</string>
+    <string name="tagsHint">Tags separated by ;</string>
 
 </resources>
