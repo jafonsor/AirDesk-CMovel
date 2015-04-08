@@ -5,8 +5,10 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists;
  */
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,13 +23,16 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.LoginActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.Utils;
 
@@ -129,6 +134,16 @@ public class ForeignFragment extends Fragment {
                         if (tagList!=null) {
                             mAirDesk.getUser().setUserTags(tagList);
                             mListAdapter.notifyDataSetChanged();
+
+                            SharedPreferences prefs = getActivity().getSharedPreferences(LoginActivity.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+
+                            Set<String> set = new HashSet<String>();
+                            set.addAll(mAirDesk.getUser().getUserTags());
+                            editor.putStringSet(LoginActivity.STATE_TAGS, set);
+
+                            editor.commit();
+
                             Toast.makeText(getActivity().getApplicationContext(), "Tags have been updated", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getActivity().getApplicationContext(), "Invalid tags", Toast.LENGTH_SHORT).show();

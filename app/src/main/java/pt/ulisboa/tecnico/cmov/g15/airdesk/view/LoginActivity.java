@@ -45,9 +45,10 @@ public class LoginActivity extends ActionBarActivity {
             String nickname = prefs.getString(STATE_NICKNAME, null);
             Set<String> set = prefs.getStringSet(STATE_TAGS, null);
 
-            if(email!=null) {
+            if (email != null) {
                 User user = new User(nickname, email);
-                if(set!=null) user.setUserTags(new ArrayList<String>(set));
+                if (set != null) user.setUserTags(new ArrayList<String>(set));
+                airDesk.setUser(user);
                 Toast.makeText(getApplicationContext(), "Welcome: " + email, Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, SwipeActivity.class));
                 finish();
@@ -73,7 +74,8 @@ public class LoginActivity extends ActionBarActivity {
         if (login_email != null && !login_email.equals("")) {
             //TODO verificar que email é unico
             User user = new User(login_nickname, login_email);
-            if(Utils.retrieveTagsFromInputText(tags)!=null) user.setUserTags(Utils.retrieveTagsFromInputText(tags));
+            if (Utils.retrieveTagsFromInputText(tags) != null)
+                user.setUserTags(Utils.retrieveTagsFromInputText(tags));
             airDesk.setUser(user);
 
 
