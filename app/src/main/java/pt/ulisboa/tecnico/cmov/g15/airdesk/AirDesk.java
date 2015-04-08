@@ -149,18 +149,18 @@ public class AirDesk extends Application {
         if(getOwnerWorkspaceByName(name) != null) {
             throw new WorkspaceAlreadyExistsException();
         }
-        OwnerWorkspace ownerWorkspace = new OwnerWorkspace(getUser(), name, quota);
-        ownerWorkspace.changeVisibilityTo(getUser(), visibility);
-        ownerWorkspace.setTags(tags);
+        //OwnerWorkspace ownerWorkspace = new OwnerWorkspace(getUser(), name, quota);
+        //ownerWorkspace.changeVisibilityTo(getUser(), visibility);
+        //ownerWorkspace.setTags(tags);
 
-        getOwnerWorkspaces().add(ownerWorkspace);
+        //getOwnerWorkspaces().add(ownerWorkspace);
     }
 
     public void editOwnerWorkspace(Integer id, String name, int quota, WorkspaceVisibility visibility, ArrayList<String> tags) {
-        Workspace workspace = getWorkspaceById(id);
-        workspace.setName(name);
-        workspace.setQuota(quota);
-        workspace.setTags(tags);
-        workspace.changeVisibilityTo(getUser(), visibility);
+        //Workspace workspace = getWorkspaceById(id);
+        //workspace.setName(name);
+        //workspace.setQuota(quota);
+        //workspace.setTags(tags);
+        //workspace.changeVisibilityTo(getUser(), visibility);
     }
 }
