@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
@@ -30,8 +31,11 @@ public class ShowFileActivity extends ActionBarActivity {
         String workspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
         boolean isOwner = intent.getBooleanExtra(EXTRA_IS_OWNER, false);
 
-        TextView fileNameView = (TextView) findViewById(R.id.file_name);
+        TextView fileNameView = (TextView) findViewById(R.id.filename_box);
         fileNameView.setText( "isOwner=" + isOwner + "; " + workspaceName + ": " + fileName);
+
+        TextView fileContentView = (TextView) findViewById(R.id.file_content_box);
+        fileContentView.setText("");
     }
 
 
@@ -55,5 +59,9 @@ public class ShowFileActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickEditFile(View v){
+
     }
 }

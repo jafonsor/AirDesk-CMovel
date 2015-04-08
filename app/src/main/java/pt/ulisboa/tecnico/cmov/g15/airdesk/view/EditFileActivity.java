@@ -5,11 +5,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.StorageService;
 
 
 public class EditFileActivity extends ActionBarActivity {
@@ -18,21 +20,26 @@ public class EditFileActivity extends ActionBarActivity {
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.FILE_ID";
 
     private AirDesk mAirDesk;
+    private StorageService SS;
     private Integer mFileId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_file);
+        setContentView(R.layout.activity_edit_file);
 
+        //SS = mAirDesk.
         mAirDesk = (AirDesk) getApplication();
         Intent intent = getIntent();
         mFileId = intent.getIntExtra(EXTRA_FILE_ID, -1);
 
         AirDeskFile file = mAirDesk.getFileById(mFileId);
 
-        TextView fileNameView = (TextView) findViewById(R.id.file_name);
+        TextView fileNameView = (TextView) findViewById(R.id.filename_box);
         fileNameView.setText(file.getName());
+
+        TextView fileContentView = (TextView) findViewById(R.id.file_content_box);
+        fileContentView.setText("");
     }
 
 
@@ -57,4 +64,9 @@ public class EditFileActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void onClickSave (View v) {
+
+    }
 }
+
