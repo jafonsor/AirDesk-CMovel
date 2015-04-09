@@ -28,10 +28,11 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
 public class EditAccessListActivity extends ActionBarActivity {
 
-    public final static String EXTRA_WORKSPACE_ID
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity.EXTRA_WORKSPACE_ID";
+    public final static String EXTRA_WORKSPACE_NAME
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity.EXTRA_WORKSPACE_NAME";
 
     private AirDesk mAirDesk;
+    private String mWorkspaceName;
     private ListAdapter<AccessListItem> mListAdapter;
     private ListView mListView;
     private Button mAddUserBtn;
@@ -45,12 +46,11 @@ public class EditAccessListActivity extends ActionBarActivity {
 
         Intent intent = getIntent();
 
-        Integer workspaceId = intent.getIntExtra(EXTRA_WORKSPACE_ID, -1);
+        mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
 
         mListView = (ListView) findViewById(R.id.user_accesslistLV);
 
-        //final Workspace workspace = mAirDesk.getWorkspaceById(workspaceId);
-        final Workspace workspace = null;
+        final Workspace workspace = mAirDesk.getOwnerWorkspaceByName(mWorkspaceName);
 
         //List<AccessListItem> elements = workspace.getAccessList();
         List<AccessListItem> elements = new ArrayList<AccessListItem>() {{

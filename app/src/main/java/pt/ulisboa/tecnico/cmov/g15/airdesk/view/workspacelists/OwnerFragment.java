@@ -141,7 +141,7 @@ public class OwnerFragment extends Fragment {
 
     public void onClickEditAccessList(OwnerWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), EditAccessListActivity.class);
-        //intent.putExtra(EditAccessListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
+        intent.putExtra(EditAccessListActivity.EXTRA_WORKSPACE_NAME, workspace.getName());
         startActivity(intent);
     }
 }
