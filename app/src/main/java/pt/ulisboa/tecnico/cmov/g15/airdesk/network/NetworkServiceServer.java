@@ -155,4 +155,9 @@ public class NetworkServiceServer {
         }
         return f.deleteNoNetwork();
     }
+
+    public boolean refreshWorkspacesS() {
+        getAirDesk().getAllowedWorkspaces();
+        return true;
+    }
 }

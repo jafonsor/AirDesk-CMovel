@@ -13,6 +13,7 @@ public class User {
     private List<String> userTags;
 
     public User(String email) {
+        this.userName = "NULL";
         this.email = email;
         userTags = new ArrayList<String>();
     }

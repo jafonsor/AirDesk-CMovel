@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AccessListItem;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
@@ -147,6 +148,24 @@ public class AirDesk extends Application {
         Log.i("info", "quota: " + changedQuota + ", visibility: " + changedVisibility + ", tags: " + changedTags);
 
         return changedQuota && changedVisibility && changedTags;
+    }
+
+    public boolean toggleUserPermissions(String workspaceName, String userEmail, boolean oldStatus) {
+        OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
+        workspace.toggleUserPermissions(userEmail, oldStatus);
+        return true;
+    }
+
+    public List<AccessListItem> getWorkspaceAccessList(String workspaceName) {
+        OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
+        return workspace.getAccessList();
+    }
+
+    public boolean inviteUser(String workspaceName, String userEmail) {
+        OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
+        AccessListItem item = new AccessListItem(new User(userEmail));
+        item.setInvited(true);
+        return workspace.addUserToAccessList(item);
     }
 
 }

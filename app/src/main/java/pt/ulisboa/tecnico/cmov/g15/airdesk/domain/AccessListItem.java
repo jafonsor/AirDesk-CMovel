@@ -30,6 +30,8 @@ public class AccessListItem {
         this.allowed = allowed;
     }
 
+    public void toggleAllowed() { this.setAllowed(!this.isAllowed()); }
+
     public boolean isInvited() {
         return invited;
     }

@@ -99,4 +99,8 @@ public class NetworkServiceClient {
         }
         return false;
     }
+
+    public static boolean refreshWorkspacesC() {
+        return networkServiceServer.refreshWorkspacesS();
+    }
 }

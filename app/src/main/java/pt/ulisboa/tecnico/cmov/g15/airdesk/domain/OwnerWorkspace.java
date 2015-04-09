@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,18 +80,32 @@ public class OwnerWorkspace extends Workspace {
         return getAccessList().add(item) && returnValue;
     }
 
-    public boolean removeUserFromAccessList(User user) {
+    public AccessListItem getAccessListItemByEmail(String userEmail) {
+        for(AccessListItem item : getAccessList())
+            if(item.getUser().getEmail().equals(userEmail))
+                return item;
+        return null;
+    }
 
-        AccessListItem itemToRemove = null;
-        for (AccessListItem item : getAccessList())
-            if (item.getUser().equals(user)) {
-                itemToRemove = item;
-                break;
-            }
-        if (itemToRemove == null) return false;
-        boolean returnValue = true;
-        returnValue = NetworkServiceClient.removeUserFromAccessList(this, user);
-        return returnValue && getAccessList().remove(itemToRemove);
+    public boolean blockUserFromAccessList(AccessListItem itemToBlock) {
+        boolean returnValue = NetworkServiceClient.removeUserFromAccessList(this, itemToBlock.getUser());
+        if(!returnValue) {
+            Log.e("Error", "Could not remove user from accesslist " + getName() + ", " + itemToBlock.getUser().getEmail());
+            return false;
+        }
+        itemToBlock.setAllowed(false);
+        return true;
+    }
+
+    public boolean allowUserFromAccessList(AccessListItem itemToAllow) {
+        // remove item. the user may not be interested on this workspace any more
+        getAccessList().remove(itemToAllow);
+        boolean returnValue = NetworkServiceClient.refreshWorkspacesC();
+        if(!returnValue) {
+            Log.e("Error", "Could not refresh workspaces when  allowing  " + getName() + ", " + itemToAllow.getUser().getEmail());
+            return false;
+        }
+        return true;
     }
 
     public boolean userInAccessList(User user) {
@@ -108,6 +124,19 @@ public class OwnerWorkspace extends Workspace {
             }
         }
         return false;
+    }
+
+    public boolean toggleUserPermissions(String userEmail, boolean oldPermission) {
+        AccessListItem item = getAccessListItemByEmail(userEmail);
+        if(item==null) {
+            Log.e("Error", "Could not find accesslist item by email: " + userEmail);
+            return false;
+        }
+        if(oldPermission) {
+            return blockUserFromAccessList(item);
+        } else {
+            return allowUserFromAccessList(item);
+        }
     }
 
     //Faz-se override porque só tem que propagar na rede se for criação de Owner
