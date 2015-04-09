@@ -149,6 +149,8 @@ public class AirDesk extends Application {
         boolean changedVisibility = ow.setVisibility(visibility);
         boolean changedTags       = ow.setTags(tags);
 
+        Log.i("info", "quota: " + changedQuota + ", visibility: " + changedVisibility + ", tags: " + changedTags);
+
         return changedQuota && changedVisibility && changedTags;
     }
 

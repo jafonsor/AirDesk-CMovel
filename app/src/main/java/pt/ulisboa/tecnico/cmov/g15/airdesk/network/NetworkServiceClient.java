@@ -57,8 +57,8 @@ public class NetworkServiceClient {
 
 
     public static boolean changeQuota(Workspace workspace, long quota) {
-        //TODO Broadcast new quota --> all clients
-        return networkServiceServer.changeQuotaS(workspace, quota);
+        //TODO Broadcast new quota --> all clients except it self
+        return true; //networkServiceServer.changeQuotaS(workspace, quota);
     }
 
     public static boolean inviteUser(Workspace workspace, User user) {
