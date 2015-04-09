@@ -65,7 +65,7 @@ public class SettingsFragment extends Fragment {
 
         AirDesk airDesk = (AirDesk) getActivity().getApplication();
 
-        FileSystemManager.deleteRecursively(new File(Environment.getExternalStorageDirectory() + "/AirDesk/" + airDesk.getUser().getEmail()));
+        FileSystemManager.deleteRecursively(new File(Environment.getExternalStorageDirectory() + "/AirDesk/"));
         Toast.makeText(getActivity().getApplicationContext(), "User deleted", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this.getActivity(), LoginActivity.class));
         this.getActivity().finish();

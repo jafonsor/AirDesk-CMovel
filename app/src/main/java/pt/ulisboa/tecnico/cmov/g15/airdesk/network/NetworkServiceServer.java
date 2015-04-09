@@ -104,7 +104,7 @@ public class NetworkServiceServer {
         AirDeskFile f = ws.getFile(file.getName());
         if(f == null) f = ws.createFile(file.getPath());
         f.setVersion(file.getVersion());
-        return f.write(fileContent);
+        return f.writeNoNetwork(fileContent);
     }
 
 
