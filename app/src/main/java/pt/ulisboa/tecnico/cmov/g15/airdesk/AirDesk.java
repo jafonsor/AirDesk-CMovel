@@ -55,18 +55,18 @@ public class AirDesk extends Application {
         this.foreignWorkspaces = foreignWorkspaces;
     }
 
-    public OwnerWorkspace getOwnerWorkspace(String workspaceName) {
+    public OwnerWorkspace getOwnerWorkspace(Workspace workspace) {
         for(OwnerWorkspace ow: getOwnerWorkspaces()){
-            if(ow.getName().equals(workspaceName)){
+            if(ow.getName().equals(workspace.getName())){
                 return ow;
             }
         }
         return null;
     }
 
-    public ForeignWorkspace getForeignWorkspace(String workspaceName) {
+    public ForeignWorkspace getForeignWorkspace(Workspace workspace) {
         for(ForeignWorkspace fw: getForeignWorkspaces()){
-            if(fw.getName().equals(workspaceName)){
+            if(fw.getName().equals(workspace.getName())){
                 return fw;
             }
         }

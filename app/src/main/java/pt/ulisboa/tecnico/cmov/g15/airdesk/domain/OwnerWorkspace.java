@@ -69,7 +69,7 @@ public class OwnerWorkspace extends Workspace {
             }
         if(itemToRemove == null) return false;
         boolean returnValue = true;
-        returnValue = NetworkServiceClient.removeUserFromAccessList(this, user);
+        //returnValue = NetworkServiceClient.removeUserFromAccessList(this, user);
         return getAccessList().remove(itemToRemove);
     }
 

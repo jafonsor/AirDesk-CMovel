@@ -21,7 +21,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.view.LoginActivity;
 
 public class AuxiliaryFragment extends Fragment{
 
-
+    private AirDesk mAirdesk;
     private Button mPopulateButton;
     private Button mDisconnectNetworkButton;
 
@@ -32,7 +32,7 @@ public class AuxiliaryFragment extends Fragment{
         mPopulateButton = (Button) rootView.findViewById(R.id.populateAuxiliaryBtn);
         mDisconnectNetworkButton = (Button) rootView.findViewById(R.id.disconnectAuxiliaryBtn);
 
-        AirDesk airDesk = (AirDesk) getActivity().getApplication();
+        mAirdesk = (AirDesk) getActivity().getApplication();
         mPopulateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,9 +49,7 @@ public class AuxiliaryFragment extends Fragment{
     }
 
     public void  onClickPopulateAirDesk(View v) {
-        //TODO fazer populate
-        Toast.makeText(getActivity().getApplicationContext(),
-                "TODO", Toast.LENGTH_SHORT).show();
+        mAirdesk.populate();
     }
 
     public void  onClickDisconnectNetwork(View v) {
