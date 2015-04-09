@@ -12,8 +12,7 @@
             android:id="@+id/workspace_name"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingLeft="50dp"/>
+            android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/delete_workspace_button"

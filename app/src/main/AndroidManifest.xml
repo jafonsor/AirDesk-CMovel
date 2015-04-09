@@ -41,6 +41,9 @@
         <activity
             android:name=".view.FileListActivity"
             android:label="@string/title_activity_file_list" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.workspacelists.SwipeActivity" />
         </activity>
         <activity
             android:name=".view.EditAccessListActivity"

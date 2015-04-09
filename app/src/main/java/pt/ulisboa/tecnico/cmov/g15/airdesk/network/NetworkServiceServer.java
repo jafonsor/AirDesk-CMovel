@@ -109,7 +109,9 @@ public class NetworkServiceServer {
 
 
     public boolean changeQuotaS(Workspace workspace, long quota) {
-        ForeignWorkspace ws = airDesk.getForeignWorkspaceByName(workspace.getName(),workspace.getOwner());
+        //TODO Broadcast new quota --> all clients
+        ForeignWorkspace ws = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName());
+
         if (ws == null) return false;
         return ws.setQuota(quota);
     }
@@ -128,7 +130,7 @@ public class NetworkServiceServer {
     }
 
     public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
-        return airDesk.deleteForeignWorkspace(ownerWorkspace.getName(), ownerWorkspace.getOwner());
+        return airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
     }
 
     public AirDesk getAirDesk() {
@@ -149,7 +151,7 @@ public class NetworkServiceServer {
         if (workspace.isOwner()) {
             f = airDesk.getOwnerWorkspaceByName(workspace.getName()).getFile(airDeskFile.getName());
         } else {
-            f = airDesk.getForeignWorkspaceByName(workspace.getName(), workspace.getOwner()).getFile(airDeskFile.getName());
+            f = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName()).getFile(airDeskFile.getName());
         }
         return f.deleteNoNetwork();
     }

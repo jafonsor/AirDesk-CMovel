@@ -31,11 +31,15 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
 public class FileListActivity extends ActionBarActivity {
 
-    public final static String EXTRA_WORKSPACE_ID
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity.WORKSPACE_ID";
+    public final static String EXTRA_OWNER_EMAIL
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity.EXTRA_WORKSPACE_OWNER_EMAIL";
+
+    public final static String EXTRA_WORKSPACE_NAME
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity.EXTRA_WORKSPACE_NAME";
 
     private AirDesk mAirDesk;
-    private Integer mWorkspaceId;
+    private String mUserEmail;
+    private String mWorkspaceName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,9 @@ public class FileListActivity extends ActionBarActivity {
         setContentView(R.layout.activity_file_list);
         mAirDesk = (AirDesk) getApplication();
         Intent intent = getIntent();
-        mWorkspaceId = intent.getIntExtra(EXTRA_WORKSPACE_ID, -1);
+        mUserEmail = intent.getStringExtra(EXTRA_OWNER_EMAIL);
+        mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
+
 
         TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
 
@@ -53,15 +59,12 @@ public class FileListActivity extends ActionBarActivity {
 
         ListView fileList = (ListView) findViewById(R.id.file_list);
 
-        //List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mWorkspaceId);
-        List<AirDeskFile> files = new ArrayList<AirDeskFile>() {{
-            add(new AirDeskFile("bogus", "shit", new OwnerWorkspace(new User("caralho", "merda"), "foda-se", 9000 )));
-        }};
+        List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName);
 
 
         final ListAdapter<AirDeskFile> listAdapter = new ListAdapter<AirDeskFile>(this, R.layout.file_item, files) {
             @Override
-            public void initItemView(final AirDeskFile file, View view, final int poisition) {
+            public void initItemView(final AirDeskFile file, View view, final int position) {
                 TextView fileNameView = (TextView) view.findViewById(R.id.file_name);
                 fileNameView.setText(file.getName());
 

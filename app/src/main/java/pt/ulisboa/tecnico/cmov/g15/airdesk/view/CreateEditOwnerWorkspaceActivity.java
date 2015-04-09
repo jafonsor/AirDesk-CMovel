@@ -134,7 +134,7 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
         }
 
         String tagsString = tagsText.getText().toString();
-        if(tagsString == null) {
+        if(tagsString == null && tagsString.isEmpty()) {
             Toast.makeText(this, "invalid tags", Toast.LENGTH_SHORT).show();
             return;
         }

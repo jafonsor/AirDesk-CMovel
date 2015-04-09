@@ -1,8 +1,11 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 /**
@@ -83,15 +86,22 @@ public abstract class Workspace {
     }
 
     public AirDeskFile createFile(String filename) {
-        if (remainingSpace() <= 0) return null;
+        if (remainingSpace() <= 0) {
+            Log.e("workspace", "creating file but there is no space left");
+            return null;
+        }
 
         if (getFile(filename) != null) return null;
 
         String path = FileSystemManager.createFile(getPath(), filename);
-        if (path != null) return new AirDeskFile(filename, path, this);
+        if (path == null)
+            return null;
+
+        AirDeskFile newFile = new AirDeskFile(filename, path, this);
+        getFiles().add(newFile);
 
 
-        return null;
+        return newFile;
     }
 
     public AirDeskFile getFile(String filename) {

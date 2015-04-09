@@ -20,6 +20,23 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 public class FileSystemManager {
     private static File sdcard0 = Environment.getExternalStorageDirectory();
 
+    // recursively delete files. used to delete all folders and subfolders
+    public static boolean deleteRecursively(File file) {
+        Log.e("Error","");
+        if(file.isDirectory()) {
+            for (String subFileName : file.list()) {
+                if (!deleteRecursively(new File(file, subFileName)))
+                    return false;
+                Log.i("info", "deleted file " + file.getAbsolutePath() + "/" + subFileName);
+            }
+        }
+        if(!file.delete()) {
+            Log.e("Error", "failed to delete file " + file.getAbsolutePath());
+            return false;
+        }
+        return true;
+    }
+
     public static String createFile(String dirPath, String filename) {
         File f = null;
         if (filename != null && dirPath != null && !filename.isEmpty() && !dirPath.isEmpty()) {
@@ -29,6 +46,7 @@ public class FileSystemManager {
                     f.createNewFile();
                     Log.i("Yay", "Encontrei o dir: " + f.getCanonicalPath());
                 } catch (IOException e) {
+                    Log.e("Error", "Could not create file " + f.getAbsolutePath() + " :" + e.getMessage());
                     return null;
                 }
             } else {
@@ -39,7 +57,7 @@ public class FileSystemManager {
                 Log.i("Info", f.getCanonicalPath());
                 return f.getCanonicalPath();
             } catch (IOException e) {
-                Log.e("Error", e.toString());
+                Log.e("Error", "Could not get cannonical paht. " + e.toString());
             }
         }
         return null; // Já existe um ficheiro com esse nome
@@ -119,7 +137,7 @@ public class FileSystemManager {
         try {
             return newDir.getCanonicalPath();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("Error", "could not get cannonical path for workspace " + newDir.getAbsolutePath() + " :" + e.toString());
         }
         return null;
     }

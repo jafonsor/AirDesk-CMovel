@@ -104,7 +104,8 @@ public class OwnerFragment extends Fragment {
 
     public void onClickListWorkspaceFiles(OwnerWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
-        intent.putExtra(FileListActivity.EXTRA_WORKSPACE_ID, workspace.getName());
+        intent.putExtra(FileListActivity.EXTRA_OWNER_EMAIL, mAirDesk.getUser().getEmail());
+        intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, workspace.getName());
         startActivity(intent);
         getActivity().finish();
     }
