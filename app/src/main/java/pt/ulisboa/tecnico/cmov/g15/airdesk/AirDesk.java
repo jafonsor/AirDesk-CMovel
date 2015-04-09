@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk;
 
 import android.app.Application;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class AirDesk extends Application {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
         //TODO temporary
-        NetworkServiceClient.setAirDesk(this);
+        //NetworkServiceClient.setAirDesk(this);
     }
 
     public User getUser() {
@@ -52,33 +53,48 @@ public class AirDesk extends Application {
         this.foreignWorkspaces = foreignWorkspaces;
     }
 
-    public OwnerWorkspace getOwnerWorkspace(String workspaceName) {
-        for (OwnerWorkspace ow : getOwnerWorkspaces()) {
-            if (ow.getName().equals(workspaceName)) {
-                return ow;
-            }
-        }
+
+    public void populate() {
+        OwnerWorkspace ow = new OwnerWorkspace(getUser(), "hollday_at_lodon", 2000);
+        getOwnerWorkspaces().add(ow);
+        ow.createFile("my_little_file");
+    }
+
+
+    // ---- Services for activities ----
+
+    public OwnerWorkspace getOwnerWorkspaceByName(String workspaceName) {
+        for (OwnerWorkspace workspace : getOwnerWorkspaces())
+            if (workspace.getName().equals(workspaceName))
+                return workspace;
         return null;
     }
 
-    public ForeignWorkspace getForeignWorkspace(String workspaceName) {
-        for (ForeignWorkspace fw : getForeignWorkspaces()) {
-            if (fw.getName().equals(workspaceName)) {
-                return fw;
-            }
-        }
+    public ForeignWorkspace getForeignWorkspaceByName(String workspaceName) {
+        for (ForeignWorkspace workspace : getForeignWorkspaces())
+            if (workspace.getName().equals(workspaceName))
+                return workspace;
         return null;
+    }
+
+    public List<OwnerWorkspace> deleteOwnerWorkspace(String workspaceName) {
+        OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
+        if (workspace == null)
+            Toast.makeText(getApplicationContext(), "there is no owner workspace: " + workspaceName, Toast.LENGTH_SHORT).show();
+
+        getOwnerWorkspaces().remove(workspace);
+
+        return getOwnerWorkspaces();
     }
 
     public void getAllowedWorkspaces() {
         List<ForeignWorkspace> foreignWSList = NetworkServiceClient.getAllowedWorkspaces(getUser(), getUser().getUserTags());
         for (ForeignWorkspace fw : foreignWSList) {
-            if (getForeignWorkspace(fw.getName()) == null) {
+            if (getForeignWorkspaceByName(fw.getName()) == null) {
                 //updates only if there is a new workspace
                 getForeignWorkspaces().add(fw);
             }
         }
     }
-
 
 }

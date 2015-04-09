@@ -49,7 +49,7 @@ public class NetworkServiceServer {
 
 
     public boolean notifyIntentionS(Workspace workspace, AirDeskFile file, FileState intention) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
 
         if (ws != null) {
             AirDeskFile f = ws.getFile(file.getName());
@@ -63,7 +63,7 @@ public class NetworkServiceServer {
 
 
     public int getFileVersionS(Workspace workspace, AirDeskFile file) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
 
         if (ws != null) {
             AirDeskFile f = ws.getFile(file.getName());
@@ -75,7 +75,7 @@ public class NetworkServiceServer {
 
 
     public FileState getFileStateS(Workspace workspace, AirDeskFile file) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
 
         if (ws != null) {
             AirDeskFile f = ws.getFile(file.getName());
@@ -87,7 +87,7 @@ public class NetworkServiceServer {
 
 
     public String getFileS(Workspace workspace, AirDeskFile file) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
 
         if (ws != null) {
             AirDeskFile f = ws.getFile(file.getName());
@@ -99,7 +99,7 @@ public class NetworkServiceServer {
 
 
     public boolean sendFileS(Workspace workspace, AirDeskFile file, String fileContent) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
         if (ws == null) return false;
         AirDeskFile f = ws.getFile(file.getName());
         return f.write(fileContent);
@@ -107,7 +107,8 @@ public class NetworkServiceServer {
 
 
     public boolean changeQuotaS(Workspace workspace, long quota) {
-        ForeignWorkspace ws = airDesk.getForeignWorkspace(workspace.getName());
+        //TODO Broadcast new quota --> all clients
+        ForeignWorkspace ws = airDesk.getForeignWorkspaceByName(workspace.getName());
         if (ws == null) return false;
         return ws.setQuota(quota);
     }

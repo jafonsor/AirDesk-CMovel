@@ -55,6 +55,7 @@ public class OwnerWorkspace extends Workspace {
     public boolean addUserToAccessList(AccessListItem item) {
         boolean returnValue = true;
         if (item.isInvited()) returnValue = NetworkServiceClient.inviteUser(this, item.getUser());
+        //if(item.isInvited()) returnValue = NetworkServiceClient.inviteUser(this, item.getUser());
         //TODO verify if it needs another condition to add User in Network when it's not invited
         return getAccessList().add(item) && returnValue;
     }
@@ -69,7 +70,7 @@ public class OwnerWorkspace extends Workspace {
             }
         if (itemToRemove == null) return false;
         boolean returnValue = true;
-        returnValue = NetworkServiceClient.removeUserFromAccessList(this, user);
+        //returnValue = NetworkServiceClient.removeUserFromAccessList(this, user);
         return getAccessList().remove(itemToRemove);
     }
 
@@ -100,7 +101,7 @@ public class OwnerWorkspace extends Workspace {
     //Faz-se override porque só tem que propagar na rede se for criação de Owner
     @Override
     public boolean delete() {
-        if(!super.delete()) return false;
+        if (!super.delete()) return false;
         return NetworkServiceClient.removeWorkspace(this);
     }
 

@@ -11,7 +11,6 @@ import android.widget.TextView;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.StorageService;
 
 public class ShowFileActivity extends ActionBarActivity {
 
@@ -25,7 +24,6 @@ public class ShowFileActivity extends ActionBarActivity {
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.EXTRA_IS_OWNER";
 
     private AirDesk mAirDesk;
-    private StorageService SS;
     private Integer mFileId;
 
     @Override
@@ -34,20 +32,19 @@ public class ShowFileActivity extends ActionBarActivity {
         setContentView(R.layout.activity_show_file);
 
         mAirDesk = (AirDesk) getApplication();
-        SS = mAirDesk.StorageService();
 
         Intent intent = getIntent();
         mFileId = intent.getIntExtra(EXTRA_FILE_ID, -1);
         String workspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
         boolean isOwner = intent.getBooleanExtra(EXTRA_IS_OWNER, false);
 
-        AirDeskFile file = mAirDesk.getFileById(mFileId);
+        //AirDeskFile file = mAirDesk.getFileById(mFileId);
 
         TextView fileNameView = (TextView) findViewById(R.id.filename_box);
-        fileNameView.setText( "isOwner=" + isOwner + "; " + workspaceName + ": " + file.getName());
+        //fileNameView.setText( "isOwner=" + isOwner + "; " + workspaceName + ": " + file.getName());
 
         TextView fileContentView = (TextView) findViewById(R.id.file_content_box);
-        fileContentView.setText(SS.readAirDeskFile(file));
+        //fileContentView.setText(SS.readAirDeskFile(file));
     }
 
 

@@ -11,7 +11,6 @@ import android.widget.TextView;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.StorageService;
 
 
 public class EditFileActivity extends ActionBarActivity {
@@ -20,7 +19,6 @@ public class EditFileActivity extends ActionBarActivity {
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.FILE_ID";
 
     private AirDesk mAirDesk;
-    private StorageService SS;
     private Integer mFileId;
 
     @Override
@@ -29,18 +27,17 @@ public class EditFileActivity extends ActionBarActivity {
         setContentView(R.layout.activity_edit_file);
 
         mAirDesk = (AirDesk) getApplication();
-        SS = mAirDesk.StorageService();
 
         Intent intent = getIntent();
         mFileId = intent.getIntExtra(EXTRA_FILE_ID, -1);
 
-        AirDeskFile file = mAirDesk.getFileById(mFileId);
+        //AirDeskFile file = mAirDesk.getFileById(mFileId);
 
         TextView fileNameView = (TextView) findViewById(R.id.filename_box);
-        fileNameView.setText(file.getName());
+        //fileNameView.setText(file.getName());
 
         TextView fileContentView = (TextView) findViewById(R.id.file_content_box);
-        fileContentView.setText(SS.readAirDeskFile(file));
+        //fileContentView.setText(SS.readAirDeskFile(file));
     }
 
 
