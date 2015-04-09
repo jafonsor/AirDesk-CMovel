@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 
 
 /**
@@ -25,6 +26,8 @@ public class AirDesk extends Application {
     public AirDesk() {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
+        //TODO temporary
+        NetworkServiceClient.setAirDesk(this);
     }
 
     public User getUser() {

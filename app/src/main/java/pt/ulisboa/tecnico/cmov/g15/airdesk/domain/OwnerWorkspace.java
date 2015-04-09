@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 
 /**
  * Created by diogo on 03-04-2015.
@@ -48,16 +49,18 @@ public class OwnerWorkspace extends Workspace {
             this.quota = newQuota;
             return true;
         }
-        //TODO network
-        return false;
+        return NetworkServiceClient.changeQuota(this, newQuota);
     }
 
     public boolean addUserToAccessList(AccessListItem item) {
-        //TODO network
-        return getAccessList().add(item);
+        boolean returnValue = true;
+        if(item.isInvited()) returnValue = NetworkServiceClient.inviteUser(this, item.getUser());
+        //TODO verify if it needs another condition to add User in Network when it's not invited
+        return getAccessList().add(item) && returnValue;
     }
 
     public boolean removeUserFromAccessList(User user){
+        //TODO network
         AccessListItem itemToRemove = null;
         for(AccessListItem item : getAccessList())
             if(item.getUser().equals(user)) {
