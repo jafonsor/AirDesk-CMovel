@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk;
 
 import android.app.Application;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,14 +76,20 @@ public class AirDesk extends Application {
         return null;
     }
 
-    public List<OwnerWorkspace> deleteOwnerWorkspace(String workspaceName) {
-        OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
-        if (workspace == null)
-            Toast.makeText(getApplicationContext(), "there is no owner workspace: " + workspaceName, Toast.LENGTH_SHORT).show();
+    public boolean deleteOwnerWorkspace(String workspaceName) {
+        OwnerWorkspace ow = getOwnerWorkspaceByName(workspaceName);
+        if (ow == null)
+            return false;
 
-        getOwnerWorkspaces().remove(workspace);
+        return getOwnerWorkspaces().remove(ow) && ow.delete();
+    }
 
-        return getOwnerWorkspaces();
+    public boolean deleteForeignWorkspace(String workspaceName) {
+        ForeignWorkspace fw = getForeignWorkspaceByName(workspaceName);
+        if (fw == null)
+            return false;
+
+        return getForeignWorkspaces().remove(fw) && fw.delete();
     }
 
     public void getAllowedWorkspaces() {

@@ -127,7 +127,7 @@ public class NetworkServiceServer {
     }
 
     public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
-        return this.airDesk.deleteForeignWorkspace(ownerWorkspace.getName());
+        return airDesk.deleteForeignWorkspace(ownerWorkspace.getName());
     }
 
     public AirDesk getAirDesk() {
@@ -146,9 +146,9 @@ public class NetworkServiceServer {
     public boolean deleteFileS(Workspace workspace, AirDeskFile airDeskFile) {
         AirDeskFile f;
         if (workspace.isOwner()) {
-            f = airDesk.getOwnerWorkspace(workspace.getName()).getFile(airDeskFile.getName());
+            f = airDesk.getOwnerWorkspaceByName(workspace.getName()).getFile(airDeskFile.getName());
         } else {
-            f = airDesk.getForeignWorkspace(workspace.getName()).getFile(airDeskFile.getName());
+            f = airDesk.getForeignWorkspaceByName(workspace.getName()).getFile(airDeskFile.getName());
         }
         return f.deleteNoNetwork();
     }
