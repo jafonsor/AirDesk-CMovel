@@ -45,5 +45,6 @@
     <string name="tagsHint">Tags separated by ;</string>
     <string name="populate">Populate</string>
     <string name="disconnect">Disconnect</string>
+    <string name="deleteUser">Delete User</string>
 
 </resources>
