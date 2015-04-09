@@ -109,7 +109,6 @@ public class NetworkServiceServer {
 
 
     public boolean changeQuotaS(Workspace workspace, long quota) {
-        //TODO Broadcast new quota --> all clients
         ForeignWorkspace ws = airDesk.getForeignWorkspaceByName(workspace.getName(),workspace.getOwner());
         if (ws == null) return false;
         return ws.setQuota(quota);
