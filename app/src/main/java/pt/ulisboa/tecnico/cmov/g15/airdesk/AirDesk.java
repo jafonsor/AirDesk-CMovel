@@ -56,6 +56,7 @@ public class AirDesk extends Application {
     public void populate() {
         OwnerWorkspace ow = new OwnerWorkspace(getUser(), "hollday_at_lodon", 2000);
         getOwnerWorkspaces().add(ow);
+        ow.create();
         ow.createFile("my_little_file");
     }
 

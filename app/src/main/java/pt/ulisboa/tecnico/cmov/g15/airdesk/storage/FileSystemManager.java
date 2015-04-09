@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.storage;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -11,11 +12,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
+
 /**
  * Created by diogo on 03-04-2015.
  */
 public class FileSystemManager {
-    private static File internal = Environment.getDataDirectory();
+    private static File sdcard0 = Environment.getExternalStorageDirectory();
 
     public static String createFile(String dirPath, String filename) {
         File f = null;
@@ -24,13 +27,16 @@ public class FileSystemManager {
             if (!f.exists()) {
                 try {
                     f.createNewFile();
-
+                    Log.i("Yay", "Encontrei o dir: " + f.getCanonicalPath());
                 } catch (IOException e) {
-                    Log.e("Error", "Already exists the file with name: " + e.toString());
                     return null;
                 }
+            } else {
+                Log.e("Error", "Already exists the file with that name");
+                return null;
             }
             try {
+                Log.i("Info", f.getCanonicalPath());
                 return f.getCanonicalPath();
             } catch (IOException e) {
                 Log.e("Error", e.toString());
@@ -42,14 +48,11 @@ public class FileSystemManager {
     private static File getFile(String filePath) {
         File file = new File(filePath);
 
-        if (filePath != null && !filePath.isEmpty()) {
+        if (filePath != null && !filePath.isEmpty())
             if (file.exists())
                 return file;
-            else
-                return null;
-        } else
-            return null;
-        //return null; // O file que procura não existe ou não foi introduzido nenhum file path
+
+        return null; // O file que procura não existe ou não foi introduzido nenhum file path
     }
 
     public static String getFileContent(String filePath) {
@@ -103,17 +106,22 @@ public class FileSystemManager {
          */
         String dirName = userEmail + "/" + wsName;
 
-        File newDir = new File(internal + "/AirDesk/", dirName);
-        newDir.mkdir();
 
-        String result = null;
+        File newDir = new File(sdcard0 + "/AirDesk/", dirName);
+
+        if (!newDir.exists()) {
+                newDir.mkdirs();
+                Log.i("Yay", "Criei o dir: " + wsName );
+        } else {
+            Log.e("Error", "Já existe o dir: " + wsName );
+        }
 
         try {
-            result = newDir.getCanonicalPath();
+            return newDir.getCanonicalPath();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
+        return null;
     }
 
     public static boolean deleteWorkspace(String dirPath) {
