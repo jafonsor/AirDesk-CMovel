@@ -69,8 +69,8 @@ public class OwnerWorkspace extends Workspace {
             }
         if (itemToRemove == null) return false;
         boolean returnValue = true;
-        //returnValue = NetworkServiceClient.removeUserFromAccessList(this, user);
-        return getAccessList().remove(itemToRemove);
+        returnValue = NetworkServiceClient.removeUserFromAccessList(this, user);
+        return returnValue && getAccessList().remove(itemToRemove);
     }
 
     public boolean userInAccessList(User user) {
@@ -98,9 +98,9 @@ public class OwnerWorkspace extends Workspace {
 
         //Network
         if (getVisibility() == WorkspaceVisibility.PUBLIC) {
-            //Apenas se envia para a rede se for publico
-            //Neste caso é enviado um alerta a dizer que existe um novo workspace
-            //e os subscritores depois actualizaram os seus workspaces chamando o getAllowedWorkspaces
+            /*Apenas se envia para a rede se for publico
+            Neste caso é enviado um alerta a dizer que existe um novo workspace
+            e os subscritores depois actualizaram os seus workspaces chamando o getAllowedWorkspaces */
             NetworkServiceClient.workspaceCreated();
         }
         return true;
