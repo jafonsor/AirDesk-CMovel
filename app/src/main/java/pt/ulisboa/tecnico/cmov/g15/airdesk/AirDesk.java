@@ -69,10 +69,11 @@ public class AirDesk extends Application {
         return null;
     }
 
-    public ForeignWorkspace getForeignWorkspaceByName(String workspaceName) {
+    public ForeignWorkspace getForeignWorkspaceByName(String workspaceName, User workspaceOwner) {
         for (ForeignWorkspace workspace : getForeignWorkspaces())
             if (workspace.getName().equals(workspaceName))
-                return workspace;
+                if (workspace.getOwner().equals(workspaceOwner))
+                    return workspace;
         return null;
     }
 
@@ -84,8 +85,8 @@ public class AirDesk extends Application {
         return getOwnerWorkspaces().remove(ow) && ow.delete();
     }
 
-    public boolean deleteForeignWorkspace(String workspaceName) {
-        ForeignWorkspace fw = getForeignWorkspaceByName(workspaceName);
+    public boolean deleteForeignWorkspace(String workspaceName, User workspaceOwner) {
+        ForeignWorkspace fw = getForeignWorkspaceByName(workspaceName, workspaceOwner);
         if (fw == null)
             return false;
 
@@ -95,7 +96,7 @@ public class AirDesk extends Application {
     public void getAllowedWorkspaces() {
         List<ForeignWorkspace> foreignWSList = NetworkServiceClient.getAllowedWorkspaces(getUser(), getUser().getUserTags());
         for (ForeignWorkspace fw : foreignWSList) {
-            if (getForeignWorkspaceByName(fw.getName()) == null) {
+            if (getForeignWorkspaceByName(fw.getName(), fw.getOwner()) == null) {
                 //updates only if there is a new workspace
                 getForeignWorkspaces().add(fw);
             }
