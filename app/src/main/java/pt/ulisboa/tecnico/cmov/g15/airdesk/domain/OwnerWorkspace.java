@@ -73,6 +73,15 @@ public class OwnerWorkspace extends Workspace {
         return getAccessList().remove(itemToRemove);
     }
 
+    public boolean userInAccessList(User user) {
+        for (AccessListItem item : getAccessList()) {
+            if (item.getUser().equals(user)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean userHasPermissions(User user) {
         for (AccessListItem item : getAccessList()) {
             if (item.getUser().equals(user)) {

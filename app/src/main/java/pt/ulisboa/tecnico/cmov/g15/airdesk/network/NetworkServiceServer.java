@@ -29,12 +29,14 @@ public class NetworkServiceServer {
     public List<ForeignWorkspace> getAllowedWorkspacesS(User user, List<String> tags) {
         List<ForeignWorkspace> allowedWorkspacesR = new ArrayList<ForeignWorkspace>();
         for (OwnerWorkspace workspace : airDesk.getOwnerWorkspaces()) {
-            if (workspace.userHasPermissions(user)) {
 
-                //TODO alterar, muito feio
-                Workspace wTemp = (Workspace) workspace;
-                allowedWorkspacesR.add((ForeignWorkspace) wTemp);
-                continue;
+            if(workspace.userInAccessList(user)) {
+                if (workspace.userHasPermissions(user)) {
+                    //TODO alterar, muito feio
+                    Workspace wTemp = (Workspace) workspace;
+                    allowedWorkspacesR.add((ForeignWorkspace) wTemp);
+                    continue;
+                } else break;
             }
 
             if (checkTags(workspace.getTags(), tags)) {
@@ -148,7 +150,7 @@ public class NetworkServiceServer {
         if (workspace.isOwner()) {
             f = airDesk.getOwnerWorkspaceByName(workspace.getName()).getFile(airDeskFile.getName());
         } else {
-            f = airDesk.getForeignWorkspaceByName(workspace.getName(),workspace.getOwner()).getFile(airDeskFile.getName());
+            f = airDesk.getForeignWorkspaceByName(workspace.getName(), workspace.getOwner()).getFile(airDeskFile.getName());
         }
         return f.deleteNoNetwork();
     }
