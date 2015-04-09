@@ -23,6 +23,8 @@ import java.util.List;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
@@ -45,13 +47,17 @@ public class FileListActivity extends ActionBarActivity {
 
         TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
 
-        Workspace workspace = mAirDesk.getWorkspaceById(mWorkspaceId);
+        //Workspace workspace = mAirDesk.getWorkspaceById(mWorkspaceId);
 
-        workspaceNameView.setText(workspace.getName());
+        //workspaceNameView.setText(workspace.getName());
 
         ListView fileList = (ListView) findViewById(R.id.file_list);
 
-        List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mWorkspaceId);
+        //List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mWorkspaceId);
+        List<AirDeskFile> files = new ArrayList<AirDeskFile>() {{
+            add(new AirDeskFile("bogus", "shit", new OwnerWorkspace(new User("caralho", "merda"), "foda-se", 9000 )));
+        }};
+
 
         final ListAdapter<AirDeskFile> listAdapter = new ListAdapter<AirDeskFile>(this, R.layout.file_item, files) {
             @Override
@@ -112,7 +118,7 @@ public class FileListActivity extends ActionBarActivity {
 
     public void onClickDeleteFile(AirDeskFile file, View v) {
         Toast.makeText(this, "deleting file " + file.getName(), Toast.LENGTH_SHORT).show();
-        mAirDesk.deleteFile(file.getId());
+        //mAirDesk.deleteFile(file.getId());
     }
 
     public void onClickShowFile(AirDeskFile file, View v) {
@@ -160,10 +166,10 @@ public class FileListActivity extends ActionBarActivity {
             Toast.makeText(this, "TO DO: check if file exists", Toast.LENGTH_SHORT).show();
             Toast.makeText(this, "TO DO: create file", Toast.LENGTH_SHORT).show();
 
-            Integer fileId = mAirDesk.createFile(fileName);
+            //Integer fileId = mAirDesk.createFile(fileName);
 
             Intent intent = new Intent(this, EditFileActivity.class);
-            intent.putExtra(EditFileActivity.EXTRA_FILE_ID, fileId);
+            //intent.putExtra(EditFileActivity.EXTRA_FILE_ID, fileId);
             startActivity(intent);
         }
     }

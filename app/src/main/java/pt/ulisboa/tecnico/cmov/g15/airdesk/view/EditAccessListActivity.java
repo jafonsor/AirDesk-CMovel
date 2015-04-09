@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
@@ -48,21 +49,24 @@ public class EditAccessListActivity extends ActionBarActivity {
 
         mListView = (ListView) findViewById(R.id.user_accesslistLV);
 
-        final Workspace workspace = mAirDesk.getWorkspaceById(workspaceId);
+        //final Workspace workspace = mAirDesk.getWorkspaceById(workspaceId);
+        final Workspace workspace = null;
 
-
-        List<AccessListItem> elements = workspace.getAccessList();
+        //List<AccessListItem> elements = workspace.getAccessList();
+        List<AccessListItem> elements = new ArrayList<AccessListItem>() {{
+            add(new AccessListItem(new User("só","para compilar")));
+        }};
 
         mListAdapter = new ListAdapter<AccessListItem>(getApplicationContext(), R.layout.accesslist_user_item, elements) {
             @Override
             public void initItemView(final AccessListItem accessListItem, View view, final int position) {
                 String email = accessListItem.getUser().getEmail();
-                boolean allowed = accessListItem.getAllowed();
+                //boolean allowed = accessListItem.getAllowed();
                 TextView emailTV = (TextView) view.findViewById(R.id.accesslist_user_emailTV);
                 emailTV.setText(email);
 
                 Button accessListButton = (Button) view.findViewById(R.id.user_accesslistBtn);
-                accessListButton.setText(allowed ? "Delete" : "Restore");
+                accessListButton.setText("IMPLEMENT GET ALLOWED");
                 accessListButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -84,7 +88,7 @@ public class EditAccessListActivity extends ActionBarActivity {
     }
 
     public void onClickAccessListButton(AccessListItem accessListItem, View v, int position) {
-        accessListItem.setAllowed(!accessListItem.getAllowed());
+        //accessListItem.setAllowed(!accessListItem.getAllowed());
         mListAdapter.notifyDataSetChanged();
         Toast.makeText(getApplicationContext(), "User's permissions changed", Toast.LENGTH_SHORT).show();
     }
@@ -104,7 +108,7 @@ public class EditAccessListActivity extends ActionBarActivity {
                         if (!email.equals("")) {
                             AccessListItem acl = new AccessListItem(new User(email));
                             acl.setInvited(true);
-                            workspace.getAccessList().add(acl);
+                            //workspace.getAccessList().add(acl);
                             mListAdapter.notifyDataSetChanged();
                             Toast.makeText(getApplicationContext(), "User has been added", Toast.LENGTH_SHORT).show();
                         } else {

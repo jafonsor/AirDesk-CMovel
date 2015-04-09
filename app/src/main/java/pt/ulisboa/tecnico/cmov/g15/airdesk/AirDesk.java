@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk;
 
 import android.app.Application;
+import android.widget.Toast;
 
 import java.security.acl.Owner;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class AirDesk extends Application {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
         //TODO temporary
-        NetworkServiceClient.setAirDesk(this);
+        //NetworkServiceClient.setAirDesk(this);
     }
 
     public User getUser() {
@@ -72,5 +73,29 @@ public class AirDesk extends Application {
         return null;
     }
 
+    public void populate() {
+        OwnerWorkspace ow = new OwnerWorkspace(getUser(), "hollday_at_lodon", 2000);
+        getOwnerWorkspaces().add(ow);
+        ow.createFile("my_little_file");
+    }
 
+
+    // ---- Services for activities ----
+
+    public OwnerWorkspace getWorkspaceByName(String workspaceName) {
+        for(OwnerWorkspace workspace : getOwnerWorkspaces())
+            if(workspace.getName().equals(workspaceName))
+                return workspace;
+        return null;
+    }
+
+    public List<OwnerWorkspace> deleteOwnerWorkspace(String workspaceName) {
+        OwnerWorkspace workspace = getWorkspaceByName(workspaceName);
+        if(workspace == null)
+            Toast.makeText(getApplicationContext(), "there is no owner workspace: " + workspaceName, Toast.LENGTH_SHORT).show();
+
+        getOwnerWorkspaces().remove(workspace);
+
+        return getOwnerWorkspaces();
+    }
 }

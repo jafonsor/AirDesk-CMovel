@@ -104,14 +104,13 @@ public class OwnerFragment extends Fragment {
 
     public void onClickListWorkspaceFiles(OwnerWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
-        intent.putExtra(FileListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
+        intent.putExtra(FileListActivity.EXTRA_WORKSPACE_ID, workspace.getName());
         startActivity(intent);
         getActivity().finish();
     }
 
     public void onClickDeleteWorkspace(OwnerWorkspace workspace, final View v, final int position) {
         final String workspaceName = workspace.getName();
-        final Integer workspaceId = workspace.getId();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
         alertDialogBuilder
@@ -120,7 +119,7 @@ public class OwnerFragment extends Fragment {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Toast.makeText(getActivity(), "TO DO: delete workspace", Toast.LENGTH_SHORT).show();
-                        mAirDesk.deleteOwnerWorkspace(workspaceId);
+                        mAirDesk.deleteOwnerWorkspace(workspaceName);
                         mListAdapter.notifyDataSetChanged();
                         dialog.dismiss();
                     }
@@ -136,14 +135,14 @@ public class OwnerFragment extends Fragment {
 
     public void onClickWorkspaceSettings(OwnerWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), CreateEditOwnerWorkspaceActivity.class);
-        intent.putExtra(CreateEditOwnerWorkspaceActivity.EXTRA_WORKSPACE_ID, workspace.getId());
+        //intent.putExtra(CreateEditOwnerWorkspaceActivity.EXTRA_WORKSPACE_ID, workspace.getId());
         startActivity(intent);
         getActivity().finish();
     }
 
     public void onClickEditAccessList(OwnerWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), EditAccessListActivity.class);
-        intent.putExtra(EditAccessListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
+        //intent.putExtra(EditAccessListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
         startActivity(intent);
         getActivity().finish();
     }

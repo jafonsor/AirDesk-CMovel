@@ -60,7 +60,7 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
         Intent intent = getIntent();
         if(intent.hasExtra(EXTRA_WORKSPACE_ID)) {
             Integer workspaceId = intent.getIntExtra(EXTRA_WORKSPACE_ID, -1);
-            mWorkspace = mAirDesk.getWorkspaceById(workspaceId);
+            //mWorkspace = mAirDesk.getWorkspaceById(workspaceId);
 
             // inflate view with values to edit
             EditText nameText  = (EditText) findViewById(R.id.workspace_name_input);
@@ -69,7 +69,7 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
 
             nameText.setText(mWorkspace.getName());
             quotaText.setText(mWorkspace.getQuota()+"");
-
+            /*
             StringBuilder strBuilder = new StringBuilder();
             for(String tag : mWorkspace.getTags()) {
                 strBuilder.append(tag);
@@ -84,6 +84,8 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
                 visibilityPosition = 1;
             }
             mVisibilitySpinner.setSelection(visibilityPosition);
+
+            */
 
         }
     }
@@ -148,15 +150,16 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
         WorkspaceVisibility workspaceVisibility = (WorkspaceVisibility)mVisibilitySpinner.getSelectedItem();
 
         if(mWorkspace == null) {
+            /*
             try {
-                mAirDesk.createOwnerWorkspace(workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
+                //mAirDesk.createOwnerWorkspace(workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
                 Toast.makeText(this, "workspace '" + workspaceName + "' created", Toast.LENGTH_SHORT).show();
             } catch (WorkspaceAlreadyExistsException e) {
                 Toast.makeText(this, "There is already a workspace with that name.", Toast.LENGTH_LONG).show();
                 return;
-            }
+            }*/
         } else {
-            mAirDesk.editOwnerWorkspace(mWorkspace.getId(), workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
+            //mAirDesk.editOwnerWorkspace(mWorkspace.getId(), workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
             Toast.makeText(this, "settings saved", Toast.LENGTH_SHORT).show();
         }
 

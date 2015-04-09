@@ -88,7 +88,7 @@ public class ForeignFragment extends Fragment {
 
     public void onClickRemoveForeignWorkspace(ForeignWorkspace workspace, View v, int position) {
         final String workspaceName = workspace.getName();
-        final Integer workspaceId = workspace.getId();
+        //final Integer workspaceId = workspace.getId();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
         alertDialogBuilder
@@ -97,7 +97,7 @@ public class ForeignFragment extends Fragment {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Toast.makeText(getActivity(), "TO DO: delete workspace", Toast.LENGTH_SHORT).show();
-                        mAirDesk.deleteForeignWorkspace(workspaceId);
+                        //mAirDesk.deleteForeignWorkspace(workspaceId);
                         mListAdapter.notifyDataSetChanged();
                     }
                 })
@@ -112,7 +112,7 @@ public class ForeignFragment extends Fragment {
 
     public void onClickListWorkspaceFiles(ForeignWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
-        intent.putExtra(FileListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
+        //intent.putExtra(FileListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
         startActivity(intent);
         //getActivity().finish();
     }
