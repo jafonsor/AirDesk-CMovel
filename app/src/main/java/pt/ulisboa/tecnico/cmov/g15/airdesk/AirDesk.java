@@ -112,12 +112,7 @@ public class AirDesk extends Application {
 
     public void getAllowedWorkspaces() {
         List<ForeignWorkspace> foreignWSList = NetworkServiceClient.getAllowedWorkspaces(getUser(), getUser().getUserTags());
-        for (ForeignWorkspace fw : foreignWSList) {
-            if (getForeignWorkspaceByName(fw.getOwner().getUserName(), fw.getName()) == null) {
-                //updates only if there is a new workspace
-                getForeignWorkspaces().add(fw);
-            }
-        }
+        setForeignWorkspaces(foreignWSList);
     }
 
     public List<AirDeskFile> getWorkspaceFiles(String userEmail, String workspaceName) {
