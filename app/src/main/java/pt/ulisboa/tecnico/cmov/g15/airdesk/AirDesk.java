@@ -55,24 +55,6 @@ public class AirDesk extends Application {
         this.foreignWorkspaces = foreignWorkspaces;
     }
 
-    public OwnerWorkspace getOwnerWorkspace(Workspace workspace) {
-        for(OwnerWorkspace ow: getOwnerWorkspaces()){
-            if(ow.getName().equals(workspace.getName())){
-                return ow;
-            }
-        }
-        return null;
-    }
-
-    public ForeignWorkspace getForeignWorkspace(Workspace workspace) {
-        for(ForeignWorkspace fw: getForeignWorkspaces()){
-            if(fw.getName().equals(workspace.getName())){
-                return fw;
-            }
-        }
-        return null;
-    }
-
     public void populate() {
         OwnerWorkspace ow = new OwnerWorkspace(getUser(), "hollday_at_lodon", 2000);
         getOwnerWorkspaces().add(ow);
@@ -82,15 +64,22 @@ public class AirDesk extends Application {
 
     // ---- Services for activities ----
 
-    public OwnerWorkspace getWorkspaceByName(String workspaceName) {
+    public OwnerWorkspace getOwnerWorkspaceByName(String workspaceName) {
         for(OwnerWorkspace workspace : getOwnerWorkspaces())
             if(workspace.getName().equals(workspaceName))
                 return workspace;
         return null;
     }
 
+    public ForeignWorkspace getForeignWorkspaceByName(String workspaceName) {
+        for(ForeignWorkspace workspace : getForeignWorkspaces())
+            if(workspace.getName().equals(workspaceName))
+                return workspace;
+        return null;
+    }
+
     public List<OwnerWorkspace> deleteOwnerWorkspace(String workspaceName) {
-        OwnerWorkspace workspace = getWorkspaceByName(workspaceName);
+        OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
         if(workspace == null)
             Toast.makeText(getApplicationContext(), "there is no owner workspace: " + workspaceName, Toast.LENGTH_SHORT).show();
 
