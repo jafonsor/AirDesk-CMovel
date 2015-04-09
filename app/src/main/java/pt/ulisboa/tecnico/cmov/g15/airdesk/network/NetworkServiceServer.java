@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AccessListItem;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
@@ -40,6 +41,7 @@ public class NetworkServiceServer {
 
             if (checkTags(workspace.getTags(), tags)) {
                 allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
+                workspace.addUserToAccessList(new AccessListItem(user));
                 continue;
             }
         }

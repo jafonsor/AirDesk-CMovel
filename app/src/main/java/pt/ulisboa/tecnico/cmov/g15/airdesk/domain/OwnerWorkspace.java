@@ -38,7 +38,8 @@ public class OwnerWorkspace extends Workspace {
     public boolean setVisibility(WorkspaceVisibility newVisibility) {
         if(this.visibility != newVisibility) {
             this.visibility = newVisibility;
-            //TODO - NetworkServiceClient.changeVisibility(this, newVisibility)
+            removeUsersFromAccessListExceptInvited();
+            NetworkServiceClient.refreshWorkspacesC();
             return true;
         }
         return true;
@@ -59,7 +60,8 @@ public class OwnerWorkspace extends Workspace {
     public boolean setTags(List<String> newTags) {
         if (!areListsEqual(this.tags, newTags)) {
             this.tags = newTags;
-            //TODO - NetworkServiceClient.changeTags(this, newTags);
+            removeUsersFromAccessListExceptInvited();
+            NetworkServiceClient.refreshWorkspacesC();
             return true;
         }
         return true;
@@ -100,6 +102,7 @@ public class OwnerWorkspace extends Workspace {
     public boolean allowUserFromAccessList(AccessListItem itemToAllow) {
         // remove item. the user may not be interested on this workspace any more
         getAccessList().remove(itemToAllow);
+        removeUsersFromAccessListExceptInvited();
         boolean returnValue = NetworkServiceClient.refreshWorkspacesC();
         if(!returnValue) {
             Log.e("Error", "Could not refresh workspaces when  allowing  " + getName() + ", " + itemToAllow.getUser().getEmail());
@@ -165,5 +168,14 @@ public class OwnerWorkspace extends Workspace {
     public boolean isOwner() {
         return true;
     }
+
+    public void removeUsersFromAccessListExceptInvited(){
+        List<AccessListItem> acListToRemove = new ArrayList<AccessListItem>();
+        for(AccessListItem ac: getAccessList()){
+            if(!ac.isInvited()) acListToRemove.add(ac);
+        }
+        getAccessList().removeAll(acListToRemove);
+    }
+
 
 }
