@@ -41,7 +41,7 @@ public class NetworkServiceServer {
 
             if (checkTags(workspace.getTags(), tags)) {
                 allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
-                workspace.addUserToAccessList(new AccessListItem(user));
+                workspace.addUserToAccessList(user.getEmail());
                 continue;
             }
         }
@@ -127,8 +127,8 @@ public class NetworkServiceServer {
         return false;
     }
 
-    public boolean inviteUserS(Workspace workspace, User user) {
-        return this.airDesk.getForeignWorkspaces().add((ForeignWorkspace) workspace);
+    public boolean inviteUserS(ForeignWorkspace workspace, User user) {
+        return this.airDesk.getForeignWorkspaces().add(workspace);
     }
 
     public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {

@@ -62,7 +62,7 @@ public class NetworkServiceClient {
         return networkServiceServer.changeQuotaS(workspace, quota);
     }
 
-    public static boolean inviteUser(Workspace workspace, User user) {
+    public static boolean inviteUser(ForeignWorkspace workspace, User user) {
         return networkServiceServer.inviteUserS(workspace, user);
     }
 
