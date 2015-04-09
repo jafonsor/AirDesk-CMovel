@@ -47,9 +47,7 @@ public abstract class ListAdapter<Item> extends BaseAdapter {
         return convertView;
     }
 
-    public void remove(int position) {
-        mItemList.remove(position);
-    }
+    public void setItems(List<Item> items) { this.mItemList = items; }
 
     public abstract void initItemView(Item item, View view, int position);
 }
