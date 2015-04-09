@@ -82,6 +82,14 @@ public class AirDesk extends Application {
         return null;
     }
 
+    public ForeignWorkspace getForeignWorkspaceByName(String workspaceOwnerEmail, String workspaceName) {
+        for (ForeignWorkspace workspace : getForeignWorkspaces())
+            if (workspace.getName().equals(workspaceName))
+                if (workspace.getOwner().getEmail().equals(workspaceOwnerEmail))
+                    return workspace;
+        return null;
+    }
+
     public boolean deleteOwnerWorkspace(String workspaceName) {
         OwnerWorkspace ow = getOwnerWorkspaceByName(workspaceName);
         if (ow == null) {
@@ -90,14 +98,6 @@ public class AirDesk extends Application {
         }
 
         return getOwnerWorkspaces().remove(ow) && ow.delete();
-    }
-
-    public ForeignWorkspace getForeignWorkspaceByName(String workspaceOwnerEmail, String workspaceName) {
-        for (ForeignWorkspace workspace : getForeignWorkspaces())
-            if (workspace.getName().equals(workspaceName))
-                if (workspace.getOwner().getEmail().equals(workspaceOwnerEmail))
-                    return workspace;
-        return null;
     }
 
     public boolean deleteForeignWorkspace(String userEmail, String workspaceName) {

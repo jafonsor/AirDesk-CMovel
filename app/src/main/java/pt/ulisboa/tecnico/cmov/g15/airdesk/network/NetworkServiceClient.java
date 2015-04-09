@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 public class NetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
     private static NetworkServiceServer networkServiceServer = new NetworkServiceServer();
+    private static List<ForeignWorkspace> blockedForeignWorkspaces = new ArrayList<ForeignWorkspace>();
 
     public NetworkServiceClient() {
     }
@@ -26,7 +27,7 @@ public class NetworkServiceClient {
 
         //broadcast this message and collects all workspaces
         for (ForeignWorkspace workspace : networkServiceServer.getAllowedWorkspacesS(user, tags)) {
-            allowedWorkspaces.add(workspace);
+            if(!isWorkspaceBlocked(workspace)) allowedWorkspaces.add(workspace);
         }
         return allowedWorkspaces;
     }
@@ -88,5 +89,14 @@ public class NetworkServiceClient {
     public static boolean deleteFile(Workspace workspace, AirDeskFile airDeskFile) {
         //TODO broadcast to accessList
         return networkServiceServer.deleteFileS(workspace,airDeskFile);
+    }
+
+    public static boolean isWorkspaceBlocked(ForeignWorkspace foreignWorkspace) {
+        for (ForeignWorkspace fw : blockedForeignWorkspaces) {
+            if (fw.getName().equals(foreignWorkspace.getName()) &&
+                    fw.getOwner().equals(foreignWorkspace.getOwner()))
+                return true;
+        }
+        return false;
     }
 }
