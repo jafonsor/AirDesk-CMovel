@@ -90,10 +90,11 @@ public class AirDeskFile {
 
         if (getWorkspace().remainingSpace() + getSize() < contentSize) return false;
 
-        if (NetworkServiceClient.notifyIntention(getWorkspace(), this, FileState.WRITE))
+        if (NetworkServiceClient.notifyIntention(getWorkspace(), this, FileState.WRITE)) {
+            incrementVersion();
             return NetworkServiceClient.sendFile(getWorkspace(), this, content) &&
                     FileSystemManager.setFileContent(getPath(), content);
-        else
+        }else
             return false;
     }
 
@@ -107,7 +108,7 @@ public class AirDeskFile {
     }
 
     public String read() {
-        if (NetworkServiceClient.getFileVersion(getWorkspace(), this) < getVersion())
+        if (NetworkServiceClient.getFileVersion(getWorkspace(), this) <= getVersion())
             writeNoNetwork(NetworkServiceClient.getFile(getWorkspace(), this));
 
         return FileSystemManager.getFileContent(getPath());

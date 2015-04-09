@@ -102,6 +102,8 @@ public class NetworkServiceServer {
         OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
         if (ws == null) return false;
         AirDeskFile f = ws.getFile(file.getName());
+        if(f == null) f = ws.createFile(file.getPath());
+        f.setVersion(file.getVersion());
         return f.write(fileContent);
     }
 

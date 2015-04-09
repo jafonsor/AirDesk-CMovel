@@ -86,6 +86,7 @@ public abstract class Workspace {
     }
 
     public AirDeskFile createFile(String filename) {
+        //WARNING This method never contacts Network
         if (remainingSpace() <= 0) {
             Log.e("workspace", "creating file but there is no space left");
             return null;
