@@ -5,7 +5,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 /**
@@ -44,10 +43,6 @@ public abstract class Workspace {
 
     public User getOwner() {
         return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
     }
 
     public String getName() {
@@ -117,5 +112,9 @@ public abstract class Workspace {
     }
 
     public abstract boolean isOwner();
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
 
 }
