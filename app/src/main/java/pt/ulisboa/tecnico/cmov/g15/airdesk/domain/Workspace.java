@@ -96,8 +96,6 @@ public abstract class Workspace {
         return null;
     }
 
-
-
     public AirDeskFile getFile(String filename) {
         for (AirDeskFile af : files)
             if (af.getName().equals(filename))

@@ -5,6 +5,7 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
@@ -46,7 +47,7 @@ public class NetworkServiceServer implements INetworkServiceServer {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
         if(ws!=null){
-            AirDeskFile f = ws.getAirDeskFile(file);
+            AirDeskFile f = ws.getFile(file.getName());
             if(f.getState() != FileState.WRITE){
                 f.setState(intention);
                 return true;
@@ -60,7 +61,7 @@ public class NetworkServiceServer implements INetworkServiceServer {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
         if(ws!=null) {
-            AirDeskFile f = ws.getAirDeskFile(file);
+            AirDeskFile f = ws.getFile(file.getName());
             return f.getVersion();
         }
 
@@ -72,7 +73,7 @@ public class NetworkServiceServer implements INetworkServiceServer {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
         if(ws!=null) {
-            AirDeskFile f = ws.getAirDeskFile(file);
+            AirDeskFile f = ws.getFile(file.getName());
             return f.getState();
         }
 
@@ -84,8 +85,8 @@ public class NetworkServiceServer implements INetworkServiceServer {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
         if(ws!=null) {
-            AirDeskFile f = ws.getAirDeskFile(file);
-            //TODO contact storage service and retrieve content of file f
+            AirDeskFile f = ws.getFile(file.getName());
+            return f.read();
         }
 
         return null;
@@ -94,15 +95,17 @@ public class NetworkServiceServer implements INetworkServiceServer {
     @Override
     public boolean sendFileS(Workspace workspace, AirDeskFile file, String fileContent) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
-        //TODO contact storage service and set content of file
-        //file.setContent(fileContent);
-        return false;
+        if(ws == null) return false;
+        AirDeskFile f = ws.getFile(file.getName());
+        return f.write(fileContent);
     }
 
     @Override
     public boolean changeQuotaS(Workspace workspace, long quota) {
         //TODO Broadcast new quota --> all clients
-        return false;
+        ForeignWorkspace ws = airDesk.getForeignWorkspace(workspace);
+        if(ws==null) return false;
+        return ws.setQuota(quota);
     }
 
     public boolean checkTags(List<String> workspaceTags, List<String> userTags){

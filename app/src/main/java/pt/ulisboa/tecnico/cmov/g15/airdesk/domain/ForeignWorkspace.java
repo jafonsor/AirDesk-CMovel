@@ -9,5 +9,15 @@ public class ForeignWorkspace extends Workspace {
         super(owner, name, quota);
     }
 
+    /*
+    method create to change quota in foreign workspaces when
+    the owner changes the workspace quota
+     */
+
+    public boolean setQuota(long newQuota) {
+        this.quota = newQuota;
+        return true;
+    }
+
 
 }
