@@ -60,7 +60,7 @@ public class OwnerWorkspace extends Workspace {
     }
 
     public boolean removeUserFromAccessList(User user){
-        //TODO network
+
         AccessListItem itemToRemove = null;
         for(AccessListItem item : getAccessList())
             if(item.getUser().equals(user)) {
@@ -68,6 +68,8 @@ public class OwnerWorkspace extends Workspace {
                 break;
             }
         if(itemToRemove == null) return false;
+        boolean returnValue = true;
+        returnValue = NetworkServiceClient.removeUserFromAccessList(this, user);
         return getAccessList().remove(itemToRemove);
     }
 
