@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
@@ -61,7 +62,10 @@ public class AirDesk extends Application {
 
     public void populate() {
         FileSystemManager.deleteRecursively(new File(Environment.getExternalStorageDirectory() + "/AirDesk/" + getUser().getEmail()));
-        OwnerWorkspace ow = new OwnerWorkspace(getUser(), "hollday_at_lodon", 2000);
+        List<String> tags = new ArrayList<String>() {{
+            add("hollyday");
+        }};
+        OwnerWorkspace ow = new OwnerWorkspace(getUser(), "hollyday_at_lodon", 2000L, WorkspaceVisibility.PUBLIC, tags);
         ow.create();
         getOwnerWorkspaces().add(ow);
         ow.create();
@@ -130,6 +134,22 @@ public class AirDesk extends Application {
         }
 
         return workspace.getFiles();
+    }
+
+    public boolean createOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
+        OwnerWorkspace ow = new OwnerWorkspace(getUser(), name, quota, visibility, tags);
+        getOwnerWorkspaces().add(ow);
+        NetworkServiceClient.workspaceCreated();
+        return ow.create();
+    }
+
+    public boolean editOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
+        OwnerWorkspace ow = getOwnerWorkspaceByName(name);
+        boolean changedQuota      = ow.setQuota(quota);
+        boolean changedVisibility = ow.setVisibility(visibility);
+        boolean changedTags       = ow.setTags(tags);
+
+        return changedQuota && changedVisibility && changedTags;
     }
 
 }

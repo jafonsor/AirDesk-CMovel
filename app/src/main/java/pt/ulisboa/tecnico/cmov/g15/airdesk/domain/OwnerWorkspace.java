@@ -14,10 +14,11 @@ public class OwnerWorkspace extends Workspace {
     private WorkspaceVisibility visibility;
     private List<String> tags;
 
-    public OwnerWorkspace(User owner, String name, long quota) {
+    public OwnerWorkspace(User owner, String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
         super(owner, name, quota);
-        tags = new ArrayList<String>();
-        accessList = new ArrayList<AccessListItem>();
+        this.visibility = visibility;
+        this.tags = tags;
+        this.accessList = new ArrayList<AccessListItem>();
     }
 
     public List<AccessListItem> getAccessList() {
@@ -32,24 +33,42 @@ public class OwnerWorkspace extends Workspace {
         return visibility;
     }
 
-    public void setVisibility(WorkspaceVisibility visibility) {
-        this.visibility = visibility;
+    public boolean setVisibility(WorkspaceVisibility newVisibility) {
+        if(this.visibility != newVisibility) {
+            this.visibility = newVisibility;
+            //TODO - NetworkServiceClient.changeVisibility(this, newVisibility)
+            return true;
+        }
+        return true;
     }
 
     public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
-        this.tags = tags;
+    private boolean areListsEqual(List l1, List l2) {
+        for(Object o1 : l1)
+            for(Object o2 : l2)
+                if(!o1.equals(o2))
+                    return false;
+        return true;
+    }
+
+    public boolean setTags(List<String> newTags) {
+        if (!areListsEqual(this.tags, newTags)) {
+            this.tags = newTags;
+            //TODO - NetworkServiceClient.changeTags(this, newTags);
+            return true;
+        }
+        return true;
     }
 
     public boolean setQuota(long newQuota) {
         if (newQuota >= this.workspaceUsage()) {
             this.quota = newQuota;
-            return true;
+            return NetworkServiceClient.changeQuota(this, newQuota);
         }
-        return NetworkServiceClient.changeQuota(this, newQuota);
+        return false;
     }
 
     public boolean addUserToAccessList(AccessListItem item) {
@@ -117,4 +136,5 @@ public class OwnerWorkspace extends Workspace {
     public boolean isOwner() {
         return true;
     }
+
 }

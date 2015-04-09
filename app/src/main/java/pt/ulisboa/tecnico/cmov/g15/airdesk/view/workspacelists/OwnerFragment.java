@@ -49,7 +49,7 @@ public class OwnerFragment extends Fragment {
             public void initItemView(final OwnerWorkspace workspace, View view, final int position) {
                 String workspaceName = workspace.getName();
                 TextView textView = (TextView) view.findViewById(R.id.workspace_name);
-                textView.setText(workspaceName);
+                textView.setText(workspaceName); 
 
                 Button deleteWorkspaceButton = (Button) view.findViewById(R.id.delete_workspace_button);
                 deleteWorkspaceButton.setOnClickListener(new View.OnClickListener() {
