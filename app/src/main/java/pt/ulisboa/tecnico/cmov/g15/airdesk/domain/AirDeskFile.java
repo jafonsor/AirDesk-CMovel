@@ -115,4 +115,8 @@ public class AirDeskFile {
 
     }
 
+    public String readNoNetwork() {
+        return FileSystemManager.getFileContent(getPath());
+    }
+
 }

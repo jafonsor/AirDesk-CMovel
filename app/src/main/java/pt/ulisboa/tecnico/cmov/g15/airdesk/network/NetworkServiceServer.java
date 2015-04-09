@@ -91,7 +91,7 @@ public class NetworkServiceServer {
 
         if (ws != null) {
             AirDeskFile f = ws.getFile(file.getName());
-            return f.read();
+            return f.readNoNetwork();
         }
 
         return null;
