@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 /**
@@ -14,7 +15,7 @@ public class AirDeskFile {
     private long size;
     private Workspace workspace;
 
-    public AirDeskFile(String name, String path, Workspace workspace ) { // When a empty AirFile is created
+    public AirDeskFile(String name, String path, Workspace workspace) { // When a empty AirFile is created
         this.name = name;
         this.version = 0;
         this.path = path;
@@ -75,22 +76,42 @@ public class AirDeskFile {
         this.version += 1;
     }
 
-    public boolean delete(){
-        //TODO network
+    public boolean delete() {
+        NetworkServiceClient.deleteFile(getWorkspace(), this);
+        return FileSystemManager.deleteFile(getPath());
+    }
+
+    public boolean deleteNoNetwork() {
         return FileSystemManager.deleteFile(getPath());
     }
 
     public boolean write(String content) {
         int contentSize = content.getBytes().length;
 
-        if(getWorkspace().remainingSpace()+getSize() < contentSize) return false;
-        //TODO network
-        return FileSystemManager.setFileContent(getPath(),content);
+        if (getWorkspace().remainingSpace() + getSize() < contentSize) return false;
+
+        if (NetworkServiceClient.notifyIntention(getWorkspace(), this, FileState.WRITE))
+            return NetworkServiceClient.sendFile(getWorkspace(), this, content) &&
+                    FileSystemManager.setFileContent(getPath(), content);
+        else
+            return false;
+    }
+
+    public boolean writeNoNetwork(String content) {
+        int contentSize = content.getBytes().length;
+
+        if (getWorkspace().remainingSpace() + getSize() < contentSize) return false;
+
+        return FileSystemManager.setFileContent(getPath(), content);
+
     }
 
     public String read() {
-        //TODO network
+        if (NetworkServiceClient.getFileVersion(getWorkspace(), this) < getVersion())
+            writeNoNetwork(NetworkServiceClient.getFile(getWorkspace(), this));
+
         return FileSystemManager.getFileContent(getPath());
+
     }
 
 }

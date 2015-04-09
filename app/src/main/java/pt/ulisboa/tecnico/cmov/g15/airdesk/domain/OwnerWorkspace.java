@@ -54,31 +54,58 @@ public class OwnerWorkspace extends Workspace {
 
     public boolean addUserToAccessList(AccessListItem item) {
         boolean returnValue = true;
-        if(item.isInvited()) returnValue = NetworkServiceClient.inviteUser(this, item.getUser());
+        if (item.isInvited()) returnValue = NetworkServiceClient.inviteUser(this, item.getUser());
         //TODO verify if it needs another condition to add User in Network when it's not invited
         return getAccessList().add(item) && returnValue;
     }
 
-    public boolean removeUserFromAccessList(User user){
+    public boolean removeUserFromAccessList(User user) {
 
         AccessListItem itemToRemove = null;
-        for(AccessListItem item : getAccessList())
-            if(item.getUser().equals(user)) {
+        for (AccessListItem item : getAccessList())
+            if (item.getUser().equals(user)) {
                 itemToRemove = item;
                 break;
             }
-        if(itemToRemove == null) return false;
+        if (itemToRemove == null) return false;
         boolean returnValue = true;
         returnValue = NetworkServiceClient.removeUserFromAccessList(this, user);
         return getAccessList().remove(itemToRemove);
     }
 
     public boolean userHasPermissions(User user) {
-        for(AccessListItem item: getAccessList()){
-            if(item.getUser().equals(user)){
+        for (AccessListItem item : getAccessList()) {
+            if (item.getUser().equals(user)) {
                 return item.isAllowed();
             }
         }
         return false;
+    }
+
+    //Faz-se override porque só tem que propagar na rede se for criação de Owner
+    @Override
+    public boolean create() {
+        if (!super.create()) return false;
+
+        //Network
+        if (getVisibility() == WorkspaceVisibility.PUBLIC) {
+            //Apenas se envia para a rede se for publico
+            //Neste caso é enviado um alerta a dizer que existe um novo workspace
+            //e os subscritores depois actualizaram os seus workspaces chamando o getAllowedWorkspaces
+            NetworkServiceClient.workspaceCreated();
+        }
+        return true;
+    }
+
+    //Faz-se override porque só tem que propagar na rede se for criação de Owner
+    @Override
+    public boolean delete() {
+        if(!super.delete()) return false;
+        return NetworkServiceClient.removeWorkspace(this);
+    }
+
+    @Override
+    public boolean isOwner() {
+        return true;
     }
 }

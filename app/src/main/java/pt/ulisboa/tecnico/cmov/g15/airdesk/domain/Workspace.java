@@ -32,12 +32,10 @@ public abstract class Workspace {
         if (path == null) return false;
 
         setPath(path);
-        //TODO Network
         return true;
     }
 
     public boolean delete() {
-        //TODO Network
         return FileSystemManager.deleteWorkspace(getPath());
     }
 
@@ -90,9 +88,9 @@ public abstract class Workspace {
         if (getFile(filename) != null) return null;
 
         String path = FileSystemManager.createFile(getPath(), filename);
-        if (path != null)
-            return new AirDeskFile(filename, path, this);
-        //TODO network
+        if (path != null) return new AirDeskFile(filename, path, this);
+
+
         return null;
     }
 
@@ -106,5 +104,7 @@ public abstract class Workspace {
     public long remainingSpace() {
         return getQuota() - workspaceUsage();
     }
+
+    public abstract boolean isOwner();
 
 }

@@ -14,27 +14,32 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 /**
  * Created by MSC on 02/04/2015.
  */
-public class NetworkServiceServer implements INetworkServiceServer {
+public class NetworkServiceServer {
 
     private AirDesk airDesk;
 
-    public NetworkServiceServer(){}
-
-    public NetworkServiceServer(AirDesk airDesk){
-        this.airDesk=airDesk;
+    public NetworkServiceServer() {
     }
 
-   @Override
-    public List<Workspace> getAllowedWorkspacesS(User user, List<String> tags) {
-        List<Workspace> allowedWorkspacesR = new ArrayList<Workspace>();
-        for(OwnerWorkspace workspace: airDesk.getOwnerWorkspaces()){
-            if(workspace.userHasPermissions(user)){
-                allowedWorkspacesR.add(workspace);
+    public NetworkServiceServer(AirDesk airDesk) {
+        this.airDesk = airDesk;
+    }
+
+
+    public List<ForeignWorkspace> getAllowedWorkspacesS(User user, List<String> tags) {
+        List<ForeignWorkspace> allowedWorkspacesR = new ArrayList<ForeignWorkspace>();
+        for (OwnerWorkspace workspace : airDesk.getOwnerWorkspaces()) {
+            if (workspace.userHasPermissions(user)) {
+
+                //TODO alterar, muito feio
+                Workspace wTemp = (Workspace) workspace;
+                allowedWorkspacesR.add((ForeignWorkspace) wTemp);
                 continue;
             }
 
-            if(checkTags(workspace.getTags(), tags)){
-                allowedWorkspacesR.add(workspace);
+            if (checkTags(workspace.getTags(), tags)) {
+                Workspace wTemp = (Workspace) workspace;
+                allowedWorkspacesR.add((ForeignWorkspace) wTemp);
                 continue;
             }
         }
@@ -42,13 +47,13 @@ public class NetworkServiceServer implements INetworkServiceServer {
         return allowedWorkspacesR;
     }
 
-    @Override
-    public boolean notifyIntentionS(User user, Workspace workspace, AirDeskFile file, FileState intention) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
-        if(ws!=null){
+    public boolean notifyIntentionS(Workspace workspace, AirDeskFile file, FileState intention) {
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+
+        if (ws != null) {
             AirDeskFile f = ws.getFile(file.getName());
-            if(f.getState() != FileState.WRITE){
+            if (f.getState() != FileState.WRITE) {
                 f.setState(intention);
                 return true;
             }
@@ -56,11 +61,11 @@ public class NetworkServiceServer implements INetworkServiceServer {
         return false;
     }
 
-    @Override
-    public int getFileVersionS(Workspace workspace, AirDeskFile file) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
-        if(ws!=null) {
+    public int getFileVersionS(Workspace workspace, AirDeskFile file) {
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+
+        if (ws != null) {
             AirDeskFile f = ws.getFile(file.getName());
             return f.getVersion();
         }
@@ -68,11 +73,11 @@ public class NetworkServiceServer implements INetworkServiceServer {
         return -1;
     }
 
-    @Override
-    public FileState getFileStateS(Workspace workspace, AirDeskFile file) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
-        if(ws!=null) {
+    public FileState getFileStateS(Workspace workspace, AirDeskFile file) {
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+
+        if (ws != null) {
             AirDeskFile f = ws.getFile(file.getName());
             return f.getState();
         }
@@ -80,11 +85,11 @@ public class NetworkServiceServer implements INetworkServiceServer {
         return null;
     }
 
-    @Override
-    public String getFileS(Workspace workspace, AirDeskFile file) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
 
-        if(ws!=null) {
+    public String getFileS(Workspace workspace, AirDeskFile file) {
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+
+        if (ws != null) {
             AirDeskFile f = ws.getFile(file.getName());
             return f.read();
         }
@@ -92,29 +97,36 @@ public class NetworkServiceServer implements INetworkServiceServer {
         return null;
     }
 
-    @Override
+
     public boolean sendFileS(Workspace workspace, AirDeskFile file, String fileContent) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace);
-        if(ws == null) return false;
+        OwnerWorkspace ws = airDesk.getOwnerWorkspace(workspace.getName());
+        if (ws == null) return false;
         AirDeskFile f = ws.getFile(file.getName());
         return f.write(fileContent);
     }
 
-    @Override
+
     public boolean changeQuotaS(Workspace workspace, long quota) {
-        //TODO Broadcast new quota --> all clients
-        ForeignWorkspace ws = airDesk.getForeignWorkspace(workspace);
-        if(ws==null) return false;
+        ForeignWorkspace ws = airDesk.getForeignWorkspace(workspace.getName());
+        if (ws == null) return false;
         return ws.setQuota(quota);
     }
 
-    public boolean checkTags(List<String> workspaceTags, List<String> userTags){
-        for(String wt: workspaceTags){
-            for(String us: userTags){
-                if(wt.equalsIgnoreCase(us)) return true;
+    public boolean checkTags(List<String> workspaceTags, List<String> userTags) {
+        for (String wt : workspaceTags) {
+            for (String us : userTags) {
+                if (wt.equalsIgnoreCase(us)) return true;
             }
         }
         return false;
+    }
+
+    public boolean inviteUserS(Workspace workspace, User user) {
+        return this.airDesk.getForeignWorkspaces().add((ForeignWorkspace) workspace);
+    }
+
+    public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
+        return this.airDesk.deleteForeignWorkspace(ownerWorkspace.getName());
     }
 
     public AirDesk getAirDesk() {
@@ -123,5 +135,20 @@ public class NetworkServiceServer implements INetworkServiceServer {
 
     public void setAirDesk(AirDesk airDesk) {
         this.airDesk = airDesk;
+    }
+
+    public void workspaceCreatedS() {
+        //TODO temporary
+        airDesk.getAllowedWorkspaces();
+    }
+
+    public boolean deleteFileS(Workspace workspace, AirDeskFile airDeskFile) {
+        AirDeskFile f;
+        if (workspace.isOwner()) {
+            f = airDesk.getOwnerWorkspace(workspace.getName()).getFile(airDeskFile.getName());
+        } else {
+            f = airDesk.getForeignWorkspace(workspace.getName()).getFile(airDeskFile.getName());
+        }
+        return f.deleteNoNetwork();
     }
 }

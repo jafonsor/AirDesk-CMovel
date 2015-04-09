@@ -2,14 +2,12 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk;
 
 import android.app.Application;
 
-import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 
 
@@ -55,8 +53,8 @@ public class AirDesk extends Application {
     }
 
     public OwnerWorkspace getOwnerWorkspace(String workspaceName) {
-        for(OwnerWorkspace ow: getOwnerWorkspaces()){
-            if(ow.getName().equals(workspaceName)){
+        for (OwnerWorkspace ow : getOwnerWorkspaces()) {
+            if (ow.getName().equals(workspaceName)) {
                 return ow;
             }
         }
@@ -64,12 +62,22 @@ public class AirDesk extends Application {
     }
 
     public ForeignWorkspace getForeignWorkspace(String workspaceName) {
-        for(ForeignWorkspace fw: getForeignWorkspaces()){
-            if(fw.getName().equals(workspaceName)){
+        for (ForeignWorkspace fw : getForeignWorkspaces()) {
+            if (fw.getName().equals(workspaceName)) {
                 return fw;
             }
         }
         return null;
+    }
+
+    public void getAllowedWorkspaces() {
+        List<ForeignWorkspace> foreignWSList = NetworkServiceClient.getAllowedWorkspaces(getUser(), getUser().getUserTags());
+        for (ForeignWorkspace fw : foreignWSList) {
+            if (getForeignWorkspace(fw.getName()) == null) {
+                //updates only if there is a new workspace
+                getForeignWorkspaces().add(fw);
+            }
+        }
     }
 
 

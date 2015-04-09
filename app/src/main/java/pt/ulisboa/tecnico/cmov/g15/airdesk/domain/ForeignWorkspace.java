@@ -9,6 +9,11 @@ public class ForeignWorkspace extends Workspace {
         super(owner, name, quota);
     }
 
+    @Override
+    public boolean isOwner() {
+        return false;
+    }
+
     /*
     method create to change quota in foreign workspaces when
     the owner changes the workspace quota
