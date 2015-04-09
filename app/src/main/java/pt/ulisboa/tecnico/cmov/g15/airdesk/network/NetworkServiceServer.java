@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.Utils;
 
 /**
  * Created by MSC on 02/04/2015.
@@ -32,16 +33,13 @@ public class NetworkServiceServer {
 
             if(workspace.userInAccessList(user)) {
                 if (workspace.userHasPermissions(user)) {
-                    //TODO alterar, muito feio
-                    Workspace wTemp = (Workspace) workspace;
-                    allowedWorkspacesR.add((ForeignWorkspace) wTemp);
+                    allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
                     continue;
                 } else break;
             }
 
             if (checkTags(workspace.getTags(), tags)) {
-                Workspace wTemp = (Workspace) workspace;
-                allowedWorkspacesR.add((ForeignWorkspace) wTemp);
+                allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
                 continue;
             }
         }
@@ -112,7 +110,7 @@ public class NetworkServiceServer {
         //TODO Broadcast new quota --> all clients
         ForeignWorkspace ws = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName());
 
-        if (ws == null) return false;
+        if (ws == null) return true;
         return ws.setQuota(quota);
     }
 

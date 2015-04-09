@@ -1,8 +1,12 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils;
 
 import java.lang.reflect.Array;
+import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.List;
+
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 
 /**
  * Created by MSC on 08/04/2015.
@@ -27,5 +31,10 @@ public class Utils {
             if( (i+1) != list.size()) tags+=";";
         }
         return tags;
+    }
+
+    public static ForeignWorkspace OwnerToForeignWorkspace(OwnerWorkspace ow){
+        ForeignWorkspace fw = new ForeignWorkspace(ow.getOwner(), ow.getName(), ow.getQuota());
+        return fw;
     }
 }
