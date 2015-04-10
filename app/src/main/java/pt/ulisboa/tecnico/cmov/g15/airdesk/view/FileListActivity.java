@@ -143,14 +143,17 @@ public class FileListActivity extends ActionBarActivity {
                 onClickCreateFile(mWorkspaceType, v);
             }
             else {
-                mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType);
-                Intent intent = new Intent(this, EditFileActivity.class);
-                intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
-                intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
-                intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
-                intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
-               // Toast.makeText(this, "File successfully created.", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
+                if(mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType)) {
+                    Intent intent = new Intent(this, EditFileActivity.class);
+                    intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
+                    intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
+                    intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
+                    intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
+                    // Toast.makeText(this, "File successfully created.", Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "Workspace full.", Toast.LENGTH_SHORT).show();
+                }
             }
 
         }
