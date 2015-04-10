@@ -55,6 +55,9 @@
         <activity
             android:name=".view.ShowFileActivity"
             android:label="@string/title_activity_show_file" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.FileListActivity" />
         </activity>
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

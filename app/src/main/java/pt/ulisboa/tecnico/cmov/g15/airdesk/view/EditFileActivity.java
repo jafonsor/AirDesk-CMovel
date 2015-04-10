@@ -61,11 +61,9 @@ public class EditFileActivity extends ActionBarActivity {
 
     public void onClickSave (View v) {
         if(mAirDesk.saveFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, fileContentView.getText().toString(),mWorkspaceType)){
-            Intent intent = new Intent(this, ShowFileActivity.class);
-            intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
-            intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_OWNER, mWorkspaceOwner);
-            intent.putExtra(ShowFileActivity.EXTRA_FILE_NAME, mFileName);
-            intent.putExtra(ShowFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
+            Intent intent = new Intent(this, FileListActivity.class);
+            intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
+            intent.putExtra(FileListActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
             Toast.makeText(this, "File successfully saved.", Toast.LENGTH_SHORT).show();
             startActivity(intent);
             finish();}
