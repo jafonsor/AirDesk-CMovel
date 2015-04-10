@@ -41,7 +41,7 @@ public class NetworkServiceServer {
 
             if (checkTags(workspace.getTags(), tags)) {
                 allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
-                workspace.addUserToAccessList(new AccessListItem(user));
+                workspace.addUserToAccessList(user.getEmail());
                 continue;
             }
         }

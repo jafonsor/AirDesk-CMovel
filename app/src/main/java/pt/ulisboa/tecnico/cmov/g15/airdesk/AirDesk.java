@@ -162,9 +162,7 @@ public class AirDesk extends Application {
 
     public boolean inviteUser(String workspaceName, String userEmail) {
         OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
-        AccessListItem item = new AccessListItem(new User(userEmail));
-        item.setInvited(true);
-        return workspace.addUserToAccessList(item);
+        return workspace.inviteUser(userEmail);
     }
 
     public void changeUserTags(List<String> tags) {
