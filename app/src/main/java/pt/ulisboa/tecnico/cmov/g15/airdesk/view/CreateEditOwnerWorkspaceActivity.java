@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
@@ -21,6 +22,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.Utils;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.SwipeActivity;
 
 public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
@@ -98,28 +100,6 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_owner_workspace, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void onClickCreateWorkspace() {
         EditText nameText  = (EditText) findViewById(R.id.workspace_name_input);
         EditText quotaText = (EditText) findViewById(R.id.workspace_quota_input);
@@ -140,21 +120,16 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
             return;
         }
 
-        String tagsString = tagsText.getText().toString();
-        if(tagsString == null && tagsString.isEmpty()) {
-            Toast.makeText(this, "invalid tags", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String[] tagsArr = tagsString.split(";");
-        // filter empty strings
-        ArrayList<String> workspaceTags = new ArrayList<>();
-        for(String tag : tagsArr) {
-            if (!tag.isEmpty())
-                workspaceTags.add(tag);
-        }
-
         WorkspaceVisibility workspaceVisibility = (WorkspaceVisibility)mVisibilitySpinner.getSelectedItem();
+
+        List<String> workspaceTags=null;
+        if(workspaceVisibility==WorkspaceVisibility.PUBLIC) {
+            workspaceTags = Utils.retrieveTagsFromInputText(tagsText.getText().toString());
+            if (workspaceTags == null) {
+                Toast.makeText(this, "invalid tags", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
 
         boolean success;
         if(mWorkspace == null) {
