@@ -78,9 +78,48 @@ public class AirDesk extends Application {
         List<String> tags = new ArrayList<String>() {{
             add("hollyday");
         }};
+
         if(createOwnerWorkspace("hollyday_at_lodon", 2000L, WorkspaceVisibility.PUBLIC, tags)){
             OwnerWorkspace ow = getOwnerWorkspaceByName("hollyday_at_lodon");
-            ow.createFile("my_little_file");
+            ow.createFile("my_little_file").write("ola\n\n\n\n\n\n\n\n\n\n\n\n\n\nn\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "OLAAOO" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n\n\n\n\n\n\nolaaaaa\n");
         }
     }
 
@@ -205,13 +244,46 @@ public class AirDesk extends Application {
             return true;
     }
 
+    public boolean removeBlockForeignWorkspace(String userEmail, String foreignWorkspaceName) {
+        ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, foreignWorkspaceName);
+        if(fw==null) return false;
+        return NetworkServiceClient.removeWorkspaceBlocked(fw);
+    }
+
+    public boolean isOwner(String userEmail) {
+        if(user.getEmail().equals(userEmail))
+            return true;
+
+        return false;
+    }
+
+    public String viewFileContent(String wsOwner, String wsName, String filename) {
+        AirDeskFile mFile = null;
+
+        if(isOwner(wsOwner)) {
+            mFile = getOwnerWorkspaceByName(wsName).getFile(filename);
+        } else {
+            mFile = getForeignWorkspaceByName(wsOwner, wsName).getFile(filename);
+        }
+
+        return mFile.read();
+    }
+
+    public Boolean saveFileContent(String wsOwner, String wsName, String filename, String content) {
+        AirDeskFile mFile = null;
+
+        if (isOwner(wsOwner)) {
+            mFile = getOwnerWorkspaceByName(wsName).getFile(filename);
+        } else {
+            mFile = getForeignWorkspaceByName(wsOwner, wsName).getFile(filename);
+        }
+
+        return mFile.write(content);
+    }
+
     public boolean isForeignWorkspaceBlocked(String userEmail, String foreignWorkspaceName) {
         ForeignWorkspace fw = getBlockedWorkspaceByName(userEmail, foreignWorkspaceName);
         return fw != null;
     }
-
-
-
-
 
 }

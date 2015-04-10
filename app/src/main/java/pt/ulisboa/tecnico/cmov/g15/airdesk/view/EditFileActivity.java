@@ -15,11 +15,20 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 
 public class EditFileActivity extends ActionBarActivity {
 
-    public final static String EXTRA_FILE_ID
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.FILE_ID";
+    public final static String EXTRA_WORKSPACE_OWNER
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.EXTRA_WORKSPACE_OWNER";
+
+    public final static String EXTRA_WORKSPACE_NAME
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.EXTRA_WORKSPACE_NAME";
+
+    public final static String EXTRA_FILE_NAME
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity.EXTRA_FILE_NAME";
 
     private AirDesk mAirDesk;
-    private Integer mFileId;
+    private String mWorkspaceName;
+    private String mWorkspaceOwner;
+    private String mFileName;
+    private TextView fileContentView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +38,16 @@ public class EditFileActivity extends ActionBarActivity {
         mAirDesk = (AirDesk) getApplication();
 
         Intent intent = getIntent();
-        mFileId = intent.getIntExtra(EXTRA_FILE_ID, -1);
 
-        //AirDeskFile file = mAirDesk.getFileById(mFileId);
+        mWorkspaceOwner = intent.getStringExtra(EXTRA_WORKSPACE_OWNER);
+        mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
+        mFileName = intent.getStringExtra(EXTRA_FILE_NAME);
 
         TextView fileNameView = (TextView) findViewById(R.id.filename_box);
-        //fileNameView.setText(file.getName());
+        fileNameView.setText(mWorkspaceName + ": " + mFileName);
 
-        TextView fileContentView = (TextView) findViewById(R.id.file_content_box);
-        //fileContentView.setText(SS.readAirDeskFile(file));
+        fileContentView = (TextView) findViewById(R.id.file_content_box);
+        fileContentView.setText(mAirDesk.viewFileContent(mWorkspaceOwner, mWorkspaceName, mFileName));
     }
 
 
@@ -64,7 +74,13 @@ public class EditFileActivity extends ActionBarActivity {
     }
 
     public void onClickSave (View v) {
-
+        Intent intent = new Intent(this, ShowFileActivity.class);
+        mAirDesk.saveFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, fileContentView.getText().toString());
+        intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
+        intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_OWNER, mWorkspaceOwner);
+        intent.putExtra(ShowFileActivity.EXTRA_FILE_NAME, mFileName);
+        startActivity(intent);
+        finish();
     }
 }
 

@@ -126,11 +126,12 @@ public class FileListActivity extends ActionBarActivity {
 
     public void onClickShowFile(AirDeskFile file, View v) {
         Intent intent = new Intent(this, ShowFileActivity.class);
-        /*
-        intent.putExtra(ShowFileActivity.EXTRA_)
-        intent.putExtra(ShowFileActivity.EXTRA_FILE_NAME, fileName);
+        boolean mIsOwner = mAirDesk.isOwner(mUserEmail);
+        String mFileName = file.getName();
+
         intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
-        intent.putExtra(ShowFileActivity.EXTRA_IS_OWNER, mIsOwner);*/
+        intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
+        intent.putExtra(ShowFileActivity.EXTRA_FILE_NAME, mFileName);
         startActivity(intent);
     }
 

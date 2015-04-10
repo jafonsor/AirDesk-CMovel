@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.view;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,21 +10,23 @@ import android.widget.TextView;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 
 public class ShowFileActivity extends ActionBarActivity {
 
-    public final static String EXTRA_FILE_ID
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.FILE_ID";
+    public final static String EXTRA_WORKSPACE_OWNER
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.EXTRA_WORKSPACE_OWNER";
 
     public final static String EXTRA_WORKSPACE_NAME
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.WORKSPACE_NAME";
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.EXTRA_WORKSPACE_NAME";
 
-    public final static String EXTRA_IS_OWNER
-            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.EXTRA_IS_OWNER";
+    public final static String EXTRA_FILE_NAME
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.EXTRA_FILE_NAME";
 
     private AirDesk mAirDesk;
-    private Integer mFileId;
+    private String mWorkspaceName;
+    private String mWorkspaceOwner;
+    private String mFileName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,19 +34,18 @@ public class ShowFileActivity extends ActionBarActivity {
         setContentView(R.layout.activity_show_file);
 
         mAirDesk = (AirDesk) getApplication();
-
         Intent intent = getIntent();
-        mFileId = intent.getIntExtra(EXTRA_FILE_ID, -1);
-        String workspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
-        boolean isOwner = intent.getBooleanExtra(EXTRA_IS_OWNER, false);
 
-        //AirDeskFile file = mAirDesk.getFileById(mFileId);
+        mWorkspaceOwner = intent.getStringExtra(EXTRA_WORKSPACE_OWNER);
+        mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
+        mFileName = intent.getStringExtra(EXTRA_FILE_NAME);
+
 
         TextView fileNameView = (TextView) findViewById(R.id.filename_box);
-        //fileNameView.setText( "isOwner=" + isOwner + "; " + workspaceName + ": " + file.getName());
+        fileNameView.setText(mWorkspaceName + ": " + mFileName);
 
         TextView fileContentView = (TextView) findViewById(R.id.file_content_box);
-        //fileContentView.setText(SS.readAirDeskFile(file));
+        fileContentView.setText(mAirDesk.viewFileContent(mWorkspaceOwner, mWorkspaceName, mFileName));
     }
 
 
@@ -70,7 +71,12 @@ public class ShowFileActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onClickEditFile(View v){
-
+    public void onClickEditFile(View v) {
+        Intent intent = new Intent(this, EditFileActivity.class);
+        intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
+        intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mWorkspaceOwner);
+        intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, mFileName);
+        startActivity(intent);
+        finish();
     }
 }

@@ -19,7 +19,7 @@
     <string name="create_file">Create File</string>
 
     <string name="title_activity_workspace_list">Workspaces</string>
-    <string name="title_activity_edit_file">EditFileActivity</string>
+    <string name="title_activity_edit_file">File Editor</string>
     <string name="title_activity_start">StartActivity</string>
     <string name="hello_world">Hello world!</string>
 
@@ -35,13 +35,14 @@
     <string name="title_activity_create_owner_workspace">Workspace Settings</string>
     <string name="title_activity_file_list">Files</string>
     <string name="title_activity_workspace_settings">WorkspaceSettingsActivity</string>
+    <string name="title_activity_show_file">File Viewer</string>
     <string name="title_activity_edit_access_list">Access List</string>
-    <string name="title_activity_show_file">ShowFileActivity</string>
     <string name="addUserAccessList">Add User</string>
 
     <string name="filename">Filename</string>
     <string name="edit_file">Edit File</string>
-    <string name="content">Content</string>
+    <string name="empty">« File is empty... »</string>
+    <string name="content">« You are free to write something... »</string>
     <string name="tagsHint">Tags separated by ;</string>
     <string name="populate">Populate</string>
     <string name="disconnect">Disconnect</string>

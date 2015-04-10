@@ -14,7 +14,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:hint="@string/filename"
-        android:inputType="text" />
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:inputType="none" />
 
     <TextView
         android:id="@+id/textView"
@@ -32,7 +36,18 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/textView"
         android:hint="@string/content"
-        android:inputType="text" />
+        android:inputType="none"
+        android:scrollbars="vertical"
+        android:layout_above="@+id/textView2"
+        android:gravity="top" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/editFileBtn" />
 
     <Button
         android:id="@+id/editFileBtn"
