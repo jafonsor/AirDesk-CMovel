@@ -145,6 +145,8 @@ public class OwnerFragment extends Fragment {
                             Toast.makeText(getActivity(), "could not delete workspace " + workspaceName, Toast.LENGTH_SHORT).show();
                         }
                         dialog.dismiss();
+                        getActivity().finish(); //Destroy o swipe anterior
+                        startActivity(new Intent(getActivity(), SwipeActivity.class));
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
