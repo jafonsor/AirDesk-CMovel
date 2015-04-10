@@ -92,6 +92,7 @@ public class AirDeskFile {
 
         if (NetworkServiceClient.notifyIntention(getWorkspace(), this, FileState.WRITE)) {
             incrementVersion();
+            setSize(contentSize);
             return NetworkServiceClient.sendFile(getWorkspace(), this, content) &&
                     FileSystemManager.setFileContent(getPath(), content);
         }else
