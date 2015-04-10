@@ -196,9 +196,9 @@ public class AirDesk extends Application {
         setForeignWorkspaces(foreignWSList);
     }
 
-    public List<AirDeskFile> getWorkspaceFiles(String userEmail, String workspaceName) {
+    public List<AirDeskFile> getWorkspaceFiles(String userEmail, String workspaceName, WorkspaceType workspaceType) {
         Workspace workspace = null;
-        if (getUser().getEmail().equals(userEmail)) {
+        if (workspaceType==WorkspaceType.OWNER) {
             workspace = getOwnerWorkspaceByName(workspaceName);
         } else {
             workspace = getForeignWorkspaceByName(userEmail, workspaceName);

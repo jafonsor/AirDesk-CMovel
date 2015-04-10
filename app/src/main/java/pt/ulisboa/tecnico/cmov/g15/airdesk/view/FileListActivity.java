@@ -57,7 +57,7 @@ public class FileListActivity extends ActionBarActivity {
 
         ListView fileList = (ListView) findViewById(R.id.file_list);
 
-        List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName);
+        List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName, mWorkspaceType);
 
 
         mListAdapter = new ListAdapter<AirDeskFile>(this, R.layout.file_item, files) {
@@ -104,7 +104,7 @@ public class FileListActivity extends ActionBarActivity {
         if(!mAirDesk.deleteFile(mUserEmail, mWorkspaceName, file.getName(), mWorkspaceType)) {
             Toast.makeText(this, "file not deleted", Toast.LENGTH_SHORT).show();
         } else {
-            mListAdapter.setItems(mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName));
+            mListAdapter.setItems(mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName, mWorkspaceType));
             mListAdapter.notifyDataSetChanged();
             Toast.makeText(this, "file deleted", Toast.LENGTH_SHORT).show();
         }

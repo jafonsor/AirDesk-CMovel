@@ -28,7 +28,7 @@
     <string name="save">Save</string>
 
     <string name="workspace_name_desc">Name</string>
-    <string name="workspace_quota_desc">Quota</string>
+    <string name="workspace_quota_desc">Quota (Bytes)</string>
     <string name="workspace_visibility_desc">Visibility</string>
     <string name="workspace_tags_desc">Tags</string>
 
@@ -47,5 +47,6 @@
     <string name="populate">Populate</string>
     <string name="disconnect">Disconnect</string>
     <string name="deleteUser">Delete User</string>
+    <string name="insert_file_name">Insert File Name</string>
 
 </resources>
