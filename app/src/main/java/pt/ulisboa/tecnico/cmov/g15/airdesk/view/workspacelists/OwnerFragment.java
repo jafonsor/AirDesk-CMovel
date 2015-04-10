@@ -5,38 +5,55 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists;
  */
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.app.Fragment;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.CreateEditOwnerWorkspaceActivity;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 
 public class OwnerFragment extends Fragment {
 
+    public static String SHARED_PREFS_WORKSPACES = "sharedPrefsWorkspace";
+    public static String OWNER_WORKSPACE_LIST = "ownerWorkspaceList";
     private AirDesk mAirDesk;
     private ListAdapter<OwnerWorkspace> mListAdapter;
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        saveListOwnerWSSharedPreferences();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.owner_layout, container, false);
+
+        restoreListOwnerWSSharedPreferences();
+
         mAirDesk = (AirDesk) getActivity().getApplication();
 
         ListView listView = (ListView) rootView.findViewById(R.id.owner_workspaces_list);
@@ -148,4 +165,35 @@ public class OwnerFragment extends Fragment {
         intent.putExtra(EditAccessListActivity.EXTRA_WORKSPACE_NAME, workspace.getName());
         startActivity(intent);
     }
+
+    public void saveListOwnerWSSharedPreferences() {
+        /*mAirDesk = (AirDesk) getActivity().getApplication();
+        List<OwnerWorkspace> ownerWorkspaceList = mAirDesk.getOwnerWorkspaces();
+        if (ownerWorkspaceList == null || ownerWorkspaceList.size() == 0) return;
+
+        //Creating a shared preference
+        SharedPreferences prefs = getActivity().getSharedPreferences(SHARED_PREFS_WORKSPACES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(ownerWorkspaceList);
+        editor.putString(OWNER_WORKSPACE_LIST, json);
+        editor.commit();*/
+    }
+
+    public void restoreListOwnerWSSharedPreferences() {
+        /*SharedPreferences prefs = getActivity().getSharedPreferences(SHARED_PREFS_WORKSPACES, Context.MODE_PRIVATE);
+
+        String ownerWSListJSONString = prefs.getString(OWNER_WORKSPACE_LIST,null);
+
+        if(ownerWSListJSONString != null){
+            Type type = new TypeToken<List<OwnerWorkspace>>(){}.getType();
+            List<OwnerWorkspace> ownerWorkspaceList = new Gson().fromJson(ownerWSListJSONString, type);
+            mAirDesk = (AirDesk) getActivity().getApplication();
+            mAirDesk.setOwnerWorkspaces(ownerWorkspaceList);
+        }
+
+        */
+    }
+
 }
