@@ -130,7 +130,15 @@ public class AirDesk extends Application {
             Log.e("bad error", "foreign workspace not found: " + workspaceName);
             return false;
         }
-        return getForeignWorkspaces().remove(fw) && fw.delete();
+        if(!getForeignWorkspaces().remove(fw)) {
+            Log.e("bad error", "could not remove from list: " + workspaceName);
+            return false;
+        }
+        if(!fw.delete()) {
+            Log.e("bad error", "workspace delete failed: " + workspaceName);
+            return false;
+        }
+        return true;
     }
 
     public void getAllowedWorkspaces() {

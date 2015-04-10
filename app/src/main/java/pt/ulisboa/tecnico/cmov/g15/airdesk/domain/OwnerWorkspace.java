@@ -85,8 +85,10 @@ public class OwnerWorkspace extends Workspace {
         item.setInvited(true);
 
         boolean returnValue = NetworkServiceClient.inviteUser(this, item.getUser());
-
-        return getAccessList().add(item) && returnValue;
+        if(getAccessListItemByEmail(userEmail) != null)
+            return returnValue;
+        else
+           return getAccessList().add(item) && returnValue;
     }
 
     public AccessListItem getAccessListItemByEmail(String userEmail) {

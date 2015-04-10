@@ -37,7 +37,7 @@
     <string name="title_activity_workspace_settings">WorkspaceSettingsActivity</string>
     <string name="title_activity_show_file">File Viewer</string>
     <string name="title_activity_edit_access_list">Access List</string>
-    <string name="addUserAccessList">Add User</string>
+    <string name="addUserAccessList">Invite</string>
 
     <string name="filename">Filename</string>
     <string name="edit_file">Edit File</string>

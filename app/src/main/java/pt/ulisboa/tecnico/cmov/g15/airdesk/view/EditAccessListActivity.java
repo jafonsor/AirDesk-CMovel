@@ -101,37 +101,22 @@ public class EditAccessListActivity extends ActionBarActivity {
     public void onClickAddUserButton(final String mWorkspaceName, View view) {
         final EditText input = new EditText(this);
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Add User")
-                .setMessage("E-mail: ")
-                .setView(input)
-                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface di, int which) {
-                        String email = input.getText().toString();
-                        if (!email.equals("")) {
-                            boolean status = mAirDesk.inviteUser(mWorkspaceName, email);
-                            if (status) {
-                                mListAdapter.setItems(mAirDesk.getWorkspaceAccessList(mWorkspaceName));
-                                mListAdapter.notifyDataSetChanged();
-                                Toast.makeText(getApplicationContext(), "User has been added", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Could not add user!!", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Invalid e-mail", Toast.LENGTH_SHORT).show();
-                        }
-                        di.dismiss();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface di, int which) {
-                        di.dismiss();
-                    }
-                })
-                .create();
-        dialog.show();
+        EditText userEmailText = (EditText) findViewById(R.id.new_user_email);
+        String userEmail = userEmailText.getText().toString();
+
+        if (!userEmail.equals("")) {
+            boolean status = mAirDesk.inviteUser(mWorkspaceName, userEmail);
+            if (status) {
+                mListAdapter.setItems(mAirDesk.getWorkspaceAccessList(mWorkspaceName));
+                mListAdapter.notifyDataSetChanged();
+                Toast.makeText(getApplicationContext(), "User has been added", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Could not add user!!", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Invalid e-mail", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 }

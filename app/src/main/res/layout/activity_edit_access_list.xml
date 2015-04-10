@@ -11,23 +11,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/add_user_accesslistBtn">
+        android:orientation="vertical">
 
         <ListView
             android:id="@+id/user_accesslistLV"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/new_user_email"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/add_user_accesslistBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/addUserAccessList"
+                android:textAlignment="center" />
+        </LinearLayout>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/add_user_accesslistBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/addUserAccessList"
-        android:textAlignment="center" />
 
 </RelativeLayout>

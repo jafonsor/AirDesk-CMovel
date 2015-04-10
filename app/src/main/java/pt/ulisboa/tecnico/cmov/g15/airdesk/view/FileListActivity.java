@@ -51,6 +51,7 @@ public class FileListActivity extends ActionBarActivity {
 
 
         TextView workspaceNameView = (TextView) findViewById(R.id.workspace_name);
+        workspaceNameView.setText(mWorkspaceName);
 
         ListView fileList = (ListView) findViewById(R.id.file_list);
 
@@ -90,6 +91,13 @@ public class FileListActivity extends ActionBarActivity {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        EditText fileNameText = (EditText) findViewById(R.id.new_file_name_input);
+        fileNameText.getText().clear();
+    }
+
     public void onClickDeleteFile(AirDeskFile file, View v) {
         Toast.makeText(this, "deleting file " + file.getName(), Toast.LENGTH_SHORT).show();
         //mAirDesk.deleteFile(file.getId());
@@ -107,43 +115,20 @@ public class FileListActivity extends ActionBarActivity {
     }
 
     public void onClickCreateFile(final WorkspaceType mWorkspaceType, final View v) {
-        final EditText input = new EditText(this);
+        EditText fileNameText = (EditText) findViewById(R.id.new_file_name_input);
+        String fileName = fileNameText.getText().toString();
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("New File")
-                .setMessage("File name: ")
-                .setView(input)
-                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface di, int which) {
-                        String fileName = input.getText().toString();
-                        createAndEditFile(mWorkspaceType, fileName, v);
-                        di.dismiss();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface di, int which) {
-                        di.dismiss();
-                    }
-                })
-                .create();
-        dialog.show();
-    }
-
-    // returns false if it fails to create the file
-    public void createAndEditFile(WorkspaceType mWorkspaceType, String fileName, View v) {
         if (fileName == null || fileName.isEmpty()) {
             Toast.makeText(this, "Invalid file name.", Toast.LENGTH_SHORT).show();
-            onClickCreateFile(mWorkspaceType, v);
             // TO DO: check if there is already a file with that name
         } else {
             if(mAirDesk.fileExists(mUserEmail, mWorkspaceName, fileName, mWorkspaceType)) {
                 Toast.makeText(this, "Already exists a file with that name.", Toast.LENGTH_SHORT).show();
-                onClickCreateFile(mWorkspaceType, v);
             }
             else {
-                if(mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType)) {
+                if(!mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType)) {
+                    Toast.makeText(this, "could not create file", Toast.LENGTH_SHORT);
+                } else {
                     Intent intent = new Intent(this, EditFileActivity.class);
                     intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
                     intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
