@@ -164,11 +164,17 @@ public class NetworkServiceServer {
         AirDeskFile f;
         if (!workspace.isOwner()) {
             f = airDesk.getOwnerWorkspaceByName(workspace.getName()).getFile(airDeskFile.getName());
+            if(f!=null){
+                airDesk.getOwnerWorkspaceByName(workspace.getName()).getFiles().remove(f);
+            }
         } else {
             ForeignWorkspace fw = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName());
             if(fw == null)
                 return true;
             f = fw.getFile(airDeskFile.getName());
+            if(f!=null){
+                airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName()).getFiles().remove(f);
+            }
         }
         return f.deleteNoNetwork();
     }
