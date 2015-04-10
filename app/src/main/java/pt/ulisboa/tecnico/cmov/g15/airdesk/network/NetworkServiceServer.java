@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.Utils;
 
 /**
@@ -31,17 +32,19 @@ public class NetworkServiceServer {
         List<ForeignWorkspace> allowedWorkspacesR = new ArrayList<ForeignWorkspace>();
         for (OwnerWorkspace workspace : airDesk.getOwnerWorkspaces()) {
 
-            if(workspace.userInAccessList(user)) {
+            if (workspace.userInAccessList(user)) {
                 if (workspace.userHasPermissions(user)) {
                     allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
                     continue;
                 } else break;
             }
 
-            if (checkTags(workspace.getTags(), tags)) {
-                allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
-                workspace.addUserToAccessList(user.getEmail());
-                continue;
+            if (workspace.getVisibility() == WorkspaceVisibility.PUBLIC) {
+                if (checkTags(workspace.getTags(), tags)) {
+                    allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
+                    workspace.addUserToAccessList(user.getEmail());
+                    continue;
+                }
             }
         }
 
@@ -103,7 +106,7 @@ public class NetworkServiceServer {
         OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
         if (ws == null) return false;
         AirDeskFile f = ws.getFile(file.getName());
-        if(f == null) f = ws.createFile(file.getPath());
+        if (f == null) f = ws.createFile(file.getPath());
         f.setVersion(file.getVersion());
         f.setState(FileState.IDLE);
         return f.writeNoNetwork(fileContent);
@@ -129,15 +132,15 @@ public class NetworkServiceServer {
 
     public boolean inviteUserS(OwnerWorkspace workspace, User user) {
         ForeignWorkspace fw = Utils.OwnerToForeignWorkspace(workspace);
-        if(airDesk.isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName()))
+        if (airDesk.isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName()))
             return true;
-        if(user.equals(airDesk.getUser()))
+        if (user.equals(airDesk.getUser()))
             return this.airDesk.getForeignWorkspaces().add(fw);
         return true;
     }
 
     public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
-        if(airDesk.isForeignWorkspaceBlocked(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName()))
+        if (airDesk.isForeignWorkspaceBlocked(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName()))
             return true;
         return airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
     }

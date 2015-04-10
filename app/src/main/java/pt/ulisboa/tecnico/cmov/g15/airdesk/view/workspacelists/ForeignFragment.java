@@ -115,10 +115,9 @@ public class ForeignFragment extends Fragment {
 
     public void onClickListWorkspaceFiles(ForeignWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
-        //TODO
-        //intent.putExtra(FileListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
+        intent.putExtra(FileListActivity.EXTRA_OWNER_EMAIL, mAirDesk.getUser().getEmail());
+        intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, workspace.getName());
         startActivity(intent);
-        //getActivity().finish();
     }
 
     public void onClickEditTags(View v) {
