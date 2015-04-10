@@ -17,7 +17,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 public class NetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
     private static NetworkServiceServer networkServiceServer = new NetworkServiceServer();
-    private static List<ForeignWorkspace> blockedForeignWorkspaces = new ArrayList<ForeignWorkspace>();
+    public static List<ForeignWorkspace> blockedForeignWorkspaces = new ArrayList<ForeignWorkspace>();
 
     public NetworkServiceClient() {
     }
@@ -62,7 +62,7 @@ public class NetworkServiceClient {
         return networkServiceServer.changeQuotaS(workspace, quota);
     }
 
-    public static boolean inviteUser(Workspace workspace, User user) {
+    public static boolean inviteUser(OwnerWorkspace workspace, User user) {
         return networkServiceServer.inviteUserS(workspace, user);
     }
 
@@ -97,6 +97,18 @@ public class NetworkServiceClient {
                     fw.getOwner().equals(foreignWorkspace.getOwner()))
                 return true;
         }
+        return false;
+    }
+
+    public static boolean removeWorkspaceBlocked(ForeignWorkspace foreignWorkspace){
+        if(!NetworkServiceClient.isWorkspaceBlocked(foreignWorkspace)) return false;
+        ForeignWorkspace fwToRemove=null;
+        for (ForeignWorkspace fw : blockedForeignWorkspaces) {
+            if (fw.getName().equals(foreignWorkspace.getName()) &&
+                    fw.getOwner().equals(foreignWorkspace.getOwner()))
+                fwToRemove = fw;
+        }
+        if(fwToRemove!=null) return blockedForeignWorkspaces.remove(fwToRemove);
         return false;
     }
 

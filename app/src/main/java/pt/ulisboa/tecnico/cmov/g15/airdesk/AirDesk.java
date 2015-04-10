@@ -107,7 +107,6 @@ public class AirDesk extends Application {
             Log.e("bad error", "foreign workspace not found: " + workspaceName);
             return false;
         }
-
         return getForeignWorkspaces().remove(fw) && fw.delete();
     }
 
@@ -118,13 +117,13 @@ public class AirDesk extends Application {
 
     public List<AirDeskFile> getWorkspaceFiles(String userEmail, String workspaceName) {
         Workspace workspace = null;
-        if(getUser().getEmail().equals(userEmail)) {
+        if (getUser().getEmail().equals(userEmail)) {
             workspace = getOwnerWorkspaceByName(workspaceName);
         } else {
             workspace = getForeignWorkspaceByName(userEmail, workspaceName);
         }
 
-        if(workspace == null) {
+        if (workspace == null) {
             Log.e("bad error", "getWorkspaceFiles for " + userEmail + "," + workspaceName);
             return null;
         }
@@ -141,9 +140,9 @@ public class AirDesk extends Application {
 
     public boolean editOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
         OwnerWorkspace ow = getOwnerWorkspaceByName(name);
-        boolean changedQuota      = ow.setQuota(quota);
+        boolean changedQuota = ow.setQuota(quota);
         boolean changedVisibility = ow.setVisibility(visibility);
-        boolean changedTags       = ow.setTags(tags);
+        boolean changedTags = ow.setTags(tags);
 
         Log.i("info", "quota: " + changedQuota + ", visibility: " + changedVisibility + ", tags: " + changedTags);
 
@@ -166,6 +165,24 @@ public class AirDesk extends Application {
         AccessListItem item = new AccessListItem(new User(userEmail));
         item.setInvited(true);
         return workspace.addUserToAccessList(item);
+    }
+
+    public void changeUserTags(List<String> tags) {
+        User user = getUser();
+        user.setUserTags(tags);
+        getAllowedWorkspaces();
+    }
+
+    public boolean addBlockedForeignWorkspace(String userEmail, String foreignWorkspaceName) {
+        ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, foreignWorkspaceName);
+        if(fw==null) return false;
+        return NetworkServiceClient.blockedForeignWorkspaces.add(fw);
+    }
+
+    public boolean removeBlockForeignWorkspace(String userEmail, String foreignWorkspaceName) {
+        ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, foreignWorkspaceName);
+        if(fw==null) return false;
+        return NetworkServiceClient.removeWorkspaceBlocked(fw);
     }
 
 }

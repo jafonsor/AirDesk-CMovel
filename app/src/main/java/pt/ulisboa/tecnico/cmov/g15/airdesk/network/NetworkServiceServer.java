@@ -106,6 +106,7 @@ public class NetworkServiceServer {
         AirDeskFile f = ws.getFile(file.getName());
         if(f == null) f = ws.createFile(file.getPath());
         f.setVersion(file.getVersion());
+        f.setState(FileState.IDLE);
         return f.writeNoNetwork(fileContent);
     }
 
@@ -127,8 +128,10 @@ public class NetworkServiceServer {
         return false;
     }
 
-    public boolean inviteUserS(Workspace workspace, User user) {
-        return this.airDesk.getForeignWorkspaces().add((ForeignWorkspace) workspace);
+    public boolean inviteUserS(OwnerWorkspace workspace, User user) {
+        if(user.equals(airDesk.getUser()))
+            return this.airDesk.getForeignWorkspaces().add(Utils.OwnerToForeignWorkspace(workspace));
+        return true;
     }
 
     public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {

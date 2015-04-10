@@ -5,6 +5,7 @@ import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 
@@ -35,6 +36,8 @@ public class Utils {
 
     public static ForeignWorkspace OwnerToForeignWorkspace(OwnerWorkspace ow){
         ForeignWorkspace fw = new ForeignWorkspace(ow.getOwner(), ow.getName(), ow.getQuota());
+        fw.setFiles(new ArrayList<AirDeskFile>(ow.getFiles()));
+        fw.setPath(ow.getPath());
         return fw;
     }
 }

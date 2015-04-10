@@ -21,8 +21,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,6 +86,7 @@ public class ForeignFragment extends Fragment {
 
     public void onClickRemoveForeignWorkspace(ForeignWorkspace workspace, View v, int position) {
         final String workspaceName = workspace.getName();
+        final String userEmail = workspace.getOwner().getEmail();
         //final Integer workspaceId = workspace.getId();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
@@ -96,8 +95,11 @@ public class ForeignFragment extends Fragment {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Toast.makeText(getActivity(), "TO DO: delete workspace", Toast.LENGTH_SHORT).show();
-                        //mAirDesk.deleteForeignWorkspace(workspaceId);
+                        if (mAirDesk.addBlockedForeignWorkspace(userEmail, workspaceName))
+                            if (mAirDesk.deleteForeignWorkspace(userEmail, workspaceName))
+                                Toast.makeText(getActivity(), "Foreign workspace Deleted", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(getActivity(), "Error removing workspace", Toast.LENGTH_SHORT).show();
                         mListAdapter.notifyDataSetChanged();
                     }
                 })
@@ -131,8 +133,8 @@ public class ForeignFragment extends Fragment {
                     public void onClick(DialogInterface di, int which) {
                         String new_tags = input.getText().toString();
                         List<String> tagList = Utils.retrieveTagsFromInputText(new_tags);
-                        if (tagList!=null) {
-                            mAirDesk.getUser().setUserTags(tagList);
+                        if (tagList != null) {
+                            mAirDesk.changeUserTags(tagList);
                             mListAdapter.notifyDataSetChanged();
 
                             SharedPreferences prefs = getActivity().getSharedPreferences(LoginActivity.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
