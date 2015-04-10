@@ -50,12 +50,14 @@ public class AuxiliaryFragment extends Fragment{
 
     public void  onClickPopulateAirDesk(View v) {
         mAirdesk.populate();
+        Toast.makeText(getActivity().getApplicationContext(),
+                "Workspace created", Toast.LENGTH_SHORT).show();
     }
 
     public void  onClickDisconnectNetwork(View v) {
         //TODO fazer disconnect
         Toast.makeText(getActivity().getApplicationContext(),
-                "TODO", Toast.LENGTH_SHORT).show();
+                "Not Implemented", Toast.LENGTH_SHORT).show();
     }
 
 
