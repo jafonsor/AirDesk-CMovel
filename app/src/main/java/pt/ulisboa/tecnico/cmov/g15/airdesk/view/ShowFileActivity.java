@@ -47,7 +47,7 @@ public class ShowFileActivity extends ActionBarActivity {
         mWorkspaceType = (WorkspaceType) intent.getSerializableExtra(EXTRA_TYPE_OF_WORKSPACE);
 
         TextView fileNameView = (TextView) findViewById(R.id.filename_box);
-        fileNameView.setText(mWorkspaceName + ": " + mFileName);
+        fileNameView.setText(mWorkspaceType + " > " + mWorkspaceName + ": " + mFileName);
 
         TextView fileContentView = (TextView) findViewById(R.id.file_content_box);
         fileContentView.setText(mAirDesk.viewFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, mWorkspaceType));

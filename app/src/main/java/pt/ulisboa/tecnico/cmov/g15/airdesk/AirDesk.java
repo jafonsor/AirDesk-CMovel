@@ -262,4 +262,16 @@ public class AirDesk extends Application {
         return fw != null;
     }
 
+    public Boolean fileExists(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
+        AirDeskFile mFile = null;
+        if (workspaceType == WorkspaceType.OWNER) {
+            mFile = getOwnerWorkspaceByName(wsName).getFile(filename);
+        } else {
+            mFile = getForeignWorkspaceByName(wsOwner, wsName).getFile(filename);
+        }
+
+        if(mFile==null) return false;
+        else return true;
+    }
+
 }

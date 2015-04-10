@@ -134,21 +134,24 @@ public class FileListActivity extends ActionBarActivity {
     // returns false if it fails to create the file
     public void createAndEditFile(WorkspaceType mWorkspaceType, String fileName, View v) {
         if (fileName == null || fileName.isEmpty()) {
-            Toast.makeText(this, "invalid file name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid file name.", Toast.LENGTH_SHORT).show();
             onClickCreateFile(mWorkspaceType, v);
             // TO DO: check if there is already a file with that name
         } else {
-            mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType);
-           // Toast.makeText(this, "TO DO: check if file exists", Toast.LENGTH_SHORT).show();
-           // Toast.makeText(this, "TO DO: create file", Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(this, EditFileActivity.class);
-            intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
-            intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
-            intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
-            intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
-            Log.e("Assinatura", "WSname: "+ mWorkspaceName +"WSowner: "+ mUserEmail + "Filename: " + fileName + "WStype: " +mWorkspaceType.toString());
-            startActivity(intent);
+            if(mAirDesk.fileExists(mUserEmail, mWorkspaceName, fileName, mWorkspaceType)) {
+                Toast.makeText(this, "Already exists a file with that name.", Toast.LENGTH_SHORT).show();
+                onClickCreateFile(mWorkspaceType, v);
+            }
+            else {
+                mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType);
+                Intent intent = new Intent(this, EditFileActivity.class);
+                intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
+                intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
+                intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
+                intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
+               // Toast.makeText(this, "File successfully created.", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
 
         }
     }

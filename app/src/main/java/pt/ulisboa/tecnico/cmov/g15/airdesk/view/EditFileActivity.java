@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
@@ -49,9 +50,9 @@ public class EditFileActivity extends ActionBarActivity {
         mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
         mFileName = intent.getStringExtra(EXTRA_FILE_NAME);
         mWorkspaceType = (WorkspaceType) intent.getSerializableExtra(EXTRA_TYPE_OF_WORKSPACE);
-        Log.e("Assinatura", "WSname: " + mWorkspaceName + "WSowner: " + mWorkspaceOwner + "Filename: " + mFileName + "WStype: " + mWorkspaceType.toString());
+
         TextView fileNameView = (TextView) findViewById(R.id.filename_box);
-        fileNameView.setText(mWorkspaceName + ": " + mFileName);
+        fileNameView.setText(mWorkspaceType + " > " + mWorkspaceName + ": " + mFileName);
 
         fileContentView = (TextView) findViewById(R.id.file_content_box);
         fileContentView.setText(mAirDesk.viewFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, mWorkspaceType));
@@ -59,14 +60,18 @@ public class EditFileActivity extends ActionBarActivity {
 
 
     public void onClickSave (View v) {
-        Intent intent = new Intent(this, ShowFileActivity.class);
-        mAirDesk.saveFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, fileContentView.getText().toString(),mWorkspaceType);
-        intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
-        intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_OWNER, mWorkspaceOwner);
-        intent.putExtra(ShowFileActivity.EXTRA_FILE_NAME, mFileName);
-        intent.putExtra(ShowFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
-        startActivity(intent);
-        finish();
+        if(mAirDesk.saveFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, fileContentView.getText().toString(),mWorkspaceType)){
+            Intent intent = new Intent(this, ShowFileActivity.class);
+            intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
+            intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_OWNER, mWorkspaceOwner);
+            intent.putExtra(ShowFileActivity.EXTRA_FILE_NAME, mFileName);
+            intent.putExtra(ShowFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
+            Toast.makeText(this, "File successfully saved.", Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+            finish();}
+        else {
+            Toast.makeText(this, "You don't have enough space to save this file.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
 
