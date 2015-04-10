@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity;
@@ -72,5 +73,11 @@ public class SwipeActivity extends FragmentActivity {
             //kill self
             finish();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        AirDesk airDesk = (AirDesk) getApplication();
+        airDesk.backup();
     }
 }

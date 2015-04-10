@@ -5,6 +5,15 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.Serializable;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +46,42 @@ public class AirDesk extends Application {
         blockedWorkspaces = new ArrayList<ForeignWorkspace>();
         //TODO temporary
         NetworkServiceClient.setAirDesk(this);
+    }
+
+    @Override
+    public void onCreate() {
+        try {
+            FileInputStream streamIn = new FileInputStream(Environment.getExternalStorageDirectory() + "/backup.airdesk");
+            ObjectInputStream objectinputstream = new ObjectInputStream(streamIn);
+            ArrayList<OwnerWorkspace> ownerWorkspaces = (ArrayList<OwnerWorkspace>) objectinputstream.readObject();
+            setOwnerWorkspaces(ownerWorkspaces);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (OptionalDataException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            Log.i("info", "backup file not found");
+        } catch (StreamCorruptedException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void backup() {
+        Log.i("info", "saving state");
+        List<OwnerWorkspace> ownerWorkspaces = getOwnerWorkspaces();
+        try  {
+            FileOutputStream fout = new FileOutputStream(Environment.getExternalStorageDirectory() + "/backup.airdesk");
+            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos.writeObject(ownerWorkspaces);
+            oos.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void reset() {
@@ -77,9 +122,8 @@ public class AirDesk extends Application {
 
     public void populate() {
         //FileSystemManager.deleteRecursively(new File(Environment.getExternalStorageDirectory() + "/AirDesk/" + getUser().getEmail()));
-        List<String> tags = new ArrayList<String>() {{
-            add("hollyday");
-        }};
+        List<String> tags = new ArrayList<String>();
+        tags.add("hollyday");
 
         String workspaceName = "Workspace"+System.currentTimeMillis();
         if (createOwnerWorkspace(workspaceName, 2000L, WorkspaceVisibility.PUBLIC, tags)) {

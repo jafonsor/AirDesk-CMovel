@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -7,7 +8,7 @@ import java.util.Objects;
 /**
  * Created by MSC on 02/04/2015.
  */
-public class User {
+public class User implements Serializable {
     private String userName;
     private String email;
     private List<String> userTags;

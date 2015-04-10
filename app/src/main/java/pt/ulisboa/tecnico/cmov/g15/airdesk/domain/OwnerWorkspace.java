@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 /**
  * Created by diogo on 03-04-2015.
  */
-public class OwnerWorkspace extends Workspace {
+public class OwnerWorkspace extends Workspace implements Serializable {
     private List<AccessListItem> accessList;
     private WorkspaceVisibility visibility;
     private List<String> tags;

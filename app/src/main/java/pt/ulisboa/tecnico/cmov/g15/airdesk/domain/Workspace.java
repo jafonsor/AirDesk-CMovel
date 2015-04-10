@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 /**
  * Created by MSC on 02/04/2015.
  */
-public abstract class Workspace {
+public abstract class Workspace implements Serializable {
     protected long quota;
     private User owner;
     private String name;

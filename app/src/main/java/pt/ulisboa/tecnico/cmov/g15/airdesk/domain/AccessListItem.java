@@ -1,9 +1,11 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by MSC on 07/04/2015.
  */
-public class AccessListItem {
+public class AccessListItem implements Serializable {
     private User user;
     private boolean allowed;
     private boolean invited;

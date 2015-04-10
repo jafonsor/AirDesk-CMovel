@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
 import android.util.Log;
 
+import java.io.Serializable;
+
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
@@ -10,7 +12,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 /**
  * Created by MSC on 02/04/2015.
  */
-public class AirDeskFile {
+public class AirDeskFile implements Serializable {
     private String name;
     private String path; // Must be a canonical path
     private int version;
