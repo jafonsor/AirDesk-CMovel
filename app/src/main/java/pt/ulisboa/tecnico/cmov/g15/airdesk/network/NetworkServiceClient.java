@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.network;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
@@ -17,19 +16,13 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 public class NetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
     private static NetworkServiceServer networkServiceServer = new NetworkServiceServer();
-    public static List<ForeignWorkspace> blockedForeignWorkspaces = new ArrayList<ForeignWorkspace>();
 
     public NetworkServiceClient() {
     }
 
     public static List<ForeignWorkspace> getAllowedWorkspaces(User user, List<String> tags) {
-        List<ForeignWorkspace> allowedWorkspaces = new ArrayList<ForeignWorkspace>();
-
         //broadcast this message and collects all workspaces
-        for (ForeignWorkspace workspace : networkServiceServer.getAllowedWorkspacesS(user, tags)) {
-            if(!isWorkspaceBlocked(workspace)) allowedWorkspaces.add(workspace);
-        }
-        return allowedWorkspaces;
+        return networkServiceServer.getAllowedWorkspacesS(user, tags);
     }
 
     public static boolean notifyIntention(Workspace workspace, AirDeskFile file, FileState intention) {
@@ -67,7 +60,9 @@ public class NetworkServiceClient {
     }
 
     //TODO temporary
-    public static void setAirDesk(AirDesk airDesk) { networkServiceServer.setAirDesk(airDesk); }
+    public static void setAirDesk(AirDesk airDesk) {
+        networkServiceServer.setAirDesk(airDesk);
+    }
 
     public static boolean removeUserFromAccessList(OwnerWorkspace ownerWorkspace, User user) {
         return networkServiceServer.removeWorkspaceS(ownerWorkspace);
@@ -86,28 +81,7 @@ public class NetworkServiceClient {
 
     public static boolean deleteFile(Workspace workspace, AirDeskFile airDeskFile) {
         //TODO broadcast to accessList
-        return networkServiceServer.deleteFileS(workspace,airDeskFile);
-    }
-
-    public static boolean isWorkspaceBlocked(ForeignWorkspace foreignWorkspace) {
-        for (ForeignWorkspace fw : blockedForeignWorkspaces) {
-            if (fw.getName().equals(foreignWorkspace.getName()) &&
-                    fw.getOwner().equals(foreignWorkspace.getOwner()))
-                return true;
-        }
-        return false;
-    }
-
-    public static boolean removeWorkspaceBlocked(ForeignWorkspace foreignWorkspace){
-        if(!NetworkServiceClient.isWorkspaceBlocked(foreignWorkspace)) return false;
-        ForeignWorkspace fwToRemove=null;
-        for (ForeignWorkspace fw : blockedForeignWorkspaces) {
-            if (fw.getName().equals(foreignWorkspace.getName()) &&
-                    fw.getOwner().equals(foreignWorkspace.getOwner()))
-                fwToRemove = fw;
-        }
-        if(fwToRemove!=null) return blockedForeignWorkspaces.remove(fwToRemove);
-        return false;
+        return networkServiceServer.deleteFileS(workspace, airDeskFile);
     }
 
     public static boolean refreshWorkspacesC() {

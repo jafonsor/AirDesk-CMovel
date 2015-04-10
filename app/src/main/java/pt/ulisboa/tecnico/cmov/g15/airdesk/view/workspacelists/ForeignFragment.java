@@ -115,6 +115,7 @@ public class ForeignFragment extends Fragment {
 
     public void onClickListWorkspaceFiles(ForeignWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
+        //TODO
         //intent.putExtra(FileListActivity.EXTRA_WORKSPACE_ID, workspace.getId());
         startActivity(intent);
         //getActivity().finish();

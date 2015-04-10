@@ -42,7 +42,6 @@ public class AirDesk extends Application {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
         blockedWorkspaces = new ArrayList<ForeignWorkspace>();
-        NetworkServiceClient.blockedForeignWorkspaces = new ArrayList<ForeignWorkspace>();
         NetworkServiceClient.setAirDesk(this);
     }
 
@@ -133,16 +132,16 @@ public class AirDesk extends Application {
         return null;
     }
 
+    public ForeignWorkspace getForeignWorkspaceByName(String workspaceOwnerEmail, String workspaceName) {
+        return findForeignWorkspaceByName(getForeignWorkspaces(), workspaceOwnerEmail, workspaceName);
+    }
+
     private ForeignWorkspace findForeignWorkspaceByName(List<ForeignWorkspace> workspaces, String ownerEmail, String wsName) {
         for(ForeignWorkspace workspace : workspaces)
             if (workspace.getName().equals(wsName))
                 if (workspace.getOwner().getEmail().equals(ownerEmail))
                     return workspace;
         return null;
-    }
-
-    public ForeignWorkspace getForeignWorkspaceByName(String workspaceOwnerEmail, String workspaceName) {
-        return findForeignWorkspaceByName(getForeignWorkspaces(), workspaceOwnerEmail, workspaceName);
     }
 
     public ForeignWorkspace getBlockedWorkspaceByName(String workspaceOwnerEmail, String workspaceName) {
@@ -170,6 +169,12 @@ public class AirDesk extends Application {
 
     public void getAllowedWorkspaces() {
         List<ForeignWorkspace> foreignWSList = NetworkServiceClient.getAllowedWorkspaces(getUser(), getUser().getUserTags());
+        List<ForeignWorkspace> wsListToRemove = new ArrayList<ForeignWorkspace>();
+        for(ForeignWorkspace fw: foreignWSList){
+            if(isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName()))
+                wsListToRemove.add(fw);
+        }
+        foreignWSList.removeAll(wsListToRemove);
         setForeignWorkspaces(foreignWSList);
     }
 

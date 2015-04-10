@@ -114,7 +114,7 @@ public class OwnerWorkspace extends Workspace {
             return false;
         }
         if(itemToAllow.isInvited()) {
-            if(NetworkServiceClient.inviteUser(this, getOwner())) {
+            if(!NetworkServiceClient.inviteUser(this, getOwner())) {
                 Log.e("Error", "Failed to invite user again");
                 return false;
             }
