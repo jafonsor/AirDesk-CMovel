@@ -270,10 +270,10 @@ public class AirDesk extends Application {
         return false;
     }
 
-    public String viewFileContent(String wsOwner, String wsName, String filename) {
+    public String viewFileContent(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
         AirDeskFile mFile = null;
 
-        if (isOwner(wsOwner)) {
+        if (workspaceType == WorkspaceType.OWNER) {
             mFile = getOwnerWorkspaceByName(wsName).getFile(filename);
         } else {
             mFile = getForeignWorkspaceByName(wsOwner, wsName).getFile(filename);
@@ -282,10 +282,10 @@ public class AirDesk extends Application {
         return mFile.read();
     }
 
-    public Boolean saveFileContent(String wsOwner, String wsName, String filename, String content) {
+    public Boolean saveFileContent(String wsOwner, String wsName, String filename, String content, WorkspaceType workspaceType) {
         AirDeskFile mFile = null;
 
-        if (isOwner(wsOwner)) {
+        if (workspaceType == WorkspaceType.OWNER) {
             mFile = getOwnerWorkspaceByName(wsName).getFile(filename);
         } else {
             mFile = getForeignWorkspaceByName(wsOwner, wsName).getFile(filename);

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -101,6 +102,7 @@ public class FileListActivity extends ActionBarActivity {
         intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
         intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
         intent.putExtra(ShowFileActivity.EXTRA_FILE_NAME, mFileName);
+        intent.putExtra(ShowFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
         startActivity(intent);
     }
 
@@ -115,7 +117,7 @@ public class FileListActivity extends ActionBarActivity {
                     @Override
                     public void onClick(DialogInterface di, int which) {
                         String fileName = input.getText().toString();
-                        createAndEditFile(mWorkspaceType,fileName, v);
+                        createAndEditFile(mWorkspaceType, fileName, v);
                         di.dismiss();
                     }
                 })
@@ -144,6 +146,8 @@ public class FileListActivity extends ActionBarActivity {
             intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
             intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
             intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
+            intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
+            Log.e("Assinatura", "WSname: "+ mWorkspaceName +"WSowner: "+ mUserEmail + "Filename: " + fileName + "WStype: " +mWorkspaceType.toString());
             startActivity(intent);
         }
     }

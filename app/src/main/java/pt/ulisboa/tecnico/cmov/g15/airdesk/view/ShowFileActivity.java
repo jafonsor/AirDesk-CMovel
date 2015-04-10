@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 
 public class ShowFileActivity extends ActionBarActivity {
 
@@ -22,10 +23,14 @@ public class ShowFileActivity extends ActionBarActivity {
     public final static String EXTRA_FILE_NAME
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.EXTRA_FILE_NAME";
 
+    public final static String EXTRA_TYPE_OF_WORKSPACE
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.ShowFileActivity.EXTRA_TYPE_OF_WORKSPACE";
+
     private AirDesk mAirDesk;
     private String mWorkspaceName;
     private String mWorkspaceOwner;
     private String mFileName;
+    private WorkspaceType mWorkspaceType;
 
 
     @Override
@@ -39,13 +44,13 @@ public class ShowFileActivity extends ActionBarActivity {
         mWorkspaceOwner = intent.getStringExtra(EXTRA_WORKSPACE_OWNER);
         mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
         mFileName = intent.getStringExtra(EXTRA_FILE_NAME);
-
+        mWorkspaceType = (WorkspaceType) intent.getSerializableExtra(EXTRA_TYPE_OF_WORKSPACE);
 
         TextView fileNameView = (TextView) findViewById(R.id.filename_box);
         fileNameView.setText(mWorkspaceName + ": " + mFileName);
 
         TextView fileContentView = (TextView) findViewById(R.id.file_content_box);
-        fileContentView.setText(mAirDesk.viewFileContent(mWorkspaceOwner, mWorkspaceName, mFileName));
+        fileContentView.setText(mAirDesk.viewFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, mWorkspaceType));
     }
 
 
@@ -76,6 +81,7 @@ public class ShowFileActivity extends ActionBarActivity {
         intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
         intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mWorkspaceOwner);
         intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, mFileName);
+        intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
         startActivity(intent);
         finish();
     }
