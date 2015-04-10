@@ -127,7 +127,7 @@ public class FileListActivity extends ActionBarActivity {
             }
             else {
                 if(!mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType)) {
-                    Toast.makeText(this, "could not create file", Toast.LENGTH_SHORT);
+                    Toast.makeText(this, "could not create file: Workspace full", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent(this, EditFileActivity.class);
                     intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
@@ -136,8 +136,6 @@ public class FileListActivity extends ActionBarActivity {
                     intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
                     // Toast.makeText(this, "File successfully created.", Toast.LENGTH_SHORT).show();
                     startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Workspace full.", Toast.LENGTH_SHORT).show();
                 }
             }
 
