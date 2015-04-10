@@ -249,12 +249,6 @@ public class AirDesk extends Application {
             return true;
     }
 
-    public boolean removeBlockForeignWorkspace(String userEmail, String foreignWorkspaceName) {
-        ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, foreignWorkspaceName);
-        if(fw==null) return false;
-        return NetworkServiceClient.removeWorkspaceBlocked(fw);
-    }
-
     public boolean isOwner(String userEmail) {
         if(user.getEmail().equals(userEmail))
             return true;
