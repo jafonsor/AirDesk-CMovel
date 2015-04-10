@@ -67,9 +67,7 @@ public class NetworkServiceClient {
     }
 
     //TODO temporary
-    public static void setAirDesk(AirDesk airDesk) {
-        networkServiceServer.setAirDesk(airDesk);
-    }
+    public static void setAirDesk(AirDesk airDesk) { networkServiceServer.setAirDesk(airDesk); }
 
     public static boolean removeUserFromAccessList(OwnerWorkspace ownerWorkspace, User user) {
         return networkServiceServer.removeWorkspaceS(ownerWorkspace);

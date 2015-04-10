@@ -108,7 +108,7 @@ public class OwnerFragment extends Fragment {
         startActivity(intent);
     }
 
-    public void onClickDeleteWorkspace(OwnerWorkspace workspace, final View v, final int position) {
+    public void onClickDeleteWorkspace(final OwnerWorkspace workspace, final View v, final int position) {
         final String workspaceName = workspace.getName();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
@@ -117,10 +117,14 @@ public class OwnerFragment extends Fragment {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Toast.makeText(getActivity(), "TO DO: delete workspace", Toast.LENGTH_SHORT).show();
-                        mAirDesk.deleteOwnerWorkspace(workspaceName);
-                        mListAdapter.setItems(mAirDesk.getOwnerWorkspaces());
-                        mListAdapter.notifyDataSetChanged();
+                        if (mAirDesk.deleteOwnerWorkspace(workspaceName)) {
+                            mListAdapter.setItems(mAirDesk.getOwnerWorkspaces());
+                            mListAdapter.notifyDataSetChanged();
+
+                            Toast.makeText(getActivity(), "delete workspace " + workspaceName, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "could not delete workspace " + workspaceName, Toast.LENGTH_SHORT).show();
+                        }
                         dialog.dismiss();
                     }
                 })

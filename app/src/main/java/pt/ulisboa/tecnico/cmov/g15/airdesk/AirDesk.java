@@ -158,8 +158,7 @@ public class AirDesk extends Application {
 
     public boolean toggleUserPermissions(String workspaceName, String userEmail, boolean oldStatus) {
         OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
-        workspace.toggleUserPermissions(userEmail, oldStatus);
-        return true;
+        return workspace.toggleUserPermissions(userEmail, oldStatus);
     }
 
     public List<AccessListItem> getWorkspaceAccessList(String workspaceName) {
