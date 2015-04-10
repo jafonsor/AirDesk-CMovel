@@ -76,52 +76,15 @@ public class AirDesk extends Application {
 
 
     public void populate() {
-        FileSystemManager.deleteRecursively(new File(Environment.getExternalStorageDirectory() + "/AirDesk/" + getUser().getEmail()));
+        //FileSystemManager.deleteRecursively(new File(Environment.getExternalStorageDirectory() + "/AirDesk/" + getUser().getEmail()));
         List<String> tags = new ArrayList<String>() {{
             add("hollyday");
         }};
 
-        if (createOwnerWorkspace("hollyday_at_lodon", 2000L, WorkspaceVisibility.PUBLIC, tags)) {
-            OwnerWorkspace ow = getOwnerWorkspaceByName("hollyday_at_lodon");
-            ow.createFile("my_little_file").write("ola\n\n\n\n\n\n\n\n\n\n\n\n\n\nn\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "OLAAOO" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n" +
-                    "\n\n\n\n\n\n\nolaaaaa\n");
+        String workspaceName = "Workspace"+System.currentTimeMillis();
+        if (createOwnerWorkspace(workspaceName, 2000L, WorkspaceVisibility.PUBLIC, tags)) {
+            OwnerWorkspace ow = getOwnerWorkspaceByName(workspaceName);
+            ow.createFile("file"+System.currentTimeMillis()).write("ola\n");
         }
     }
 
@@ -262,10 +225,10 @@ public class AirDesk extends Application {
     public boolean createFile(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
         if (workspaceType == WorkspaceType.OWNER) {
             if (getOwnerWorkspaceByName(wsName).createFile(filename) != null)
-                return true;
+                return NetworkServiceClient.sendFile(getOwnerWorkspaceByName(wsName), getOwnerWorkspaceByName(wsName).getFile(filename), "");
         } else {
             if (getForeignWorkspaceByName(wsOwner, wsName).createFile(filename) != null)
-                return true;
+                return NetworkServiceClient.sendFile(getForeignWorkspaceByName(wsOwner, wsName), getForeignWorkspaceByName(wsOwner, wsName).getFile(filename), "");
         }
         return false;
     }

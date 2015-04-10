@@ -139,8 +139,8 @@ public class FileListActivity extends ActionBarActivity {
             // TO DO: check if there is already a file with that name
         } else {
             mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType);
-            Toast.makeText(this, "TO DO: check if file exists", Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "TO DO: create file", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "TO DO: check if file exists", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "TO DO: create file", Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(this, EditFileActivity.class);
             intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
@@ -149,6 +149,7 @@ public class FileListActivity extends ActionBarActivity {
             intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
             Log.e("Assinatura", "WSname: "+ mWorkspaceName +"WSowner: "+ mUserEmail + "Filename: " + fileName + "WStype: " +mWorkspaceType.toString());
             startActivity(intent);
+
         }
     }
 }

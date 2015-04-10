@@ -90,8 +90,12 @@ public abstract class Workspace {
         if (getFile(filename) != null) return null;
 
         String path = FileSystemManager.createFile(getPath(), filename);
-        if (path == null)
-            return null;
+        if (path == null){
+            //TEMPORARY 1a entrega
+            path = getPath()+"/"+filename+".txt";
+            //return null;
+        }
+
 
         AirDeskFile newFile = new AirDeskFile(filename, path, this);
         getFiles().add(newFile);
