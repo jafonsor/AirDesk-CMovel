@@ -29,6 +29,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.LoginActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
@@ -117,6 +118,7 @@ public class ForeignFragment extends Fragment {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
         intent.putExtra(FileListActivity.EXTRA_OWNER_EMAIL, mAirDesk.getUser().getEmail());
         intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, workspace.getName());
+        intent.putExtra(FileListActivity.EXTRA_TYPE_OF_WORKSPACE, WorkspaceType.FOREIGN);
         startActivity(intent);
     }
 

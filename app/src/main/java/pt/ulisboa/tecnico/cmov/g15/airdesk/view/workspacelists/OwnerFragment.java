@@ -29,6 +29,7 @@ import java.util.List;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.CreateEditOwnerWorkspaceActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
@@ -122,6 +123,7 @@ public class OwnerFragment extends Fragment {
         Intent intent = new Intent(getActivity(), FileListActivity.class);
         intent.putExtra(FileListActivity.EXTRA_OWNER_EMAIL, mAirDesk.getUser().getEmail());
         intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, workspace.getName());
+        intent.putExtra(FileListActivity.EXTRA_TYPE_OF_WORKSPACE, WorkspaceType.OWNER);
         startActivity(intent);
     }
 

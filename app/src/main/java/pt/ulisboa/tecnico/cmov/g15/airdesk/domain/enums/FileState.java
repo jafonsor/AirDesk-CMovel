@@ -7,4 +7,4 @@ public enum FileState {
     IDLE,
     READ,
     WRITE
-}
+};

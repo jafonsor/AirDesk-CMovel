@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
@@ -38,7 +39,7 @@ public class AirDesk extends Application {
         NetworkServiceClient.setAirDesk(this);
     }
 
-    public void reset(){
+    public void reset() {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
         blockedWorkspaces = new ArrayList<ForeignWorkspace>();
@@ -69,7 +70,9 @@ public class AirDesk extends Application {
         this.foreignWorkspaces = foreignWorkspaces;
     }
 
-    public List<ForeignWorkspace> getBlockedWorkspaces() { return blockedWorkspaces; }
+    public List<ForeignWorkspace> getBlockedWorkspaces() {
+        return blockedWorkspaces;
+    }
 
 
     public void populate() {
@@ -78,7 +81,7 @@ public class AirDesk extends Application {
             add("hollyday");
         }};
 
-        if(createOwnerWorkspace("hollyday_at_lodon", 2000L, WorkspaceVisibility.PUBLIC, tags)){
+        if (createOwnerWorkspace("hollyday_at_lodon", 2000L, WorkspaceVisibility.PUBLIC, tags)) {
             OwnerWorkspace ow = getOwnerWorkspaceByName("hollyday_at_lodon");
             ow.createFile("my_little_file").write("ola\n\n\n\n\n\n\n\n\n\n\n\n\n\nn\n" +
                     "\n" +
@@ -137,7 +140,7 @@ public class AirDesk extends Application {
     }
 
     private ForeignWorkspace findForeignWorkspaceByName(List<ForeignWorkspace> workspaces, String ownerEmail, String wsName) {
-        for(ForeignWorkspace workspace : workspaces)
+        for (ForeignWorkspace workspace : workspaces)
             if (workspace.getName().equals(wsName))
                 if (workspace.getOwner().getEmail().equals(ownerEmail))
                     return workspace;
@@ -170,8 +173,8 @@ public class AirDesk extends Application {
     public void getAllowedWorkspaces() {
         List<ForeignWorkspace> foreignWSList = NetworkServiceClient.getAllowedWorkspaces(getUser(), getUser().getUserTags());
         List<ForeignWorkspace> wsListToRemove = new ArrayList<ForeignWorkspace>();
-        for(ForeignWorkspace fw: foreignWSList){
-            if(isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName()))
+        for (ForeignWorkspace fw : foreignWSList) {
+            if (isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName()))
                 wsListToRemove.add(fw);
         }
         foreignWSList.removeAll(wsListToRemove);
@@ -195,7 +198,7 @@ public class AirDesk extends Application {
     }
 
     public boolean createOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
-        if(getOwnerWorkspaceByName(name) != null) {
+        if (getOwnerWorkspaceByName(name) != null) {
             Log.e("Error", "trying to create a workspace with a name that already exists");
             return false;
         }
@@ -239,29 +242,29 @@ public class AirDesk extends Application {
 
     public boolean blockForeignWorkspace(String userEmail, String foreignWorkspaceName) {
         ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, foreignWorkspaceName);
-        if(fw==null) {
+        if (fw == null) {
             Log.e("Error", "blocking a foreign workspace that doesn't exist");
             return false;
         }
-        if(!isForeignWorkspaceBlocked(userEmail, foreignWorkspaceName))
+        if (!isForeignWorkspaceBlocked(userEmail, foreignWorkspaceName))
             return getBlockedWorkspaces().add(fw);
         else
             return true;
     }
 
     public boolean isOwner(String userEmail) {
-        if(user.getEmail().equals(userEmail))
+        if (user.getEmail().equals(userEmail))
             return true;
 
         return false;
     }
 
-    public boolean createFile(String wsOwner, String wsName, String filename) {
-        if(isOwner(wsOwner)) {
-            if(getOwnerWorkspaceByName(wsName).createFile(filename) != null)
+    public boolean createFile(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
+        if (workspaceType == WorkspaceType.OWNER) {
+            if (getOwnerWorkspaceByName(wsName).createFile(filename) != null)
                 return true;
         } else {
-            if(getForeignWorkspaceByName(wsOwner, wsName).createFile(filename) != null)
+            if (getForeignWorkspaceByName(wsOwner, wsName).createFile(filename) != null)
                 return true;
         }
         return false;
@@ -270,7 +273,7 @@ public class AirDesk extends Application {
     public String viewFileContent(String wsOwner, String wsName, String filename) {
         AirDeskFile mFile = null;
 
-        if(isOwner(wsOwner)) {
+        if (isOwner(wsOwner)) {
             mFile = getOwnerWorkspaceByName(wsName).getFile(filename);
         } else {
             mFile = getForeignWorkspaceByName(wsOwner, wsName).getFile(filename);
