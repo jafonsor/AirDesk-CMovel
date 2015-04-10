@@ -168,12 +168,15 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
             }
         } else {
             success = mAirDesk.editOwnerWorkspace(workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
-            if(success)
+            if(success) {
                 Toast.makeText(this, "settings saved", Toast.LENGTH_SHORT).show();
+
+            }
             else
                 Toast.makeText(this, "settings not saved", Toast.LENGTH_SHORT).show();
         }
 
+        this.setResult(0); //Destroy o swipe anterior
         startActivity(new Intent(this, SwipeActivity.class));
         finish();
     }

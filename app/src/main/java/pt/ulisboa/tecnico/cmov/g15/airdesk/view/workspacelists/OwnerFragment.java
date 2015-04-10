@@ -116,7 +116,7 @@ public class OwnerFragment extends Fragment {
 
     public void onClickCreateWorkspace(View v) {
         Intent intent = new Intent(getActivity(), CreateEditOwnerWorkspaceActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,1);
     }
 
     public void onClickListWorkspaceFiles(OwnerWorkspace workspace, View v) {
@@ -159,7 +159,7 @@ public class OwnerFragment extends Fragment {
     public void onClickWorkspaceSettings(OwnerWorkspace workspace, View v) {
         Intent intent = new Intent(getActivity(), CreateEditOwnerWorkspaceActivity.class);
         intent.putExtra(CreateEditOwnerWorkspaceActivity.EXTRA_WORKSPACE_NAME, workspace.getName());
-        startActivity(intent);
+        startActivityForResult(intent,1);
     }
 
     public void onClickEditAccessList(OwnerWorkspace workspace, View v) {

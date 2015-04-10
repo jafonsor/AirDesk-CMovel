@@ -60,4 +60,17 @@ public class SwipeActivity extends FragmentActivity {
         AlertDialog deleteFileDialog = alertDialogBuilder.create();
         deleteFileDialog.show();
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        //matches the result code passed from ChildActivity
+        if(resultCode == 0)
+        {
+            //kill self
+            finish();
+        }
+    }
 }
