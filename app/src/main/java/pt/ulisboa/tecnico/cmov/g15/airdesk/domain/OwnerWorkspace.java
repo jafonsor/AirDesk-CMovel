@@ -107,14 +107,19 @@ public class OwnerWorkspace extends Workspace {
     }
 
     public boolean allowUserFromAccessList(AccessListItem itemToAllow) {
-        // remove item. the user may not be interested on this workspace any more
-        getAccessList().remove(itemToAllow);
         removeUsersFromAccessListExceptInvited();
         boolean returnValue = NetworkServiceClient.refreshWorkspacesC();
         if(!returnValue) {
             Log.e("Error", "Could not refresh workspaces when  allowing  " + getName() + ", " + itemToAllow.getUser().getEmail());
             return false;
         }
+        if(itemToAllow.isInvited()) {
+            if(NetworkServiceClient.inviteUser(this, getOwner())) {
+                Log.e("Error", "Failed to invite user again");
+                return false;
+            }
+        }
+        itemToAllow.setAllowed(true);
         return true;
     }
 

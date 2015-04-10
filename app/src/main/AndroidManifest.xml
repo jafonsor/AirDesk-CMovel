@@ -47,7 +47,7 @@
         </activity>
         <activity
             android:name=".view.EditAccessListActivity"
-            android:label="@string/title_activity_workspace_settings" >
+            android:label="@string/title_activity_edit_access_list" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.workspacelists.SwipeActivity" />

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AccessListItem;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
@@ -129,12 +128,17 @@ public class NetworkServiceServer {
     }
 
     public boolean inviteUserS(OwnerWorkspace workspace, User user) {
+        ForeignWorkspace fw = Utils.OwnerToForeignWorkspace(workspace);
+        if(airDesk.isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName()))
+            return true;
         if(user.equals(airDesk.getUser()))
-            return this.airDesk.getForeignWorkspaces().add(Utils.OwnerToForeignWorkspace(workspace));
+            return this.airDesk.getForeignWorkspaces().add(fw);
         return true;
     }
 
     public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
+        if(airDesk.isForeignWorkspaceBlocked(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName()))
+            return true;
         return airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
     }
 

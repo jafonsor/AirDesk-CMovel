@@ -95,11 +95,12 @@ public class ForeignFragment extends Fragment {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if (mAirDesk.addBlockedForeignWorkspace(userEmail, workspaceName))
+                        if (mAirDesk.blockForeignWorkspace(userEmail, workspaceName))
                             if (mAirDesk.deleteForeignWorkspace(userEmail, workspaceName))
                                 Toast.makeText(getActivity(), "Foreign workspace Deleted", Toast.LENGTH_SHORT).show();
                             else
                                 Toast.makeText(getActivity(), "Error removing workspace", Toast.LENGTH_SHORT).show();
+                        mListAdapter.setItems(mAirDesk.getForeignWorkspaces());
                         mListAdapter.notifyDataSetChanged();
                     }
                 })
