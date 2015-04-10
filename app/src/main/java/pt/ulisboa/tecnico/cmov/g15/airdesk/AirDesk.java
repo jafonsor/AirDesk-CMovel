@@ -36,6 +36,13 @@ public class AirDesk extends Application {
         NetworkServiceClient.setAirDesk(this);
     }
 
+    public void reset(){
+        ownerWorkspaces = new ArrayList<OwnerWorkspace>();
+        foreignWorkspaces = new ArrayList<ForeignWorkspace>();
+        NetworkServiceClient.blockedForeignWorkspaces = new ArrayList<ForeignWorkspace>();
+        NetworkServiceClient.setAirDesk(this);
+    }
+
     public User getUser() {
         return user;
     }
