@@ -256,6 +256,17 @@ public class AirDesk extends Application {
         return false;
     }
 
+    public boolean createFile(String wsOwner, String wsName, String filename) {
+        if(isOwner(wsOwner)) {
+            if(getOwnerWorkspaceByName(wsName).createFile(filename) != null)
+                return true;
+        } else {
+            if(getForeignWorkspaceByName(wsOwner, wsName).createFile(filename) != null)
+                return true;
+        }
+        return false;
+    }
+
     public String viewFileContent(String wsOwner, String wsName, String filename) {
         AirDeskFile mFile = null;
 

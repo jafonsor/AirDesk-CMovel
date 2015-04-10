@@ -53,10 +53,6 @@ public class FileListActivity extends ActionBarActivity {
 
         TextView workspaceNameView = (TextView)findViewById(R.id.workspace_name);
 
-        //Workspace workspace = mAirDesk.getWorkspaceById(mWorkspaceId);
-
-        //workspaceNameView.setText(workspace.getName());
-
         ListView fileList = (ListView) findViewById(R.id.file_list);
 
         List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName);
@@ -126,7 +122,6 @@ public class FileListActivity extends ActionBarActivity {
 
     public void onClickShowFile(AirDeskFile file, View v) {
         Intent intent = new Intent(this, ShowFileActivity.class);
-        boolean mIsOwner = mAirDesk.isOwner(mUserEmail);
         String mFileName = file.getName();
 
         intent.putExtra(ShowFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
@@ -167,13 +162,14 @@ public class FileListActivity extends ActionBarActivity {
             onClickCreateFile(v);
             // TO DO: check if there is already a file with that name
         } else {
+            mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName);
             Toast.makeText(this, "TO DO: check if file exists", Toast.LENGTH_SHORT).show();
             Toast.makeText(this, "TO DO: create file", Toast.LENGTH_SHORT).show();
 
-            //Integer fileId = mAirDesk.createFile(fileName);
-
             Intent intent = new Intent(this, EditFileActivity.class);
-            //intent.putExtra(EditFileActivity.EXTRA_FILE_ID, fileId);
+            intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
+            intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
+            intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
             startActivity(intent);
         }
     }
