@@ -162,7 +162,10 @@ public class FileSystemManager {
         if (file != null) {
             return file.delete();
         }
-        return false;
+
+        //TODO 2a parte alterar para retornar false, feito apenas para nao remover duas vezes o ficheiro
+        // (que é o mesmo no cartao por se tratar de workspaces espelhados)
+        return true;
     }
 
 }

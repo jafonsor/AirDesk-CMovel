@@ -117,7 +117,7 @@ public class AirDeskFile {
     }
 
     public String read() {
-        if (NetworkServiceClient.getFileVersion(getWorkspace(), this) <= getVersion())
+        if (NetworkServiceClient.getFileVersion(getWorkspace(), this) > getVersion())
             writeNoNetwork(NetworkServiceClient.getFile(getWorkspace(), this));
 
         return FileSystemManager.getFileContent(getPath());
