@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 /**
@@ -119,6 +120,23 @@ public abstract class Workspace {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public boolean deleteFile(String fileName) {
+        AirDeskFile file = getFile(fileName);
+        if(file == null) {
+            Log.e("Error", "trying to remove file that doesn't exist from workspace");
+            return false;
+        }
+        if(!file.delete()) {
+            Log.e("Error", "file delete gonne wrong");
+            return false;
+        }
+        if(!getFiles().remove(file)) {
+            Log.e("Error", "could not remove file from file list");
+            return false;
+        }
+        return true;
     }
 
 }

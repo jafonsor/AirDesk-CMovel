@@ -270,7 +270,7 @@ public class AirDesk extends Application {
         return fw != null;
     }
 
-    public Boolean fileExists(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
+    public boolean fileExists(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
         AirDeskFile mFile = null;
         if (workspaceType == WorkspaceType.OWNER) {
             mFile = getOwnerWorkspaceByName(wsName).getFile(filename);
@@ -280,6 +280,22 @@ public class AirDesk extends Application {
 
         if(mFile==null) return false;
         else return true;
+    }
+
+    public boolean deleteFile(String ownerEmail, String workspaceName, String fileName, WorkspaceType mWorkspaceType) {
+        Workspace w = null;
+        if(mWorkspaceType == WorkspaceType.FOREIGN) {
+            w = getForeignWorkspaceByName(ownerEmail, workspaceName);
+        } else {
+            w = getOwnerWorkspaceByName(workspaceName);
+        }
+
+        if(w == null) {
+            Log.e("Error", "workspace of file not found");
+            return false;
+        }
+
+        return w.deleteFile(fileName);
     }
 
 }

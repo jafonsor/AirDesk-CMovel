@@ -39,6 +39,8 @@ public class FileListActivity extends ActionBarActivity {
     private String mWorkspaceName;
     private WorkspaceType mWorkspaceType;
 
+    ListAdapter<AirDeskFile> mListAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +60,7 @@ public class FileListActivity extends ActionBarActivity {
         List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName);
 
 
-        final ListAdapter<AirDeskFile> listAdapter = new ListAdapter<AirDeskFile>(this, R.layout.file_item, files) {
+        mListAdapter = new ListAdapter<AirDeskFile>(this, R.layout.file_item, files) {
             @Override
             public void initItemView(final AirDeskFile file, View view, final int position) {
                 TextView fileNameView = (TextView) view.findViewById(R.id.file_name);
@@ -74,11 +76,11 @@ public class FileListActivity extends ActionBarActivity {
             }
         };
 
-        fileList.setAdapter(listAdapter);
+        fileList.setAdapter(mListAdapter);
         fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onClickShowFile(listAdapter.getItem(position), view);
+                onClickShowFile(mListAdapter.getItem(position), view);
             }
         });
 
@@ -99,8 +101,13 @@ public class FileListActivity extends ActionBarActivity {
     }
 
     public void onClickDeleteFile(AirDeskFile file, View v) {
-        Toast.makeText(this, "deleting file " + file.getName(), Toast.LENGTH_SHORT).show();
-        //mAirDesk.deleteFile(file.getId());
+        if(!mAirDesk.deleteFile(mUserEmail, mWorkspaceName, file.getName(), mWorkspaceType)) {
+            Toast.makeText(this, "file not deleted", Toast.LENGTH_SHORT).show();
+        } else {
+            mListAdapter.setItems(mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName));
+            mListAdapter.notifyDataSetChanged();
+            Toast.makeText(this, "file deleted", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onClickShowFile(AirDeskFile file, View v) {

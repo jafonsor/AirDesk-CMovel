@@ -1,5 +1,8 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import android.util.Log;
+
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
@@ -77,8 +80,13 @@ public class AirDeskFile {
     }
 
     public boolean delete() {
-        NetworkServiceClient.deleteFile(getWorkspace(), this);
-        return FileSystemManager.deleteFile(getPath());
+        boolean remoteDeleteStatus = NetworkServiceClient.deleteFile(getWorkspace(), this);
+        boolean localDeleteStatus = FileSystemManager.deleteFile(getPath());
+        if(!remoteDeleteStatus)
+            Log.e("Error", "could not delete remote file");
+        if(!localDeleteStatus)
+            Log.e("Error", "could not delete local file");
+        return remoteDeleteStatus && localDeleteStatus;
     }
 
     public boolean deleteNoNetwork() {

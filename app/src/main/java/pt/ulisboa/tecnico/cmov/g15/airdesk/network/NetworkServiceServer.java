@@ -142,6 +142,8 @@ public class NetworkServiceServer {
     public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
         if (airDesk.isForeignWorkspaceBlocked(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName()))
             return true;
+        if (airDesk.getOwnerWorkspaceByName(ownerWorkspace.getName()) == null)
+            return true;
         return airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
     }
 
@@ -160,10 +162,13 @@ public class NetworkServiceServer {
 
     public boolean deleteFileS(Workspace workspace, AirDeskFile airDeskFile) {
         AirDeskFile f;
-        if (workspace.isOwner()) {
+        if (!workspace.isOwner()) {
             f = airDesk.getOwnerWorkspaceByName(workspace.getName()).getFile(airDeskFile.getName());
         } else {
-            f = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName()).getFile(airDeskFile.getName());
+            ForeignWorkspace fw = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName());
+            if(fw == null)
+                return true;
+            f = fw.getFile(airDeskFile.getName());
         }
         return f.deleteNoNetwork();
     }
