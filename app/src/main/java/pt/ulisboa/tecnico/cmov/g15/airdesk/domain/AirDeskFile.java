@@ -1,11 +1,12 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
-import android.util.Log;
-
 import java.io.Serializable;
 
-import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.DeleteFileException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.LocalDeleteAirDeskFileException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.RemoteDeleteAirDeskFileException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
@@ -82,16 +83,25 @@ public class AirDeskFile implements Serializable {
     }
 
     public boolean delete() {
-        boolean remoteDeleteStatus = NetworkServiceClient.deleteFile(getWorkspace(), this);
-        boolean localDeleteStatus = FileSystemManager.deleteFile(getPath());
-        if(!remoteDeleteStatus)
-            Log.e("Error", "could not delete remote file");
-        if(!localDeleteStatus)
-            Log.e("Error", "could not delete local file");
-        return remoteDeleteStatus && localDeleteStatus;
+
+        //Delete remotely
+        try {
+            NetworkServiceClient.deleteFile(getWorkspace(), this);
+        } catch (AirDeskException e) {
+            throw new RemoteDeleteAirDeskFileException(this.getName());
+        }
+
+        //Delete locally
+        try {
+            FileSystemManager.deleteFile(getPath());
+        } catch (AirDeskException e) {
+            throw new LocalDeleteAirDeskFileException(this.getName());
+        }
+
+        return true;
     }
 
-    public boolean deleteNoNetwork() {
+    public boolean deleteNoNetwork() throws DeleteFileException {
         return FileSystemManager.deleteFile(getPath());
     }
 
@@ -105,7 +115,7 @@ public class AirDeskFile implements Serializable {
             setSize(contentSize);
             return NetworkServiceClient.sendFile(getWorkspace(), this, content) &&
                     FileSystemManager.setFileContent(getPath(), content);
-        }else
+        } else
             return false;
     }
 

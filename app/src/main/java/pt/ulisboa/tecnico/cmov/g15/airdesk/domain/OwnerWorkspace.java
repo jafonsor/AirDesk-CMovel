@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 
@@ -159,8 +160,8 @@ public class OwnerWorkspace extends Workspace implements Serializable {
 
     //Faz-se override porque só tem que propagar na rede se for criação de Owner
     @Override
-    public boolean create() {
-        if (!super.create()) return false;
+    public boolean create(WorkspaceType workspaceType) {
+        if (!super.create(WorkspaceType.OWNER)) return false;
 
         //Network
         if (getVisibility() == WorkspaceVisibility.PUBLIC) {

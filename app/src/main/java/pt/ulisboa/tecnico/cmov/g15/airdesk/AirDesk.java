@@ -48,6 +48,7 @@ public class AirDesk extends Application {
         NetworkServiceClient.setAirDesk(this);
     }
 
+    /*
     @Override
     public void onCreate() {
         try {
@@ -67,7 +68,7 @@ public class AirDesk extends Application {
             throw new RuntimeException(e);
         }
     }
-
+*/
     public void backup() {
         Log.i("info", "saving state");
         List<OwnerWorkspace> ownerWorkspaces = getOwnerWorkspaces();
@@ -220,7 +221,7 @@ public class AirDesk extends Application {
         OwnerWorkspace ow = new OwnerWorkspace(getUser(), name, quota, visibility, tags);
         getOwnerWorkspaces().add(ow);
         NetworkServiceClient.workspaceCreated();
-        return ow.create();
+        return ow.create(WorkspaceType.OWNER);
     }
 
     public boolean editOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {

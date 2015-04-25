@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 /**
@@ -30,8 +31,8 @@ public abstract class Workspace implements Serializable {
         this.quota = quota;
     }
 
-    public boolean create() {
-        String path = FileSystemManager.createWorkspace(getOwner().getEmail(), getName());
+    public boolean create(WorkspaceType workspaceType) {
+        String path = FileSystemManager.createWorkspace(getOwner().getEmail(), getName(), workspaceType);
 
         if (path == null) return false;
 
