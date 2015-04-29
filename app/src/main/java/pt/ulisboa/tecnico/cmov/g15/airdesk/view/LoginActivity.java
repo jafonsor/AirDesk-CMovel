@@ -70,7 +70,6 @@ public class LoginActivity extends ActionBarActivity {
         editText = (EditText) findViewById(R.id.login_tags_box);
         String tags = editText.getText().toString().trim();
 
-
         if (login_email != null && !login_email.equals("")) {
             //TODO verificar que email é unico
             User user = new User(login_nickname, login_email);

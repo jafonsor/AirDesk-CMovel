@@ -82,7 +82,6 @@ public class AirDesk extends Application {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public void reset() {
