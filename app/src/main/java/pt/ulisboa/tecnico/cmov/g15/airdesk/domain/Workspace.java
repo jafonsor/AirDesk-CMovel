@@ -8,6 +8,7 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceFullException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 /**
@@ -87,7 +88,7 @@ public abstract class Workspace implements Serializable {
         //WARNING This method never contacts Network
         if (remainingSpace() <= 0) {
             Log.e("workspace", "creating file but there is no space left");
-            return null;
+            throw new WorkspaceFullException("creating file but there is on space left");
         }
 
         if (getFile(filename) != null) return null;

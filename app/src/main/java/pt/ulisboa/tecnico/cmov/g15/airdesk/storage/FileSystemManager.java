@@ -27,6 +27,14 @@ public class FileSystemManager {
 
     private static File sdcard0 = Environment.getExternalStorageDirectory();
 
+    private static File applicationFolder = new File(sdcard0,  "/AirDesk/");
+
+    public static File getApplicationFolder() { return FileSystemManager.applicationFolder; }
+
+    public static void resetStorageFolder() {
+        deleteRecursively(getApplicationFolder());
+    }
+
     // recursively delete files. used to delete all folders and subfolders
     public static boolean deleteRecursively(File file) throws DeleteFileException {
 
@@ -139,7 +147,7 @@ public class FileSystemManager {
         String dirName = workspaceType.toString() + "/" + userEmail + "/" + wsName;
 
 
-        File newDir = new File(sdcard0 + "/AirDesk/", dirName);
+        File newDir = new File(getApplicationFolder(), dirName);
 
         if (!newDir.exists()) {
             newDir.mkdirs();
