@@ -64,8 +64,8 @@ public class NetworkServiceClient {
         networkServiceServer.setAirDesk(airDesk);
     }
 
-    public static boolean removeUserFromAccessList(OwnerWorkspace ownerWorkspace, User user) {
-        return networkServiceServer.removeWorkspaceS(ownerWorkspace);
+    public static void removeUserFromAccessList(OwnerWorkspace ownerWorkspace, User user) {
+        networkServiceServer.removeWorkspaceS(ownerWorkspace);
     }
 
     public static void workspaceCreated() {
@@ -73,15 +73,15 @@ public class NetworkServiceClient {
         networkServiceServer.workspaceCreatedS();
     }
 
-    public static boolean removeWorkspace(OwnerWorkspace workspace) {
+    public static void removeWorkspace(OwnerWorkspace workspace) {
         //TODO broadcast to accessList
-        return networkServiceServer.removeWorkspaceS(workspace);
+        networkServiceServer.removeWorkspaceS(workspace);
     }
 
 
-    public static boolean deleteFile(Workspace workspace, AirDeskFile airDeskFile) {
+    public static void deleteFile(Workspace workspace, AirDeskFile airDeskFile) {
         //TODO broadcast to accessList
-        return networkServiceServer.deleteFileS(workspace, airDeskFile);
+        networkServiceServer.deleteFileS(workspace, airDeskFile);
     }
 
     public static boolean refreshWorkspacesC() {

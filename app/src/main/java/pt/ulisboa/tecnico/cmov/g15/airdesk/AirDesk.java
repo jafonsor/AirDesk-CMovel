@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
@@ -158,31 +159,26 @@ public class AirDesk extends Application {
         return findForeignWorkspaceByName(getBlockedWorkspaces(), workspaceOwnerEmail, workspaceName);
     }
 
-    public boolean deleteOwnerWorkspace(String workspaceName) {
+    public void deleteOwnerWorkspace(String workspaceName) {
         OwnerWorkspace ow = getOwnerWorkspaceByName(workspaceName);
         if (ow == null) {
             Log.e("bad error", "owner workspace not found: " + workspaceName);
-            return false;
+            throw new WorkspaceDoesNotExistException(workspaceName);
         }
 
-        return getOwnerWorkspaces().remove(ow) && ow.delete();
+        getOwnerWorkspaces().remove(ow);
+        ow.delete();
     }
 
-    public boolean deleteForeignWorkspace(String userEmail, String workspaceName) {
+    public void deleteForeignWorkspace(String userEmail, String workspaceName) {
         ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, workspaceName);
         if (fw == null) {
-            Log.e("bad error", "foreign workspace not found: " + workspaceName);
-            return false;
+            throw new WorkspaceDoesNotExistException(workspaceName);
         }
         if(!getForeignWorkspaces().remove(fw)) {
             Log.e("bad error", "could not remove from list: " + workspaceName);
-            return false;
         }
-        if(!fw.delete()) {
-            Log.e("bad error", "workspace delete failed: " + workspaceName);
-            return false;
-        }
-        return true;
+        fw.delete();
     }
 
     public void getAllowedWorkspaces() {
@@ -326,7 +322,7 @@ public class AirDesk extends Application {
         else return true;
     }
 
-    public boolean deleteFile(String ownerEmail, String workspaceName, String fileName, WorkspaceType mWorkspaceType) {
+    public void deleteFile(String ownerEmail, String workspaceName, String fileName, WorkspaceType mWorkspaceType) {
         Workspace w = null;
         if(mWorkspaceType == WorkspaceType.FOREIGN) {
             w = getForeignWorkspaceByName(ownerEmail, workspaceName);
@@ -335,11 +331,10 @@ public class AirDesk extends Application {
         }
 
         if(w == null) {
-            Log.e("Error", "workspace of file not found");
-            return false;
+            throw new WorkspaceDoesNotExistException("error deleting file on " + workspaceName);
         }
 
-        return w.deleteFile(fileName);
+        w.deleteFile(fileName);
     }
 
 }

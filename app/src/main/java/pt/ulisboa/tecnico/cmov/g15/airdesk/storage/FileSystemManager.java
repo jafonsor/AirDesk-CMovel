@@ -26,14 +26,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsExce
 public class FileSystemManager {
 
     private static File sdcard0 = Environment.getExternalStorageDirectory();
-
-    private static File applicationFolder = new File(sdcard0,  "/AirDesk/");
-
-    public static File getApplicationFolder() { return FileSystemManager.applicationFolder; }
-
-    public static void resetStorageFolder() {
-        deleteRecursively(getApplicationFolder());
-    }
+    private static File appDir = new File(sdcard0, "/AirDesk");
 
     // recursively delete files. used to delete all folders and subfolders
     public static boolean deleteRecursively(File file) throws DeleteFileException {
@@ -137,6 +130,12 @@ public class FileSystemManager {
         }
     }
 
+    public static File workspaceDir(String userEmail, String wsName, WorkspaceType workspaceType) {
+        String dirName = workspaceType.toString() + "/" + userEmail + "/" + wsName;
+
+        return new File(appDir, dirName);
+    }
+
     public static String createWorkspace(String userEmail, String wsName, WorkspaceType workspaceType)
             throws WorkspaceAlreadyExistsException, CanonicalPathException {
         /*
@@ -144,10 +143,8 @@ public class FileSystemManager {
             Note: This approach is useful to have different files with the
                   same name in different workspaces.
          */
-        String dirName = workspaceType.toString() + "/" + userEmail + "/" + wsName;
 
-
-        File newDir = new File(getApplicationFolder(), dirName);
+        File newDir = workspaceDir(userEmail, wsName, workspaceType);
 
         if (!newDir.exists()) {
             newDir.mkdirs();
@@ -163,7 +160,7 @@ public class FileSystemManager {
         }
     }
 
-    public static boolean deleteWorkspace(String dirPath)
+    public static void deleteWorkspace(String dirPath)
             throws DeleteFileException, DeleteWorkspaceException {
 
         File ws = new File(dirPath);
@@ -174,21 +171,30 @@ public class FileSystemManager {
                     throw new DeleteFileException(children[i]);
                 }
             }
-            return ws.delete();
+            if(!ws.delete()) {
+                throw new DeleteWorkspaceException(dirPath + " could not remove dir");
+            }
+        } else {
+            throw new DeleteWorkspaceException(dirPath + " is not dir");
         }
-        throw new DeleteWorkspaceException(dirPath);
     }
 
-    public static boolean deleteFile(String filePath)
+    public static void deleteFile(String filePath)
             throws DeleteFileException {
 
         File file = getFile(filePath);
 
-        if (file != null) {
-            return file.delete();
+        if(file == null) {
+            throw new DeleteFileException("invalid path");
         }
 
-        throw new DeleteFileException(filePath);
+        if (!file.delete()) {
+            throw new DeleteFileException("could not delete file");
+        }
+    }
+
+    public static void deleteStorage() {
+        deleteRecursively(appDir);
     }
 
 }

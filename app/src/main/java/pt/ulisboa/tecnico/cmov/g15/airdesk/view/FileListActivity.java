@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 
 public class FileListActivity extends ActionBarActivity {
@@ -101,12 +102,13 @@ public class FileListActivity extends ActionBarActivity {
     }
 
     public void onClickDeleteFile(AirDeskFile file, View v) {
-        if(!mAirDesk.deleteFile(mUserEmail, mWorkspaceName, file.getName(), mWorkspaceType)) {
-            Toast.makeText(this, "file not deleted", Toast.LENGTH_SHORT).show();
-        } else {
+        try {
+            mAirDesk.deleteFile(mUserEmail, mWorkspaceName, file.getName(), mWorkspaceType);
             mListAdapter.setItems(mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName, mWorkspaceType));
             mListAdapter.notifyDataSetChanged();
             Toast.makeText(this, "file deleted", Toast.LENGTH_SHORT).show();
+        } catch(WorkspaceDoesNotExistException e) {
+            Toast.makeText(this, "file not deleted", Toast.LENGTH_SHORT).show();
         }
     }
 

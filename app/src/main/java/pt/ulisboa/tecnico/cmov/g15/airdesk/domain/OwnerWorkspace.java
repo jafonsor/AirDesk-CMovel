@@ -101,11 +101,7 @@ public class OwnerWorkspace extends Workspace implements Serializable {
     }
 
     public boolean blockUserFromAccessList(AccessListItem itemToBlock) {
-        boolean returnValue = NetworkServiceClient.removeUserFromAccessList(this, itemToBlock.getUser());
-        if(!returnValue) {
-            Log.e("Error", "Could not remove user from accesslist " + getName() + ", " + itemToBlock.getUser().getEmail());
-            return false;
-        }
+        NetworkServiceClient.removeUserFromAccessList(this, itemToBlock.getUser());
         itemToBlock.setAllowed(false);
         return true;
     }
@@ -175,9 +171,9 @@ public class OwnerWorkspace extends Workspace implements Serializable {
 
     //Faz-se override porque só tem que propagar na rede se for criação de Owner
     @Override
-    public boolean delete() {
-        if (!super.delete()) return false;
-        return NetworkServiceClient.removeWorkspace(this);
+    public void delete() {
+        super.delete();
+        NetworkServiceClient.removeWorkspace(this);
     }
 
     @Override

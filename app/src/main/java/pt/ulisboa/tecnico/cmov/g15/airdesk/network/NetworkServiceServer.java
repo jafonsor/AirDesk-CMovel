@@ -139,12 +139,12 @@ public class NetworkServiceServer {
         return true;
     }
 
-    public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
+    public void removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
         if (airDesk.isForeignWorkspaceBlocked(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName()))
-            return true;
+            return;
         if (airDesk.getOwnerWorkspaceByName(ownerWorkspace.getName()) == null)
-            return true;
-        return airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
+            return;
+        airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
     }
 
     public AirDesk getAirDesk() {
@@ -160,7 +160,7 @@ public class NetworkServiceServer {
         airDesk.getAllowedWorkspaces();
     }
 
-    public boolean deleteFileS(Workspace workspace, AirDeskFile airDeskFile) {
+    public void deleteFileS(Workspace workspace, AirDeskFile airDeskFile) {
         AirDeskFile f;
         if (!workspace.isOwner()) {
             f = airDesk.getOwnerWorkspaceByName(workspace.getName()).getFile(airDeskFile.getName());
@@ -170,13 +170,13 @@ public class NetworkServiceServer {
         } else {
             ForeignWorkspace fw = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName());
             if(fw == null)
-                return true;
+                return;
             f = fw.getFile(airDeskFile.getName());
             if(f!=null){
                 airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName()).getFiles().remove(f);
             }
         }
-        return f.deleteNoNetwork();
+        f.deleteNoNetwork();
     }
 
     public boolean refreshWorkspacesS() {

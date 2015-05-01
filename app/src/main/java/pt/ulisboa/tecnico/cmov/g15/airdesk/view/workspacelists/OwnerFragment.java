@@ -30,6 +30,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.CreateEditOwnerWorkspaceActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditAccessListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
@@ -136,12 +137,13 @@ public class OwnerFragment extends Fragment {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if (mAirDesk.deleteOwnerWorkspace(workspaceName)) {
+                        try {
+                            mAirDesk.deleteOwnerWorkspace(workspaceName);
                             mListAdapter.setItems(mAirDesk.getOwnerWorkspaces());
                             mListAdapter.notifyDataSetChanged();
 
                             Toast.makeText(getActivity(), "delete workspace " + workspaceName, Toast.LENGTH_SHORT).show();
-                        } else {
+                        } catch (AirDeskException e) {
                             Toast.makeText(getActivity(), "could not delete workspace " + workspaceName, Toast.LENGTH_SHORT).show();
                         }
                         dialog.dismiss();
