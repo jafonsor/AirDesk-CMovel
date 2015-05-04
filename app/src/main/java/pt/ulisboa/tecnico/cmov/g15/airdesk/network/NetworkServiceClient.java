@@ -45,8 +45,8 @@ public class NetworkServiceClient {
     }
 
 
-    public static boolean sendFile(Workspace workspace, AirDeskFile file, String fileContent) {
-        return networkServiceServer.sendFileS(workspace, file, fileContent);
+    public static void sendFile(Workspace workspace, AirDeskFile file, String fileContent) {
+        networkServiceServer.sendFileS(workspace, file, fileContent);
     }
 
 
@@ -55,8 +55,8 @@ public class NetworkServiceClient {
         return networkServiceServer.changeQuotaS(workspace, quota);
     }
 
-    public static boolean inviteUser(OwnerWorkspace workspace, User user) {
-        return networkServiceServer.inviteUserS(workspace, user);
+    public static void inviteUser(OwnerWorkspace workspace, User user) {
+        networkServiceServer.inviteUserS(workspace, user);
     }
 
     //TODO temporary

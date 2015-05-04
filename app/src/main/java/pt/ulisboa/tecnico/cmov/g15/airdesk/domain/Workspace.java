@@ -38,14 +38,12 @@ public abstract class Workspace implements Serializable {
         this.quota = quota;
     }
 
-    public boolean create(WorkspaceType workspaceType) {
-        String path = FileSystemManager.createWorkspace(getOwner().getEmail(), getName(), workspaceType);
-
-        if (path == null) return false;
-
+    public void create() {
+        String path = FileSystemManager.createWorkspace(getOwner().getEmail(), getName(), getType());
         setPath(path);
-        return true;
     }
+
+    public abstract WorkspaceType getType();
 
     public void delete() throws DeleteFileException, DeleteWorkspaceException {
         FileSystemManager.deleteWorkspace(getPath());

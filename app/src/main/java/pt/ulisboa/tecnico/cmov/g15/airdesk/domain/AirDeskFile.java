@@ -112,8 +112,8 @@ public class AirDeskFile implements Serializable {
         if (NetworkServiceClient.notifyIntention(getWorkspace(), this, FileState.WRITE)) {
             incrementVersion();
             setSize(contentSize);
-            return NetworkServiceClient.sendFile(getWorkspace(), this, content) &&
-                    FileSystemManager.setFileContent(getPath(), content);
+            NetworkServiceClient.sendFile(getWorkspace(), this, content);
+            return FileSystemManager.setFileContent(getPath(), content);
         } else
             return false;
     }

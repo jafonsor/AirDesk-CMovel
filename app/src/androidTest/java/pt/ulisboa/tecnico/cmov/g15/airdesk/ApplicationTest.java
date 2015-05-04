@@ -45,13 +45,45 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         airDesk.createOwnerWorkspace("workspace", workpaceQuota, WorkspaceVisibility.PUBLIC, tags);
     }
 
+    // -- Foreign Workspace
+
+    public void testCreateForeignWorkspace() {
+        airDesk.inviteUser("workspace", "email");
+        File dir = FileSystemManager.workspaceDir("email", "workspace", WorkspaceType.FOREIGN);
+        assertTrue(dir.exists());
+        assertNotNull(airDesk.getForeignWorkspaceByName("email", "workspace"));
+    }
+
+    public void testDeleteForeignWorkspace() {
+        airDesk.inviteUser("workspace", "email");
+        airDesk.deleteForeignWorkspace("email", "workspace");
+        File dir = FileSystemManager.workspaceDir("email", "workspace", WorkspaceType.FOREIGN);
+        assertFalse(dir.exists());
+        assertNull(airDesk.getForeignWorkspaceByName("email", "workspace"));
+    }
+
+    public void testDeleteForeignWorkspaceThatDoesNotExist() {
+        File dir = FileSystemManager.workspaceDir("email", "workspace", WorkspaceType.FOREIGN);
+        assertFalse(dir.exists());
+        assertNull(airDesk.getForeignWorkspaceByName("email", "workspace"));
+        try {
+            airDesk.deleteForeignWorkspace("email", "workspace");
+            assertTrue(false);
+        } catch(WorkspaceDoesNotExistException e) {
+            assertTrue(true);
+        }
+    }
+
+    // -- Owner Workspace
+
     public void testDeleteOwnerWorkspace() {
         List<OwnerWorkspace> workspaces = airDesk.getOwnerWorkspaces();
         OwnerWorkspace w = workspaces.get(0);
+        File dir = FileSystemManager.workspaceDir(airDesk.getUser().getEmail(), w.getName(), WorkspaceType.OWNER);
+        assertTrue(dir.exists());
         airDesk.deleteOwnerWorkspace(w.getName());
         List<OwnerWorkspace> resultWorkspaces = airDesk.getOwnerWorkspaces();
         assertFalse(resultWorkspaces.contains(w));
-        File dir = FileSystemManager.workspaceDir(airDesk.getUser().getEmail(), w.getName(), WorkspaceType.OWNER);
         assertFalse(dir.exists());
     }
 
@@ -65,6 +97,28 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
             assertTrue(true);
         }
     }
+
+    // -- file
+
+    public void testFileExists() {
+        airDesk.createFile("email", "workspace", "new_file", WorkspaceType.OWNER);
+
+        assertTrue(airDesk.fileExists("email", "workspace", "new_file", WorkspaceType.OWNER));
+
+        OwnerWorkspace ow = airDesk.getOwnerWorkspaceByName("workspace");
+        File file = new File(ow.getPath(), "new_file.txt");
+        assertTrue(file.exists());
+    }
+
+    // -- Foreign file
+
+    public void testCreateForeignFile() {
+        airDesk.inviteUser("workspace", "email");
+        airDesk.createFile("email", "workspace", "new_file", WorkspaceType.FOREIGN);
+        assertTrue(airDesk.fileExists("email", "workspace", "new_file", WorkspaceType.FOREIGN));
+    }
+
+    // -- Owner file
 
     public void testCreateFile() {
         airDesk.createFile("name", "workspace", "new_file", WorkspaceType.OWNER);

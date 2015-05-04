@@ -21,6 +21,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.Utils;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.SwipeActivity;
@@ -133,10 +134,10 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
 
         boolean success;
         if(mWorkspace == null) {
-            success = mAirDesk.createOwnerWorkspace(workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
-            if(success) {
+            try {
+                mAirDesk.createOwnerWorkspace(workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
                 Toast.makeText(this, "workspace '" + workspaceName + "' created", Toast.LENGTH_SHORT).show();
-            } else {
+            } catch(AirDeskException e) {
                 Toast.makeText(this, "There is already a workspace with that name.", Toast.LENGTH_LONG).show();
                 finish();
                 return;

@@ -194,7 +194,8 @@ public class FileSystemManager {
     }
 
     public static void deleteStorage() {
-        deleteRecursively(appDir);
+        if(appDir.exists())
+            deleteRecursively(appDir);
     }
 
 }
