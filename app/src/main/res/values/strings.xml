@@ -49,4 +49,5 @@
     <string name="deleteUser">Delete User</string>
     <string name="insert_file_name">Insert File Name</string>
 
+    <string name="port">10001</string>
 </resources>
