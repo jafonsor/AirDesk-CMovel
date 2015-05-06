@@ -102,25 +102,7 @@ public class AuxiliaryFragment extends Fragment implements
     }
 
     @Override
-    public void onResume() {
-        // initialize the WDSim API
-        SimWifiP2pSocketManager.Init(getActivity().getApplicationContext());
-
-        // register broadcast receiver
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
-        receiver = new SimWifiP2pBroadcastReceiver(this);
-        getActivity().registerReceiver(receiver, filter);
-
-        super.onResume();
-    }
-
-    @Override
     public void onStop() {
-        getActivity().unregisterReceiver(receiver);
         getActivity().unbindService(mConnection);
         mBound = false;
         guiUpdateInitState(rootView);

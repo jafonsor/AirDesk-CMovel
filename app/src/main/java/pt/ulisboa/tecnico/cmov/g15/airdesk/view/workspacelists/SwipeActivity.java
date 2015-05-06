@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.WifiP2pManagerService;
 
 
 public class SwipeActivity extends FragmentActivity {
@@ -25,6 +26,8 @@ public class SwipeActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workspaces_list);
+
+        startWifiP2pManagerService();
 
         MyAdapter mAdapter = new MyAdapter(getSupportFragmentManager());
 
@@ -80,4 +83,15 @@ public class SwipeActivity extends FragmentActivity {
         AirDesk airDesk = (AirDesk) getApplication();
         airDesk.backup();
     }
+
+    // Start the service
+    public void startWifiP2pManagerService() {
+        startService(new Intent(this, WifiP2pManagerService.class));
+    }
+
+    // Stop the service
+    public void stopWifiP2pManagerService() {
+        stopService(new Intent(this, WifiP2pManagerService.class));
+    }
+
 }
