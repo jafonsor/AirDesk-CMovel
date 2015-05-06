@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
+
 /**
  * Created by diogo on 03-04-2015.
  */
@@ -22,6 +24,11 @@ public class ForeignWorkspace extends Workspace {
     public boolean setQuota(long newQuota) {
         this.quota = newQuota;
         return true;
+    }
+
+    @Override
+    public WorkspaceType getType() {
+        return WorkspaceType.FOREIGN;
     }
 
 

@@ -20,6 +20,8 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 
 public class FileListActivity extends ActionBarActivity {
@@ -101,12 +103,13 @@ public class FileListActivity extends ActionBarActivity {
     }
 
     public void onClickDeleteFile(AirDeskFile file, View v) {
-        if(!mAirDesk.deleteFile(mUserEmail, mWorkspaceName, file.getName(), mWorkspaceType)) {
-            Toast.makeText(this, "file not deleted", Toast.LENGTH_SHORT).show();
-        } else {
+        try {
+            mAirDesk.deleteFile(mUserEmail, mWorkspaceName, file.getName(), mWorkspaceType);
             mListAdapter.setItems(mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName, mWorkspaceType));
             mListAdapter.notifyDataSetChanged();
             Toast.makeText(this, "file deleted", Toast.LENGTH_SHORT).show();
+        } catch(WorkspaceDoesNotExistException e) {
+            Toast.makeText(this, "file not deleted", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -133,9 +136,10 @@ public class FileListActivity extends ActionBarActivity {
                 Toast.makeText(this, "Already exists a file with that name.", Toast.LENGTH_SHORT).show();
             }
             else {
-                if(!mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType)) {
+                try {
+                    mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType);
                     Toast.makeText(this, "could not create file: Workspace full", Toast.LENGTH_SHORT).show();
-                } else {
+                } catch(AirDeskException e) {
                     Intent intent = new Intent(this, EditFileActivity.class);
                     intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
                     intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);

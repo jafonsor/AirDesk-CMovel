@@ -82,7 +82,7 @@ public class AirDeskFile implements Serializable {
         this.version += 1;
     }
 
-    public boolean delete() {
+    public void delete() throws RemoteDeleteAirDeskFileException, LocalDeleteAirDeskFileException {
 
         //Delete remotely
         try {
@@ -98,11 +98,10 @@ public class AirDeskFile implements Serializable {
             throw new LocalDeleteAirDeskFileException(this.getName());
         }
 
-        return true;
     }
 
-    public boolean deleteNoNetwork() throws DeleteFileException {
-        return FileSystemManager.deleteFile(getPath());
+    public void deleteNoNetwork() throws DeleteFileException {
+        FileSystemManager.deleteFile(getPath());
     }
 
     public boolean write(String content) {
@@ -113,8 +112,8 @@ public class AirDeskFile implements Serializable {
         if (NetworkServiceClient.notifyIntention(getWorkspace(), this, FileState.WRITE)) {
             incrementVersion();
             setSize(contentSize);
-            return NetworkServiceClient.sendFile(getWorkspace(), this, content) &&
-                    FileSystemManager.setFileContent(getPath(), content);
+            NetworkServiceClient.sendFile(getWorkspace(), this, content);
+            return FileSystemManager.setFileContent(getPath(), content);
         } else
             return false;
     }

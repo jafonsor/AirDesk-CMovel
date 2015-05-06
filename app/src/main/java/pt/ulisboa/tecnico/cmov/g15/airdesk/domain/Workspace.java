@@ -8,6 +8,13 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.DeleteFileException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.DeleteWorkspaceException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileAlreadyExistsException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.LocalDeleteAirDeskFileException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.RemoteDeleteAirDeskFileException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceFullException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 /**
@@ -31,17 +38,15 @@ public abstract class Workspace implements Serializable {
         this.quota = quota;
     }
 
-    public boolean create(WorkspaceType workspaceType) {
-        String path = FileSystemManager.createWorkspace(getOwner().getEmail(), getName(), workspaceType);
-
-        if (path == null) return false;
-
+    public void create() {
+        String path = FileSystemManager.createWorkspace(getOwner().getEmail(), getName(), getType());
         setPath(path);
-        return true;
     }
 
-    public boolean delete() {
-        return FileSystemManager.deleteWorkspace(getPath());
+    public abstract WorkspaceType getType();
+
+    public void delete() throws DeleteFileException, DeleteWorkspaceException {
+        FileSystemManager.deleteWorkspace(getPath());
     }
 
     public User getOwner() {
@@ -83,22 +88,24 @@ public abstract class Workspace implements Serializable {
         return result;
     }
 
-    public AirDeskFile createFile(String filename) {
+    public AirDeskFile createFile(String filename) throws WorkspaceFullException, FileAlreadyExistsException {
         //WARNING This method never contacts Network
         if (remainingSpace() <= 0) {
-            Log.e("workspace", "creating file but there is no space left");
-            return null;
+            throw new WorkspaceFullException("there is no space left on this workspace");
         }
 
-        if (getFile(filename) != null) return null;
+        if (getFile(filename) != null) {
+            throw new FileAlreadyExistsException("file: " + filename + "already exists.");
+        };
 
         String path = FileSystemManager.createFile(getPath(), filename);
+        /*
         if (path == null){
             //TEMPORARY 1a entrega
             path = getPath()+"/"+filename+".txt";
             //return null;
         }
-
+        */
 
         AirDeskFile newFile = new AirDeskFile(filename, path, this);
         getFiles().add(newFile);
@@ -124,21 +131,13 @@ public abstract class Workspace implements Serializable {
         this.owner = owner;
     }
 
-    public boolean deleteFile(String fileName) {
+    public void deleteFile(String fileName) throws FileDoesNotExistsException, RemoteDeleteAirDeskFileException, LocalDeleteAirDeskFileException {
         AirDeskFile file = getFile(fileName);
         if(file == null) {
-            Log.e("Error", "trying to remove file that doesn't exist from workspace");
-            return false;
+            throw new FileDoesNotExistsException("deleting file '" + fileName + "' that does not exist.");
         }
-        if(!file.delete()) {
-            Log.e("Error", "file delete gonne wrong");
-            return false;
-        }
-        if(!getFiles().remove(file)) {
-            Log.e("Error", "could not remove file from file list");
-            return false;
-        }
-        return true;
+        file.delete();
+        getFiles().remove(file);
     }
 
 }

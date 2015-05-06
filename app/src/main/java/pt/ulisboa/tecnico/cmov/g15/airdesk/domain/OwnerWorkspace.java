@@ -82,15 +82,13 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         return getAccessList().add(item);
     }
 
-    public boolean inviteUser(String userEmail) {
+    public void inviteUser(String userEmail) {
         AccessListItem item = new AccessListItem(new User(userEmail));
         item.setInvited(true);
 
-        boolean returnValue = NetworkServiceClient.inviteUser(this, item.getUser());
-        if(getAccessListItemByEmail(userEmail) != null)
-            return returnValue;
-        else
-           return getAccessList().add(item) && returnValue;
+        NetworkServiceClient.inviteUser(this, item.getUser());
+        if(getAccessListItemByEmail(userEmail) == null)
+            getAccessList().add(item);
     }
 
     public AccessListItem getAccessListItemByEmail(String userEmail) {
@@ -101,11 +99,7 @@ public class OwnerWorkspace extends Workspace implements Serializable {
     }
 
     public boolean blockUserFromAccessList(AccessListItem itemToBlock) {
-        boolean returnValue = NetworkServiceClient.removeUserFromAccessList(this, itemToBlock.getUser());
-        if(!returnValue) {
-            Log.e("Error", "Could not remove user from accesslist " + getName() + ", " + itemToBlock.getUser().getEmail());
-            return false;
-        }
+        NetworkServiceClient.removeUserFromAccessList(this, itemToBlock.getUser());
         itemToBlock.setAllowed(false);
         return true;
     }
@@ -118,10 +112,7 @@ public class OwnerWorkspace extends Workspace implements Serializable {
             return false;
         }
         if(itemToAllow.isInvited()) {
-            if(!NetworkServiceClient.inviteUser(this, getOwner())) {
-                Log.e("Error", "Failed to invite user again");
-                return false;
-            }
+            NetworkServiceClient.inviteUser(this, getOwner());
         }
         itemToAllow.setAllowed(true);
         return true;
@@ -158,10 +149,14 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         }
     }
 
+    public WorkspaceType getType() {
+        return WorkspaceType.OWNER;
+    }
+
     //Faz-se override porque só tem que propagar na rede se for criação de Owner
     @Override
-    public boolean create(WorkspaceType workspaceType) {
-        if (!super.create(WorkspaceType.OWNER)) return false;
+    public void create() {
+        super.create();
 
         //Network
         if (getVisibility() == WorkspaceVisibility.PUBLIC) {
@@ -170,14 +165,13 @@ public class OwnerWorkspace extends Workspace implements Serializable {
             e os subscritores depois actualizaram os seus workspaces chamando o getAllowedWorkspaces */
             NetworkServiceClient.workspaceCreated();
         }
-        return true;
     }
 
     //Faz-se override porque só tem que propagar na rede se for criação de Owner
     @Override
-    public boolean delete() {
-        if (!super.delete()) return false;
-        return NetworkServiceClient.removeWorkspace(this);
+    public void delete() {
+        super.delete();
+        NetworkServiceClient.removeWorkspace(this);
     }
 
     @Override

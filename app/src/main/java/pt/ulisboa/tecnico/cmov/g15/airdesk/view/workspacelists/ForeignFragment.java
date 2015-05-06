@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.LoginActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
@@ -96,11 +98,14 @@ public class ForeignFragment extends Fragment {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if (mAirDesk.blockForeignWorkspace(userEmail, workspaceName))
-                            if (mAirDesk.deleteForeignWorkspace(userEmail, workspaceName))
-                                Toast.makeText(getActivity(), "Foreign workspace Deleted", Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(getActivity(), "Error removing workspace", Toast.LENGTH_SHORT).show();
+                        try {
+                            mAirDesk.blockForeignWorkspace(userEmail, workspaceName);
+                            mAirDesk.deleteForeignWorkspace(userEmail, workspaceName);
+                            Toast.makeText(getActivity(), "Foreign workspace Deleted", Toast.LENGTH_SHORT).show();
+                        } catch (AirDeskException e) {
+                            Log.e("error", e.getMessage());
+                            Toast.makeText(getActivity(), "Error removing workspace", Toast.LENGTH_SHORT).show();
+                        }
                         mListAdapter.setItems(mAirDesk.getForeignWorkspaces());
                         mListAdapter.notifyDataSetChanged();
                     }

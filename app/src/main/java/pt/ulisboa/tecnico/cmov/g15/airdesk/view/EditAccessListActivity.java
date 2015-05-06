@@ -23,6 +23,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AccessListItem;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
 
@@ -105,12 +106,12 @@ public class EditAccessListActivity extends ActionBarActivity {
         String userEmail = userEmailText.getText().toString();
 
         if (!userEmail.equals("")) {
-            boolean status = mAirDesk.inviteUser(mWorkspaceName, userEmail);
-            if (status) {
+            try {
+                mAirDesk.inviteUser(mWorkspaceName, userEmail);
                 mListAdapter.setItems(mAirDesk.getWorkspaceAccessList(mWorkspaceName));
                 mListAdapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "User has been added", Toast.LENGTH_SHORT).show();
-            } else {
+            } catch(AirDeskException e) {
                 Toast.makeText(getApplicationContext(), "Could not add user!!", Toast.LENGTH_SHORT).show();
             }
         } else {

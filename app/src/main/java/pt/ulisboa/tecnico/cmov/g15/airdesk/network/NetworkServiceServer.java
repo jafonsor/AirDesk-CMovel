@@ -10,7 +10,9 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.Utils;
 
 /**
@@ -102,14 +104,13 @@ public class NetworkServiceServer {
     }
 
 
-    public boolean sendFileS(Workspace workspace, AirDeskFile file, String fileContent) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
-        if (ws == null) return false;
-        AirDeskFile f = ws.getFile(file.getName());
-        if (f == null) f = ws.createFile(file.getName());
+    public void sendFileS(Workspace workspace, AirDeskFile file, String fileContent) {
+        AirDeskFile f = workspace.getFile(file.getName());
+        if (f == null)
+            f = workspace.createFile(file.getName());
         f.setVersion(file.getVersion());
         f.setState(FileState.IDLE);
-        return f.writeNoNetwork(fileContent);
+        f.writeNoNetwork(fileContent);
     }
 
 
@@ -130,21 +131,21 @@ public class NetworkServiceServer {
         return false;
     }
 
-    public boolean inviteUserS(OwnerWorkspace workspace, User user) {
+    public void inviteUserS(OwnerWorkspace workspace, User user) {
         ForeignWorkspace fw = Utils.OwnerToForeignWorkspace(workspace);
+        fw.create();
         if (airDesk.isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName()))
-            return true;
+            return;
         if (user.equals(airDesk.getUser()))
-            return this.airDesk.getForeignWorkspaces().add(fw);
-        return true;
+            this.airDesk.getForeignWorkspaces().add(fw);
     }
 
-    public boolean removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
+    public void removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
         if (airDesk.isForeignWorkspaceBlocked(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName()))
-            return true;
+            return;
         if (airDesk.getOwnerWorkspaceByName(ownerWorkspace.getName()) == null)
-            return true;
-        return airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
+            return;
+        airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
     }
 
     public AirDesk getAirDesk() {
@@ -160,7 +161,7 @@ public class NetworkServiceServer {
         airDesk.getAllowedWorkspaces();
     }
 
-    public boolean deleteFileS(Workspace workspace, AirDeskFile airDeskFile) {
+    public void deleteFileS(Workspace workspace, AirDeskFile airDeskFile) {
         AirDeskFile f;
         if (!workspace.isOwner()) {
             f = airDesk.getOwnerWorkspaceByName(workspace.getName()).getFile(airDeskFile.getName());
@@ -170,13 +171,13 @@ public class NetworkServiceServer {
         } else {
             ForeignWorkspace fw = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName());
             if(fw == null)
-                return true;
+                return;
             f = fw.getFile(airDeskFile.getName());
             if(f!=null){
                 airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName()).getFiles().remove(f);
             }
         }
-        return f.deleteNoNetwork();
+        f.deleteNoNetwork();
     }
 
     public boolean refreshWorkspacesS() {
