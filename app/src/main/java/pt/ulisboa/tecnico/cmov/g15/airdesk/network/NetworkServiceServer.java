@@ -10,8 +10,8 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.Utils;
 
@@ -54,17 +54,22 @@ public class NetworkServiceServer {
     }
 
 
-    public boolean notifyIntentionS(Workspace workspace, AirDeskFile file, FileState intention) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
+    public boolean notifyIntentionS(String workspaceName, String fileName, FileState intention) {
+        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspaceName);
 
-        if (ws != null) {
-            AirDeskFile f = ws.getFile(file.getName());
-            if (f.getState() != FileState.WRITE) {
-                f.setState(intention);
-                return true;
-            }
+        if (ws == null)
+            throw new WorkspaceDoesNotExistException(workspaceName);
+
+        AirDeskFile f = ws.getFile(fileName);
+        if( f == null)
+            f = ws.createFileNoNetwork(fileName);
+
+        if (f.getState() == FileState.WRITE)
+            return false;
+        else {
+            f.setState(intention);
+            return true;
         }
-        return false;
     }
 
 
@@ -92,23 +97,28 @@ public class NetworkServiceServer {
     }
 
 
-    public String getFileS(Workspace workspace, AirDeskFile file) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
+    public String getFileS(String workspaceName, String fileName) {
+        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspaceName);
 
-        if (ws != null) {
-            AirDeskFile f = ws.getFile(file.getName());
-            return f.readNoNetwork();
-        }
+        if (ws == null)
+            throw new WorkspaceDoesNotExistException(workspaceName);
 
-        return null;
+        AirDeskFile f = ws.getFile(fileName);
+        if(f == null)
+            throw new FileDoesNotExistsException(fileName);
+
+        return f.readNoNetwork();
     }
 
 
-    public void sendFileS(Workspace workspace, AirDeskFile file, String fileContent) {
-        AirDeskFile f = workspace.getFile(file.getName());
-        if (f == null)
-            f = workspace.createFile(file.getName());
-        f.setVersion(file.getVersion());
+    public void sendFileS(String workspaceName, String fileName, String fileContent) {
+        OwnerWorkspace workspace = airDesk.getOwnerWorkspaceByName(workspaceName);
+
+        AirDeskFile f = workspace.getFile(fileName);
+        if(f == null)
+            f = workspace.createFileNoNetwork(fileName);
+
+        f.incrementVersion();
         f.setState(FileState.IDLE);
         f.writeNoNetwork(fileContent);
     }

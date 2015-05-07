@@ -4,16 +4,10 @@ import android.app.Application;
 import android.os.Environment;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OptionalDataException;
-import java.io.Serializable;
-import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,10 +19,10 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 
 
 /**
@@ -130,7 +124,7 @@ public class AirDesk extends Application {
         String workspaceName = "Workspace"+System.currentTimeMillis();
         createOwnerWorkspace(workspaceName, 2000L, WorkspaceVisibility.PUBLIC, tags);
         OwnerWorkspace ow = getOwnerWorkspaceByName(workspaceName);
-        ow.createFile("file"+System.currentTimeMillis()).write("ola\n");
+        ow.createFileNoNetwork("file" + System.currentTimeMillis()).write("ola\n");
     }
 
 
@@ -149,8 +143,8 @@ public class AirDesk extends Application {
 
     private ForeignWorkspace findForeignWorkspaceByName(List<ForeignWorkspace> workspaces, String ownerEmail, String wsName) {
         for (ForeignWorkspace workspace : workspaces)
-            if (workspace.getName().equals(wsName))
-                if (workspace.getOwner().getEmail().equals(ownerEmail))
+            if (workspace.getName().equals(wsName)
+                && workspace.getOwner().getEmail().equals(ownerEmail))
                     return workspace;
         return null;
     }
@@ -270,28 +264,35 @@ public class AirDesk extends Application {
     }
 
     public void createFile(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
+        Workspace workspace = null;
         if (workspaceType == WorkspaceType.OWNER) {
-            if (getOwnerWorkspaceByName(wsName).createFile(filename) != null)
-                NetworkServiceClient.sendFile(getOwnerWorkspaceByName(wsName), getOwnerWorkspaceByName(wsName).getFile(filename), "");
+            workspace = getOwnerWorkspaceByName(wsName);
         } else {
-            if (getForeignWorkspaceByName(wsOwner, wsName).createFile(filename) != null)
-                NetworkServiceClient.sendFile(getForeignWorkspaceByName(wsOwner, wsName), getForeignWorkspaceByName(wsOwner, wsName).getFile(filename), "");
+            workspace = getForeignWorkspaceByName(wsOwner, wsName);
         }
+
+        AirDeskFile file = workspace.createFileOnNetwork(filename);
     }
 
     public String viewFileContent(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
-        AirDeskFile mFile = null;
-
+        Workspace ws = null;
         if (workspaceType == WorkspaceType.OWNER) {
-            mFile = getOwnerWorkspaceByName(wsName).getFile(filename);
+            ws = getOwnerWorkspaceByName(wsName);
         } else {
-            mFile = getForeignWorkspaceByName(wsOwner, wsName).getFile(filename);
+            ws = getForeignWorkspaceByName(wsOwner, wsName);
         }
+
+        if(ws == null)
+            throw new WorkspaceDoesNotExistException(wsName);
+
+        AirDeskFile mFile = ws.getFile(filename);
+        if(mFile == null)
+            throw new FileDoesNotExistsException(filename);
 
         return mFile.read();
     }
 
-    public Boolean saveFileContent(String wsOwner, String wsName, String filename, String content, WorkspaceType workspaceType) {
+    public void saveFileContent(String wsOwner, String wsName, String filename, String content, WorkspaceType workspaceType) {
         AirDeskFile mFile = null;
 
         if (workspaceType == WorkspaceType.OWNER) {
@@ -300,7 +301,10 @@ public class AirDesk extends Application {
             mFile = getForeignWorkspaceByName(wsOwner, wsName).getFile(filename);
         }
 
-        return mFile.write(content);
+        if(mFile == null)
+            throw new FileDoesNotExistsException(filename);
+
+        mFile.write(content);
     }
 
     public boolean isForeignWorkspaceBlocked(String userEmail, String foreignWorkspaceName) {

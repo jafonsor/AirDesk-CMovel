@@ -26,7 +26,7 @@ public class NetworkServiceClient {
     }
 
     public static boolean notifyIntention(Workspace workspace, AirDeskFile file, FileState intention) {
-        return networkServiceServer.notifyIntentionS(workspace, file, intention);
+        return networkServiceServer.notifyIntentionS(workspace.getName(), file.getName(), intention);
     }
 
 
@@ -40,13 +40,13 @@ public class NetworkServiceClient {
     }
 
 
-    public static String getFile(Workspace workspace, AirDeskFile file) {
-        return networkServiceServer.getFileS(workspace, file);
+    public static String getFile(String workspaceName, String fileName) {
+        return networkServiceServer.getFileS(workspaceName, fileName);
     }
 
 
-    public static void sendFile(Workspace workspace, AirDeskFile file, String fileContent) {
-        networkServiceServer.sendFileS(workspace, file, fileContent);
+    public static void sendFile(String workspaceName, String fileName, String fileContent) {
+        networkServiceServer.sendFileS(workspaceName, fileName, fileContent);
     }
 
 

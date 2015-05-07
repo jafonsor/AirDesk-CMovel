@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 
 
 public class EditFileActivity extends ActionBarActivity {
@@ -60,15 +61,18 @@ public class EditFileActivity extends ActionBarActivity {
 
 
     public void onClickSave (View v) {
-        if(mAirDesk.saveFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, fileContentView.getText().toString(),mWorkspaceType)){
+        try {
+            mAirDesk.saveFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, fileContentView.getText().toString(), mWorkspaceType);
             Intent intent = new Intent(this, FileListActivity.class);
             intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
             intent.putExtra(FileListActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
             Toast.makeText(this, "File successfully saved.", Toast.LENGTH_SHORT).show();
             startActivity(intent);
-            finish();}
-        else {
+        } catch (AirDeskException e){
+            Log.e("exception", e.toString());
             Toast.makeText(this, "You don't have enough space to save this file.", Toast.LENGTH_SHORT).show();
+        } finally {
+            finish();
         }
     }
 }

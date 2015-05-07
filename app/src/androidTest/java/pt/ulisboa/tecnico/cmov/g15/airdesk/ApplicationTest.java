@@ -8,6 +8,8 @@ import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
@@ -18,6 +20,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceFullException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.ForeignFragment;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -116,7 +119,28 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         airDesk.inviteUser("workspace", "email");
         airDesk.createFile("email", "workspace", "new_file", WorkspaceType.FOREIGN);
         assertTrue(airDesk.fileExists("email", "workspace", "new_file", WorkspaceType.FOREIGN));
+        assertTrue(airDesk.fileExists("email", "workspace", "new_file", WorkspaceType.OWNER));
     }
+
+    public void testCreateOwnerForeignFile() {
+        airDesk.inviteUser("workspace", "email");
+        airDesk.createFile("email", "workspace", "new_file", WorkspaceType.OWNER);
+        assertTrue(airDesk.fileExists("email", "workspace", "new_file", WorkspaceType.FOREIGN));
+        assertTrue(airDesk.fileExists("email", "workspace", "new_file", WorkspaceType.OWNER));
+    }
+
+    public void testChangeContentOwnerForeignFile() {
+        airDesk.inviteUser("workspace", "email");
+        airDesk.createFile("email", "workspace", "new_file", WorkspaceType.OWNER);
+        AirDeskFile file = airDesk.getOwnerWorkspaceByName("workspace").getFile("new_file");
+        int fileInitialVersion = file.getVersion();
+        airDesk.saveFileContent("email", "workspace", "new_file", "content", WorkspaceType.OWNER);
+        assertEquals(fileInitialVersion + 1, file.getVersion());
+        String readContent = airDesk.viewFileContent("email", "workspace", "new_file", WorkspaceType.FOREIGN);
+        assertEquals("content", readContent);
+    }
+
+
 
     // -- Owner file
 

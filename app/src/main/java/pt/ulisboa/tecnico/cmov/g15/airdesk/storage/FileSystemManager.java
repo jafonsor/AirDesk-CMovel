@@ -110,7 +110,7 @@ public class FileSystemManager {
         return text.toString();
     }
 
-    public static boolean setFileContent(String filePath, String content)
+    public static void setFileContent(String filePath, String content)
             throws FileDoesNotExistsException, InvalidFileContentException {
 
         File file = getFile(filePath);
@@ -122,8 +122,6 @@ public class FileSystemManager {
             Writer writer = new BufferedWriter(new FileWriter(file));
             writer.write(content);
             writer.close();
-
-            return true;
         } catch (IOException e) {
             Log.e("write", "Can not write file: " + e.toString());
             throw new InvalidFileContentException(filePath + "\n content:" + content);

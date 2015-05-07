@@ -88,7 +88,13 @@ public abstract class Workspace implements Serializable {
         return result;
     }
 
-    public AirDeskFile createFile(String filename) throws WorkspaceFullException, FileAlreadyExistsException {
+    public AirDeskFile createFileOnNetwork(String filename) throws WorkspaceFullException, FileAlreadyExistsException {
+        AirDeskFile file = createFileNoNetwork(filename);
+        file.write("");
+        return file;
+    }
+
+    public AirDeskFile createFileNoNetwork(String filename) throws WorkspaceFullException, FileAlreadyExistsException {
         //WARNING This method never contacts Network
         if (remainingSpace() <= 0) {
             throw new WorkspaceFullException("there is no space left on this workspace");
@@ -139,5 +145,4 @@ public abstract class Workspace implements Serializable {
         file.delete();
         getFiles().remove(file);
     }
-
 }

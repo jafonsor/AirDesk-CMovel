@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.ContentExceedsQuotaException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.DeleteFileException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.LocalDeleteAirDeskFileException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.RemoteDeleteAirDeskFileException;
@@ -104,32 +105,36 @@ public class AirDeskFile implements Serializable {
         FileSystemManager.deleteFile(getPath());
     }
 
-    public boolean write(String content) {
+    public void write(String content) {
         int contentSize = content.getBytes().length;
 
-        if (getWorkspace().remainingSpace() + getSize() < contentSize) return false;
+        if(spaceLeftForContent(contentSize) < contentSize)
+            throw new ContentExceedsQuotaException("new content exceeds workspace quota");
 
-        if (NetworkServiceClient.notifyIntention(getWorkspace(), this, FileState.WRITE)) {
-            incrementVersion();
-            setSize(contentSize);
-            NetworkServiceClient.sendFile(getWorkspace(), this, content);
-            return FileSystemManager.setFileContent(getPath(), content);
-        } else
-            return false;
+        NetworkServiceClient.notifyIntention(getWorkspace(), this, FileState.WRITE);
+        incrementVersion();
+        setSize(contentSize);
+        NetworkServiceClient.sendFile(getWorkspace().getName(), this.getName(), content);
+        FileSystemManager.setFileContent(getPath(), content);
     }
 
-    public boolean writeNoNetwork(String content) {
+    public void writeNoNetwork(String content) {
         int contentSize = content.getBytes().length;
 
-        if (getWorkspace().remainingSpace() + getSize() < contentSize) return false;
+        if(spaceLeftForContent(contentSize) < contentSize)
+            throw new ContentExceedsQuotaException("new content exceeds workspace quota");
 
-        return FileSystemManager.setFileContent(getPath(), content);
+        FileSystemManager.setFileContent(getPath(), content);
 
+    }
+
+    public long spaceLeftForContent(long contentSize) {
+        return getWorkspace().remainingSpace() + getSize();
     }
 
     public String read() {
         if (NetworkServiceClient.getFileVersion(getWorkspace(), this) > getVersion())
-            writeNoNetwork(NetworkServiceClient.getFile(getWorkspace(), this));
+            writeNoNetwork(NetworkServiceClient.getFile(getWorkspace().getName(), this.getName()));
 
         return FileSystemManager.getFileContent(getPath());
 
