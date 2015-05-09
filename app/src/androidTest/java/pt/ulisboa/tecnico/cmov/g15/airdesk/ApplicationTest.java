@@ -41,9 +41,7 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
     public void setUp() {
         createApplication();
         airDesk = getApplication();
-        FileSystemManager.deleteStorage();
         airDesk.setUser(new User(OWNERUSERNAME,OWNEREMAIL));
-        airDesk.reset();
         List<String> tags = new ArrayList<String>();
         tags.add("hollyday");
 
@@ -227,6 +225,5 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
     protected void tearDown() throws Exception {
         FileSystemManager.deleteStorage();
         airDesk.reset();
-        super.tearDown();
     }
 }
