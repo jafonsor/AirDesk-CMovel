@@ -29,31 +29,6 @@ public class NetworkServiceServer {
         this.airDesk = airDesk;
     }
 
-
-    public List<ForeignWorkspace> getAllowedWorkspacesS(User user, List<String> tags) {
-        List<ForeignWorkspace> allowedWorkspacesR = new ArrayList<ForeignWorkspace>();
-        for (OwnerWorkspace workspace : airDesk.getOwnerWorkspaces()) {
-
-            if (workspace.userInAccessList(user)) {
-                if (workspace.userHasPermissions(user)) {
-                    allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
-                    continue;
-                } else break;
-            }
-
-            if (workspace.getVisibility() == WorkspaceVisibility.PUBLIC) {
-                if (checkTags(workspace.getTags(), tags)) {
-                    allowedWorkspacesR.add(Utils.OwnerToForeignWorkspace(workspace));
-                    workspace.addUserToAccessList(user.getEmail());
-                    continue;
-                }
-            }
-        }
-
-        return allowedWorkspacesR;
-    }
-
-
     public boolean notifyIntentionS(String workspaceName, String fileName, FileState intention) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspaceName);
 
@@ -190,8 +165,37 @@ public class NetworkServiceServer {
         f.deleteNoNetwork();
     }
 
-    public boolean refreshWorkspacesS() {
-        getAirDesk().getAllowedWorkspaces();
-        return true;
+    public void refreshWorkspacesS() {
+        getAirDesk().searchWorkspaces();
+    }
+
+    public List<String> searchWorkspacesS(String clientEmail, List<String> clientTags) {
+        List<String> allowedWorkspacesR = new ArrayList<String>();
+        for (OwnerWorkspace workspace : airDesk.getOwnerWorkspaces()) {
+
+            if (workspace.userInAccessList(clientEmail)) {
+                if (workspace.userHasPermissions(clientEmail)) {
+                    allowedWorkspacesR.add(workspace.getName());
+                    continue;
+                } else break;
+            }
+
+            if (workspace.getVisibility() == WorkspaceVisibility.PUBLIC) {
+                if (checkTags(workspace.getTags(), clientTags)) {
+                    allowedWorkspacesR.add(workspace.getName());
+                    workspace.addUserToAccessList(clientEmail);
+                    continue;
+                }
+            }
+        }
+        return allowedWorkspacesR;
+    }
+
+    // i don't know if when we add wifi to this the ownerEmail will be needed
+    public long getWorkspaceQuotaS(String ownerEmail, String workspaceName) {
+        OwnerWorkspace ow = airDesk.getOwnerWorkspaceByName(workspaceName);
+        if(ow == null)
+            throw new WorkspaceDoesNotExistException(workspaceName);
+        return ow.getQuota();
     }
 }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AccessListItem;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
@@ -178,15 +179,24 @@ public class AirDesk extends Application {
         fw.delete();
     }
 
-    public void getAllowedWorkspaces() {
-        List<ForeignWorkspace> foreignWSList = NetworkServiceClient.getAllowedWorkspaces(getUser(), getUser().getUserTags());
-        List<ForeignWorkspace> wsListToRemove = new ArrayList<ForeignWorkspace>();
-        for (ForeignWorkspace fw : foreignWSList) {
-            if (isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName()))
-                wsListToRemove.add(fw);
-        }
-        foreignWSList.removeAll(wsListToRemove);
-        setForeignWorkspaces(foreignWSList);
+    public void searchWorkspaces() {
+        Map<String, List<String>> foreignWSMap = NetworkServiceClient.searchWorkspaces(getUser().getEmail(), getUser().getUserTags());
+        List<ForeignWorkspace> wsListToAdd = new ArrayList<ForeignWorkspace>();
+        for (ForeignWorkspace fw : getForeignWorkspaces()) {
+            if (!isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName())) {
+                // don't add blocked workspaces
+                long quota = NetworkServiceClient.getWorkspaceQuota(wsOwner,fwName);
+                ForeignWorkspace fw = getForeignWorkspaceByName(wsOwner, fwName);
+                // don't create a new workspace if the workspace already exists
+                if(fw != null) {
+                    fw = new ForeignWorkspace(getForeignUser(wsOwner), fwName, quota);
+                    wsListToAdd.add(fw);
+                } else {
+                    fw.setQuota(fw.getQuota());
+                }
+            }
+        };
+        getForeignWorkspaces().add(wsListToAdd);
     }
 
     public List<AirDeskFile> getWorkspaceFiles(String userEmail, String workspaceName, WorkspaceType workspaceType) {
@@ -249,7 +259,7 @@ public class AirDesk extends Application {
     public void changeUserTags(List<String> tags) {
         User user = getUser();
         user.setUserTags(tags);
-        getAllowedWorkspaces();
+        searchWorkspaces();
     }
 
     public boolean blockForeignWorkspace(String userEmail, String foreignWorkspaceName) {

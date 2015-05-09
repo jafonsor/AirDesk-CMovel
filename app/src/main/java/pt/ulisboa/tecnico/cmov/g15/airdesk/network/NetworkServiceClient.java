@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.network;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
@@ -18,11 +19,6 @@ public class NetworkServiceClient {
     private static NetworkServiceServer networkServiceServer = new NetworkServiceServer();
 
     public NetworkServiceClient() {
-    }
-
-    public static List<ForeignWorkspace> getAllowedWorkspaces(User user, List<String> tags) {
-        //broadcast this message and collects all workspaces
-        return networkServiceServer.getAllowedWorkspacesS(user, tags);
     }
 
     public static boolean notifyIntention(Workspace workspace, AirDeskFile file, FileState intention) {
@@ -86,5 +82,19 @@ public class NetworkServiceClient {
 
     public static boolean refreshWorkspacesC() {
         return networkServiceServer.refreshWorkspacesS();
+    }
+
+    public static List<ForeignWorkspace> searchWorkspaces(String email, List<String> tags) {
+        List<String> workspaceNames = networkServiceServer.searchWorkspacesS(email, tags);
+        List<ForeignWorkspace> foreignWorkspaces = new ArrayList<ForeignWorkspace>();
+        for(String workspaceName : workspaceNames) {
+            long quota = getWorkspaceQuota(email, workspaceName);
+            foreignWorkspaces.add(new ForeignWorkspace(new User(email), workspaceName, quota));
+        }
+        return foreignWorkspaces;
+    }
+
+    public static long getWorkspaceQuota(String ownerEmail, String workspaceName) {
+        return networkServiceServer.getWorkspaceQuotaS(ownerEmail, workspaceName);
     }
 }

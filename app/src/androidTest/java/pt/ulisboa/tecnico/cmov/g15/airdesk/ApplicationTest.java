@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileAlreadyExistsException
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceFullException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.ForeignFragment;
 
@@ -224,7 +225,18 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
     }
 
     public void testSearchWorkspaces() {
-        List<String> tags = user.getUserTags();
-        //airDesk.createOwnerWorkspace("workspace2", 1000L, WorkspaceVisibility.PRIVATE, );
+        List<String> userTags = user.getUserTags();
+        List<String> wrongTags = new ArrayList<String>() {{
+            add("wrongTag");
+        }};
+        airDesk.createOwnerWorkspace("workspace2", 1000L, WorkspaceVisibility.PRIVATE, userTags);
+        airDesk.createOwnerWorkspace("workspace3", 1000L, WorkspaceVisibility.PUBLIC,  userTags);
+        airDesk.createOwnerWorkspace("workspace4", 1000L, WorkspaceVisibility.PUBLIC,  wrongTags);
+
+        NetworkServiceClient.searchWorkspace("email", userTags);
+
+        assertNull(airDesk.getForeignWorkspaceByName("email", "workspace2"));
+        assertNotNull(airDesk.getForeignWorkspaceByName("email", "workspace3"));
+        assertNull(airDesk.getForeignWorkspaceByName("email", "workspace4"));
     }
 }

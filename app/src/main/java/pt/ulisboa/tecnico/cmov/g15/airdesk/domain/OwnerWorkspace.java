@@ -117,18 +117,18 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         return true;
     }
 
-    public boolean userInAccessList(User user) {
+    public boolean userInAccessList(String userEmail) {
         for (AccessListItem item : getAccessList()) {
-            if (item.getUser().equals(user)) {
+            if (item.getUser().getEmail().equals(userEmail)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean userHasPermissions(User user) {
+    public boolean userHasPermissions(String userEmail) {
         for (AccessListItem item : getAccessList()) {
-            if (item.getUser().equals(user)) {
+            if (item.getUser().getEmail().equals(userEmail)) {
                 return item.isAllowed();
             }
         }
