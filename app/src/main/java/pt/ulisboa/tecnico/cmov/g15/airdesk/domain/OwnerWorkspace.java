@@ -155,20 +155,6 @@ public class OwnerWorkspace extends Workspace implements Serializable {
 
     //Faz-se override porque só tem que propagar na rede se for criação de Owner
     @Override
-    public void create() {
-        super.create();
-
-        //Network
-        if (getVisibility() == WorkspaceVisibility.PUBLIC) {
-            /*Apenas se envia para a rede se for publico
-            Neste caso é enviado um alerta a dizer que existe um novo workspace
-            e os subscritores depois actualizaram os seus workspaces chamando o getAllowedWorkspaces */
-            NetworkServiceClient.workspaceCreated();
-        }
-    }
-
-    //Faz-se override porque só tem que propagar na rede se for criação de Owner
-    @Override
     public void delete() {
         super.delete();
         NetworkServiceClient.removeWorkspace(this);

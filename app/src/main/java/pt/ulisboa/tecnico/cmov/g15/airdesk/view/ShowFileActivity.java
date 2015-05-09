@@ -7,9 +7,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 
 public class ShowFileActivity extends ActionBarActivity {
@@ -54,12 +56,17 @@ public class ShowFileActivity extends ActionBarActivity {
     }
 
     public void onClickEditFile(View v) {
-        Intent intent = new Intent(this, EditFileActivity.class);
-        intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
-        intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mWorkspaceOwner);
-        intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, mFileName);
-        intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
-        startActivity(intent);
-        finish();
+        if(mAirDesk.notifyIntention(mWorkspaceOwner, mWorkspaceName, mFileName, FileState.WRITE, mWorkspaceType)){
+            Intent intent = new Intent(this, EditFileActivity.class);
+            intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
+            intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mWorkspaceOwner);
+            intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, mFileName);
+            intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
+            startActivity(intent);
+            finish();
+        }else{
+            Toast.makeText(getApplicationContext(), "Not allowed to edit this file", Toast.LENGTH_LONG).show();
+        }
+
     }
 }

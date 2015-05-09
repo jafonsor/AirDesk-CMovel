@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException;
@@ -203,12 +204,11 @@ public class AirDesk extends Application {
     }
 
     public void createOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
+        OwnerWorkspace ow = new OwnerWorkspace(getUser(), name, quota, visibility, tags);
         if (getOwnerWorkspaceByName(name) != null) {
             throw new WorkspaceAlreadyExistsException(name);
         }
-        OwnerWorkspace ow = new OwnerWorkspace(getUser(), name, quota, visibility, tags);
         getOwnerWorkspaces().add(ow);
-        NetworkServiceClient.workspaceCreated();
         ow.create();
     }
 
@@ -337,6 +337,23 @@ public class AirDesk extends Application {
         }
 
         w.deleteFile(fileName);
+    }
+
+    public boolean notifyIntention(String ownerEmail, String workspaceName, String fileName, FileState fileIntention, WorkspaceType workspaceType) {
+        Workspace w = null;
+        if(workspaceType == WorkspaceType.FOREIGN) {
+            w = getForeignWorkspaceByName(ownerEmail, workspaceName);
+        } else {
+            w = getOwnerWorkspaceByName(workspaceName);
+        }
+
+        if(w == null) {
+            throw new WorkspaceDoesNotExistException("workspace " + workspaceName + " does not exist");
+        }
+
+        AirDeskFile file = w.getFile(fileName);
+
+        return NetworkServiceClient.notifyIntention(w, file, fileIntention);
     }
 
 }
