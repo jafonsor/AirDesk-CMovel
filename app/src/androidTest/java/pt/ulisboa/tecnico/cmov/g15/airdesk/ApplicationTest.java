@@ -35,6 +35,7 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
     }
 
     AirDesk airDesk;
+    User user;
 
     long workpaceQuota = 2000L;
 
@@ -42,6 +43,12 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         createApplication();
         airDesk = getApplication();
         airDesk.setUser(new User(OWNERUSERNAME,OWNEREMAIL));
+
+        airDesk.reset();
+
+        user = new User("name","email");
+        airDesk.setUser(user);
+
         List<String> tags = new ArrayList<String>();
         tags.add("hollyday");
 
@@ -214,5 +221,10 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
     protected void tearDown() throws Exception {
         FileSystemManager.deleteStorage();
         airDesk.reset();
+    }
+
+    public void testSearchWorkspaces() {
+        List<String> tags = user.getUserTags();
+        //airDesk.createOwnerWorkspace("workspace2", 1000L, WorkspaceVisibility.PRIVATE, );
     }
 }
