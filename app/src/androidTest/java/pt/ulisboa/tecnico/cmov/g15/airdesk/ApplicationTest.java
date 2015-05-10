@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
@@ -321,7 +322,7 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         NetworkServiceClient.addForeignUser(OWNEREMAIL);
         airDesk.searchWorkspaces();
 
-        airDesk.createFile(OWNEREMAIL,workspaceName, "new_file", WorkspaceType.FOREIGN);
+        airDesk.createFile(OWNEREMAIL, workspaceName, "new_file", WorkspaceType.FOREIGN);
         ForeignWorkspace fw = airDesk.getForeignWorkspaceByName(OWNEREMAIL, workspaceName);
 
         String initialContent = airDesk.viewFileContent(OWNEREMAIL, workspaceName, "new_file", WorkspaceType.OWNER);
@@ -359,13 +360,25 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         assertEquals(1, foundFiles.size());
         assertEquals("new_file", foundFiles.get(0).getName());
 
-        ow.deleteFile("new_file");
+        airDesk.deleteFile(OWNEREMAIL, workspaceName, "new_file", WorkspaceType.OWNER);
 
         foundFiles = airDesk.getWorkspaceFiles(OWNEREMAIL, workspaceName, WorkspaceType.OWNER);
 
         assertEquals(0, foundFiles.size());
+    }
+
+    public void testTwoUsersChangingFile() {
+        String workspaceName = "workspaceJajãozão";
+        airDesk.createOwnerWorkspace(workspaceName, 1000L, WorkspaceVisibility.PUBLIC, user.getUserTags());
 
 
+        NetworkServiceClient.addForeignUser(OWNEREMAIL);
+        airDesk.searchWorkspaces();
+
+        airDesk.createFile(OWNEREMAIL, workspaceName, "new_file", WorkspaceType.FOREIGN);
+
+        assertTrue(airDesk.notifyIntention(OWNEREMAIL, workspaceName, "new_file", FileState.WRITE, WorkspaceType.OWNER));
+        assertFalse(airDesk.notifyIntention(OWNEREMAIL, workspaceName, "new_file", FileState.WRITE, WorkspaceType.OWNER));
     }
 
     @Override
