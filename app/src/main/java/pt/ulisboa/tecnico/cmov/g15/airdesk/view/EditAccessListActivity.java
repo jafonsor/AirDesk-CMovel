@@ -23,9 +23,11 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AccessListItem;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.OwnerFragment;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.SwipeActivity;
 
 public class EditAccessListActivity extends ActionBarActivity {
 
@@ -48,6 +50,16 @@ public class EditAccessListActivity extends ActionBarActivity {
         Intent intent = getIntent();
 
         mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
+
+        if(mWorkspaceName == null)
+            if(savedInstanceState != null){
+                mWorkspaceName = savedInstanceState.getString(EXTRA_WORKSPACE_NAME);
+            }else{
+                Toast.makeText(getApplicationContext(), "Invalid workspace attributes", Toast.LENGTH_SHORT).show();
+                this.setResult(0); //Destroy o swipe anterior
+                startActivity(new Intent(this, SwipeActivity.class));
+                finish();
+            }
 
         mListView = (ListView) findViewById(R.id.user_accesslistLV);
 
@@ -118,6 +130,12 @@ public class EditAccessListActivity extends ActionBarActivity {
             Toast.makeText(getApplicationContext(), "Invalid e-mail", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(EXTRA_WORKSPACE_NAME, mWorkspaceName);
+        super.onSaveInstanceState(outState);
     }
 
 }

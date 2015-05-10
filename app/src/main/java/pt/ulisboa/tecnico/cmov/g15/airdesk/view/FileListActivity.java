@@ -23,6 +23,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.ListAdapter;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.SwipeActivity;
 
 public class FileListActivity extends ActionBarActivity {
 
@@ -34,7 +35,6 @@ public class FileListActivity extends ActionBarActivity {
 
     public final static String EXTRA_TYPE_OF_WORKSPACE
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.FileListActivity.EXTRA_TYPE_OF_WORKSPACE";
-
 
     private AirDesk mAirDesk;
     private String mUserEmail;
@@ -49,10 +49,22 @@ public class FileListActivity extends ActionBarActivity {
         setContentView(R.layout.activity_file_list);
         mAirDesk = (AirDesk) getApplication();
         Intent intent = getIntent();
+
         mUserEmail = intent.getStringExtra(EXTRA_OWNER_EMAIL);
         mWorkspaceName = intent.getStringExtra(EXTRA_WORKSPACE_NAME);
         mWorkspaceType = (WorkspaceType) intent.getSerializableExtra(EXTRA_TYPE_OF_WORKSPACE);
 
+        if( (mUserEmail == null || mWorkspaceName == null || mWorkspaceType == null) )
+            if(savedInstanceState != null){
+                mUserEmail = savedInstanceState.getString(EXTRA_OWNER_EMAIL);
+                mWorkspaceName = savedInstanceState.getString(EXTRA_WORKSPACE_NAME);
+                mWorkspaceType = (WorkspaceType) savedInstanceState.getSerializable(EXTRA_TYPE_OF_WORKSPACE);
+            }else{
+                Toast.makeText(getApplicationContext(), "Invalid workspace attributes", Toast.LENGTH_SHORT).show();
+                this.setResult(0); //Destroy o swipe anterior
+                startActivity(new Intent(this, SwipeActivity.class));
+                finish();
+            }
 
         TextView workspaceNameView = (TextView) findViewById(R.id.workspace_name);
         workspaceNameView.setText(mWorkspaceName);
@@ -121,6 +133,7 @@ public class FileListActivity extends ActionBarActivity {
         intent.putExtra(ShowFileActivity.EXTRA_FILE_NAME, mFileName);
         intent.putExtra(ShowFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
         startActivity(intent);
+        finish();
     }
 
     public void onClickCreateFile(final WorkspaceType mWorkspaceType, final View v) {
@@ -139,9 +152,18 @@ public class FileListActivity extends ActionBarActivity {
                     intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
                     intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
                     startActivity(intent);
+                    finish();
                 } catch(AirDeskException e) {
                     Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                 }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(EXTRA_OWNER_EMAIL, mUserEmail);
+        outState.putString(EXTRA_WORKSPACE_NAME, mWorkspaceName);
+        outState.putSerializable(EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
+        super.onSaveInstanceState(outState);
     }
 }

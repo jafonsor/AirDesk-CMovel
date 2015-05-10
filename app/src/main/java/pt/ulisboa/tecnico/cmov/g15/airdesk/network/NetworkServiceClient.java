@@ -80,7 +80,7 @@ public class NetworkServiceClient {
 
     public static void deleteFile(Workspace workspace, AirDeskFile airDeskFile) {
         //TODO broadcast to accessList
-        networkServiceServer.deleteFileS(workspace, airDeskFile);
+        networkServiceServer.deleteFileS(workspace.getName(), airDeskFile.getName());
     }
 
     public static Map<String, List<String>> searchWorkspaces(String email, List<String> tags) {

@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
@@ -141,23 +142,12 @@ public class NetworkServiceServer {
         this.airDesk = airDesk;
     }
 
-    public void deleteFileS(Workspace workspace, AirDeskFile airDeskFile) {
+    public void deleteFileS(String workspaceName, String fileName) {
         AirDeskFile f;
-        if (!workspace.isOwner()) {
-            f = airDesk.getOwnerWorkspaceByName(workspace.getName()).getFile(airDeskFile.getName());
-            if(f!=null){
-                airDesk.getOwnerWorkspaceByName(workspace.getName()).getFiles().remove(f);
-            }
-        } else {
-            ForeignWorkspace fw = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName());
-            if(fw == null)
-                return;
-            f = fw.getFile(airDeskFile.getName());
-            if(f!=null){
-                airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName()).getFiles().remove(f);
-            }
-        }
-        f.deleteNoNetwork();
+        OwnerWorkspace ow = airDesk.getOwnerWorkspaceByName(workspaceName);
+        if(ow == null)
+           throw new WorkspaceDoesNotExistException(workspaceName);
+        ow.deleteFile(fileName, WorkspaceType.OWNER);
     }
 
     public void refreshWorkspacesS() {

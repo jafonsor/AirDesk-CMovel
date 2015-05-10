@@ -423,7 +423,7 @@ public class AirDesk extends Application {
             throw new WorkspaceDoesNotExistException("error deleting file on " + workspaceName);
         }
 
-        w.deleteFile(fileName);
+        w.deleteFile(fileName, mWorkspaceType);
     }
 
     public boolean notifyIntention(String ownerEmail, String workspaceName, String fileName, FileState fileIntention, WorkspaceType workspaceType) {

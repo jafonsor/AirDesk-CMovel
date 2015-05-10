@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 import java.io.Serializable;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.ContentExceedsQuotaException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.DeleteFileException;
@@ -83,13 +84,15 @@ public class AirDeskFile implements Serializable {
         this.version += 1;
     }
 
-    public void delete() throws RemoteDeleteAirDeskFileException, LocalDeleteAirDeskFileException {
+    public void delete(WorkspaceType workspaceType) throws RemoteDeleteAirDeskFileException, LocalDeleteAirDeskFileException {
 
-        //Delete remotely
-        try {
-            NetworkServiceClient.deleteFile(getWorkspace(), this);
-        } catch (AirDeskException e) {
-            throw new RemoteDeleteAirDeskFileException(this.getName());
+        if(workspaceType == WorkspaceType.FOREIGN) {
+            //Delete remotely
+            try {
+                NetworkServiceClient.deleteFile(getWorkspace(), this);
+            } catch (AirDeskException e) {
+                throw new RemoteDeleteAirDeskFileException(this.getName());
+            }
         }
 
         //Delete locally

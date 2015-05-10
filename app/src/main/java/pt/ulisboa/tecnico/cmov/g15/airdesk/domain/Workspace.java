@@ -138,12 +138,12 @@ public abstract class Workspace implements Serializable {
         this.owner = owner;
     }
 
-    public void deleteFile(String fileName) throws FileDoesNotExistsException, RemoteDeleteAirDeskFileException, LocalDeleteAirDeskFileException {
+    public void deleteFile(String fileName, WorkspaceType workspaceType) throws FileDoesNotExistsException, RemoteDeleteAirDeskFileException, LocalDeleteAirDeskFileException {
         AirDeskFile file = getFile(fileName);
         if(file == null) {
             throw new FileDoesNotExistsException("deleting file '" + fileName + "' that does not exist.");
         }
-        file.delete();
+        file.delete(workspaceType);
         getFiles().remove(file);
     }
 }
