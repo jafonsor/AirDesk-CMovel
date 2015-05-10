@@ -237,6 +237,7 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         airDesk.createOwnerWorkspace("workspace5", 1000L, WorkspaceVisibility.PUBLIC, userTags);
         airDesk.createOwnerWorkspace("workspace6", 1000L, WorkspaceVisibility.PUBLIC, userTags);
         airDesk.createOwnerWorkspace("workspace7", 1000L, WorkspaceVisibility.PRIVATE, wrongTags);
+        airDesk.createOwnerWorkspace("workspace8", 1000L, WorkspaceVisibility.PUBLIC, userTags);
 
         OwnerWorkspace ow1 = airDesk.getOwnerWorkspaceByName("workspace5");
         ow1.allowUserFromAccessList(new AccessListItem(user));
@@ -249,6 +250,10 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         invitedItem.setInvited(true);
         ow3.allowUserFromAccessList(invitedItem);
 
+        OwnerWorkspace ow4 = airDesk.getOwnerWorkspaceByName("workspace8");
+        ow4.inviteUser(OWNEREMAIL);
+        ow4.blockUserFromAccessList(ow4.getAccessListItemByEmail(OWNEREMAIL));
+
 
         NetworkServiceClient.addForeignUser(OWNEREMAIL);
 
@@ -260,6 +265,7 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         assertNotNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace5"));
         assertNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace6"));
         assertNotNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace7"));
+        assertNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace8"));
     }
 
     @Override
