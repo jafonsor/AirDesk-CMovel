@@ -70,7 +70,7 @@ public class EditFileActivity extends ActionBarActivity {
             startActivity(intent);
         } catch (AirDeskException e){
             Log.e("exception", e.toString());
-            Toast.makeText(this, "You don't have enough space to save this file.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
         } finally {
             finish();
         }

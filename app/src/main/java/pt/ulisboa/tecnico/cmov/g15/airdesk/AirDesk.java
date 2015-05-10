@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AnotherUserEditingFileException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
@@ -212,6 +213,15 @@ public class AirDesk extends Application {
         ow.create();
     }
 
+    public void createForeignWorkspace(User ownerWorkspace, String workspaceName, Long quota) {
+        ForeignWorkspace fw = new ForeignWorkspace(ownerWorkspace, workspaceName, quota);
+        if (getForeignWorkspaceByName(ownerWorkspace.getEmail(),workspaceName) != null) {
+            throw new WorkspaceAlreadyExistsException(workspaceName);
+        }
+        getForeignWorkspaces().add(fw);
+        fw.create();
+    }
+
     public boolean editOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
         OwnerWorkspace ow = getOwnerWorkspaceByName(name);
         boolean changedQuota = ow.setQuota(quota);
@@ -263,15 +273,19 @@ public class AirDesk extends Application {
         return false;
     }
 
-    public void createFile(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
-        Workspace workspace = null;
-        if (workspaceType == WorkspaceType.OWNER) {
-            workspace = getOwnerWorkspaceByName(wsName);
-        } else {
-            workspace = getForeignWorkspaceByName(wsOwner, wsName);
-        }
+    /*
+    *
+    * Chamar esta funcao apenas da activity. Para criar a lista de ficheiros usar createFileNoNetwork.
+     */
 
-        AirDeskFile file = workspace.createFileOnNetwork(filename);
+    public void createFile(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
+        if (workspaceType == WorkspaceType.OWNER) {
+            OwnerWorkspace ow  = getOwnerWorkspaceByName(wsName);
+            ow.createFileNoNetwork(filename);
+        } else {
+           ForeignWorkspace fw= getForeignWorkspaceByName(wsOwner, wsName);
+           fw.createFileOnNetwork(filename);
+        }
     }
 
     public String viewFileContent(String wsOwner, String wsName, String filename, WorkspaceType workspaceType) {
@@ -292,19 +306,23 @@ public class AirDesk extends Application {
         return mFile.read();
     }
 
-    public void saveFileContent(String wsOwner, String wsName, String filename, String content, WorkspaceType workspaceType) {
+    public void saveFileContent(String wsOwner, String wsName, String filename, String content, WorkspaceType workspaceType)
+                throws AnotherUserEditingFileException{
+
         AirDeskFile mFile = null;
 
         if (workspaceType == WorkspaceType.OWNER) {
             mFile = getOwnerWorkspaceByName(wsName).getFile(filename);
+            if(mFile == null)
+                throw new FileDoesNotExistsException(filename);
+            mFile.writeNoNetwork(content);
+            mFile.incrementVersion();
         } else {
             mFile = getForeignWorkspaceByName(wsOwner, wsName).getFile(filename);
+            if(mFile == null)
+                throw new FileDoesNotExistsException(filename);
+            mFile.write(content);
         }
-
-        if(mFile == null)
-            throw new FileDoesNotExistsException(filename);
-
-        mFile.write(content);
     }
 
     public boolean isForeignWorkspaceBlocked(String userEmail, String foreignWorkspaceName) {

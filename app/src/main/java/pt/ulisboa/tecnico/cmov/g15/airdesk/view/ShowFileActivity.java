@@ -55,6 +55,12 @@ public class ShowFileActivity extends ActionBarActivity {
         fileContentView.setText(mAirDesk.viewFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, mWorkspaceType));
     }
 
+    @Override
+    protected void onResume() {
+        mAirDesk.notifyIntention(mWorkspaceOwner, mWorkspaceName, mFileName, FileState.READ, mWorkspaceType);
+        super.onResume();
+    }
+
     public void onClickEditFile(View v) {
         if(mAirDesk.notifyIntention(mWorkspaceOwner, mWorkspaceName, mFileName, FileState.WRITE, mWorkspaceType)){
             Intent intent = new Intent(this, EditFileActivity.class);

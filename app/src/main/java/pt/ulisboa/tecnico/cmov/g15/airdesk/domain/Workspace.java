@@ -105,6 +105,7 @@ public abstract class Workspace implements Serializable {
         };
 
         String path = FileSystemManager.createFile(getPath(), filename);
+
         /*
         if (path == null){
             //TEMPORARY 1a entrega

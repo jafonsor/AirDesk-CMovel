@@ -111,7 +111,6 @@ public class AirDeskFile implements Serializable {
         if(spaceLeftForContent(contentSize) < contentSize)
             throw new ContentExceedsQuotaException("new content exceeds workspace quota");
 
-        NetworkServiceClient.notifyIntention(getWorkspace(), this, FileState.WRITE);
         incrementVersion();
         setSize(contentSize);
         NetworkServiceClient.sendFile(getWorkspace().getName(), this.getName(), content);
@@ -123,6 +122,8 @@ public class AirDeskFile implements Serializable {
 
         if(spaceLeftForContent(contentSize) < contentSize)
             throw new ContentExceedsQuotaException("new content exceeds workspace quota");
+
+        setSize(contentSize);
 
         FileSystemManager.setFileContent(getPath(), content);
 
