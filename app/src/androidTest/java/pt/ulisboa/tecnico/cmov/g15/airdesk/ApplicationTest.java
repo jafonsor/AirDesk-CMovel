@@ -233,7 +233,7 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         airDesk.createOwnerWorkspace("workspace3", 1000L, WorkspaceVisibility.PUBLIC,  userTags);
         airDesk.createOwnerWorkspace("workspace4", 1000L, WorkspaceVisibility.PUBLIC,  wrongTags);
 
-        NetworkServiceClient.searchWorkspace("email", userTags);
+        airDesk.searchWorkspaces();
 
         assertNull(airDesk.getForeignWorkspaceByName("email", "workspace2"));
         assertNotNull(airDesk.getForeignWorkspaceByName("email", "workspace3"));

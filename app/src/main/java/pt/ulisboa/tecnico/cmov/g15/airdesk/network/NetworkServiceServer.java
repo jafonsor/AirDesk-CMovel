@@ -141,11 +141,6 @@ public class NetworkServiceServer {
         this.airDesk = airDesk;
     }
 
-    public void workspaceCreatedS() {
-        //TODO temporary
-        airDesk.getAllowedWorkspaces();
-    }
-
     public void deleteFileS(Workspace workspace, AirDeskFile airDeskFile) {
         AirDeskFile f;
         if (!workspace.isOwner()) {

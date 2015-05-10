@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +48,17 @@ public class AirDesk extends Application {
         blockedWorkspaces = new ArrayList<ForeignWorkspace>();
         //TODO temporary
         NetworkServiceClient.setAirDesk(this);
+    }
+
+    private Map<String, User> foreignUsers = new HashMap<String, User>();
+    private User getForeignUser(String email) {
+        if(foreignUsers.containsKey(email)) {
+            return foreignUsers.get(email);
+        } else {
+            User newUser = new User(email);
+            foreignUsers.put(email, newUser);
+            return newUser;
+        }
     }
 
     /*
@@ -182,21 +195,25 @@ public class AirDesk extends Application {
     public void searchWorkspaces() {
         Map<String, List<String>> foreignWSMap = NetworkServiceClient.searchWorkspaces(getUser().getEmail(), getUser().getUserTags());
         List<ForeignWorkspace> wsListToAdd = new ArrayList<ForeignWorkspace>();
-        for (ForeignWorkspace fw : getForeignWorkspaces()) {
-            if (!isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName())) {
-                // don't add blocked workspaces
-                long quota = NetworkServiceClient.getWorkspaceQuota(wsOwner,fwName);
-                ForeignWorkspace fw = getForeignWorkspaceByName(wsOwner, fwName);
-                // don't create a new workspace if the workspace already exists
-                if(fw != null) {
-                    fw = new ForeignWorkspace(getForeignUser(wsOwner), fwName, quota);
-                    wsListToAdd.add(fw);
-                } else {
-                    fw.setQuota(fw.getQuota());
+        for(Map.Entry<String, List<String>> entry : foreignWSMap.entrySet()) {
+            String wsOwner = entry.getKey();
+            List<String> workspaces = entry.getValue();
+            for(String workspaceName : workspaces) {
+                if (!isForeignWorkspaceBlocked(wsOwner, workspaceName)) {
+                    // don't add blocked workspaces
+                    long quota = NetworkServiceClient.getWorkspaceQuota(wsOwner, workspaceName);
+                    ForeignWorkspace fw = getForeignWorkspaceByName(wsOwner, workspaceName);
+                    // don't create a new workspace if the workspace already exists
+                    if (fw != null) {
+                        fw = new ForeignWorkspace(getForeignUser(wsOwner), workspaceName, quota);
+                        wsListToAdd.add(fw);
+                    } else {
+                        fw.setQuota(fw.getQuota());
+                    }
                 }
             }
         };
-        getForeignWorkspaces().add(wsListToAdd);
+        getForeignWorkspaces().addAll(wsListToAdd);
     }
 
     public List<AirDeskFile> getWorkspaceFiles(String userEmail, String workspaceName, WorkspaceType workspaceType) {

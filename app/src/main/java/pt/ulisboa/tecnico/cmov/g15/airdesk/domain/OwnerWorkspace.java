@@ -42,7 +42,6 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         if(this.visibility != newVisibility) {
             this.visibility = newVisibility;
             removeUsersFromAccessListExceptInvited();
-            NetworkServiceClient.refreshWorkspacesC();
         }
     }
 
@@ -62,7 +61,6 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         if (!areListsEqual(this.tags, newTags)) {
             this.tags = newTags;
             removeUsersFromAccessListExceptInvited();
-            NetworkServiceClient.refreshWorkspacesC();
             return true;
         }
         return true;
@@ -105,14 +103,7 @@ public class OwnerWorkspace extends Workspace implements Serializable {
 
     public boolean allowUserFromAccessList(AccessListItem itemToAllow) {
         removeUsersFromAccessListExceptInvited();
-        boolean returnValue = NetworkServiceClient.refreshWorkspacesC();
-        if(!returnValue) {
-            Log.e("Error", "Could not refresh workspaces when  allowing  " + getName() + ", " + itemToAllow.getUser().getEmail());
-            return false;
-        }
-        if(itemToAllow.isInvited()) {
-            NetworkServiceClient.inviteUser(this, getOwner());
-        }
+
         itemToAllow.setAllowed(true);
         return true;
     }

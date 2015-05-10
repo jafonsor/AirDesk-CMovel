@@ -1,7 +1,9 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.network;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
@@ -17,8 +19,10 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 public class NetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
     private static NetworkServiceServer networkServiceServer = new NetworkServiceServer();
+    private static List<String> userEmails;
 
     public NetworkServiceClient() {
+        userEmails = new ArrayList<String>();
     }
 
     public static boolean notifyIntention(Workspace workspace, AirDeskFile file, FileState intention) {
@@ -58,15 +62,7 @@ public class NetworkServiceClient {
     //TODO temporary
     public static void setAirDesk(AirDesk airDesk) {
         networkServiceServer.setAirDesk(airDesk);
-    }
-
-    public static void removeUserFromAccessList(OwnerWorkspace ownerWorkspace, User user) {
-        networkServiceServer.removeWorkspaceS(ownerWorkspace);
-    }
-
-    public static void workspaceCreated() {
-        //TODO broadcast
-        networkServiceServer.workspaceCreatedS();
+        userEmails.add(airDesk.getUser().getEmail());
     }
 
     public static void removeWorkspace(OwnerWorkspace workspace) {
@@ -74,24 +70,24 @@ public class NetworkServiceClient {
         networkServiceServer.removeWorkspaceS(workspace);
     }
 
+    public static void removeUserFromAccessList(OwnerWorkspace ownerWorkspace, User user) {
+        networkServiceServer.removeWorkspaceS(ownerWorkspace);
+    }
 
     public static void deleteFile(Workspace workspace, AirDeskFile airDeskFile) {
         //TODO broadcast to accessList
         networkServiceServer.deleteFileS(workspace, airDeskFile);
     }
 
-    public static boolean refreshWorkspacesC() {
-        return networkServiceServer.refreshWorkspacesS();
-    }
-
-    public static List<ForeignWorkspace> searchWorkspaces(String email, List<String> tags) {
+    public static Map<String, List<String>> searchWorkspaces(String email, List<String> tags) {
+        Map<String,List<String>> searchResult = new HashMap<String,List<String>>();
         List<String> workspaceNames = networkServiceServer.searchWorkspacesS(email, tags);
-        List<ForeignWorkspace> foreignWorkspaces = new ArrayList<ForeignWorkspace>();
+        List<String> foreignWorkspaces = new ArrayList<String>();
         for(String workspaceName : workspaceNames) {
-            long quota = getWorkspaceQuota(email, workspaceName);
-            foreignWorkspaces.add(new ForeignWorkspace(new User(email), workspaceName, quota));
+            foreignWorkspaces.add(workspaceName);
         }
-        return foreignWorkspaces;
+        searchResult.put(email, foreignWorkspaces);
+        return searchResult;
     }
 
     public static long getWorkspaceQuota(String ownerEmail, String workspaceName) {
