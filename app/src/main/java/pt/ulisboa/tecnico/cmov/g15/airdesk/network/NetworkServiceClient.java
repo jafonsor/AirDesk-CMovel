@@ -25,8 +25,8 @@ public class NetworkServiceClient {
         userEmails = new ArrayList<String>();
     }
 
-    public static boolean notifyIntention(Workspace workspace, AirDeskFile file, FileState intention) {
-        return networkServiceServer.notifyIntentionS(workspace.getName(), file.getName(), intention);
+    public static boolean notifyIntention(Workspace workspace, AirDeskFile file, FileState intention, boolean force) {
+        return networkServiceServer.notifyIntentionS(workspace.getName(), file.getName(), intention, force);
     }
 
 

@@ -13,6 +13,7 @@ import android.widget.Toast;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.SwipeActivity;
@@ -98,6 +99,12 @@ public class EditFileActivity extends ActionBarActivity {
         outState.putString(EXTRA_FILE_NAME, mFileName);
         outState.putSerializable(EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onStop() {
+        mAirDesk.notifyIntention(mWorkspaceOwner, mWorkspaceName, mFileName, FileState.IDLE, mWorkspaceType, true);
+        super.onStop();
     }
 }
 

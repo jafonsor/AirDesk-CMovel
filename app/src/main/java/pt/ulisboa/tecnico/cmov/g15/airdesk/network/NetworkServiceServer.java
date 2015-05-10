@@ -30,22 +30,23 @@ public class NetworkServiceServer {
         this.airDesk = airDesk;
     }
 
-    public boolean notifyIntentionS(String workspaceName, String fileName, FileState intention) {
+    public boolean notifyIntentionS(String workspaceName, String fileName, FileState intention, boolean force) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspaceName);
 
         if (ws == null)
             throw new WorkspaceDoesNotExistException(workspaceName);
 
         AirDeskFile f = ws.getFile(fileName);
-        if( f == null)
-            f = ws.createFileNoNetwork(fileName);
 
-        if (f.getState() == FileState.WRITE)
-            return false;
-        else {
+        if(force){
             f.setState(intention);
             return true;
         }
+        if (f.getState() == FileState.WRITE)
+            return false;
+
+        f.setState(intention);
+        return true;
     }
 
 
@@ -95,7 +96,6 @@ public class NetworkServiceServer {
             f = workspace.createFileNoNetwork(fileName);
 
         f.incrementVersion();
-        f.setState(FileState.IDLE);
         f.writeNoNetwork(fileContent);
     }
 

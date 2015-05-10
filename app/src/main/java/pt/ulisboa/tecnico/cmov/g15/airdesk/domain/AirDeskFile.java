@@ -118,6 +118,7 @@ public class AirDeskFile implements Serializable {
         setSize(contentSize);
         NetworkServiceClient.sendFile(getWorkspace().getName(), this.getName(), content);
         FileSystemManager.setFileContent(getPath(), content);
+        setState(FileState.IDLE);
     }
 
     public void writeNoNetwork(String content) {
@@ -129,7 +130,7 @@ public class AirDeskFile implements Serializable {
         setSize(contentSize);
 
         FileSystemManager.setFileContent(getPath(), content);
-
+        setState(FileState.IDLE);
     }
 
     public long spaceLeftForContent(long contentSize) {

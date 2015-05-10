@@ -426,21 +426,44 @@ public class AirDesk extends Application {
         w.deleteFile(fileName, mWorkspaceType);
     }
 
-    public boolean notifyIntention(String ownerEmail, String workspaceName, String fileName, FileState fileIntention, WorkspaceType workspaceType) {
+
+    public boolean notifyIntention(String ownerEmail, String workspaceName, String fileName, FileState fileIntention, WorkspaceType workspaceType){
+        return notifyIntention(ownerEmail,workspaceName, fileName, fileIntention, workspaceType, false);
+    }
+
+    public boolean notifyIntention(String ownerEmail, String workspaceName, String fileName, FileState fileIntention, WorkspaceType workspaceType, boolean force) {
         Workspace w = null;
         if(workspaceType == WorkspaceType.FOREIGN) {
             w = getForeignWorkspaceByName(ownerEmail, workspaceName);
+            if(w == null) {
+                throw new WorkspaceDoesNotExistException("workspace " + workspaceName + " does not exist");
+            }
+            AirDeskFile file = w.getFile(fileName);
+
+            return NetworkServiceClient.notifyIntention(w, file, fileIntention, force);
+
         } else {
             w = getOwnerWorkspaceByName(workspaceName);
+            if(w == null) {
+                throw new WorkspaceDoesNotExistException("workspace " + workspaceName + " does not exist");
+            }
+            AirDeskFile file = w.getFile(fileName);
+
+            if(force){
+                file.setState(fileIntention);
+                return true;
+            }
+
+            if (file.getState() == FileState.WRITE)
+                return false;
+            else {
+                file.setState(fileIntention);
+                return true;
+            }
         }
 
-        if(w == null) {
-            throw new WorkspaceDoesNotExistException("workspace " + workspaceName + " does not exist");
-        }
 
-        AirDeskFile file = w.getFile(fileName);
 
-        return NetworkServiceClient.notifyIntention(w, file, fileIntention);
     }
 
 }
