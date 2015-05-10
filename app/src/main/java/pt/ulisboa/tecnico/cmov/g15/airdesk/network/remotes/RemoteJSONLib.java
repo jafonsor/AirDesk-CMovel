@@ -6,7 +6,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
  * Created by joao on 10-05-2015.
  */
 public class RemoteJSONLib {
-    public static String createJsonCall(String methodName, Object[] args) {
+    public static String createJsonCall(String methodName, Object ...args) {
 
         return null;
     }
