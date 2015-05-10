@@ -4,6 +4,7 @@ import android.util.Log;
 
 import junit.framework.TestCase;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +31,20 @@ public class RemoteJSONLibTest extends TestCase {
 
     public void testGenerateMethodCall() {
         String jsonedCall = RemoteJSONLib.createJsonCall("method", 3);
-        assertEquals("{\"methodName\":\"method\",\"args\":[{\"class\":\"int\",\"valeu\":3}]", jsonedCall);
+
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("methodName", "method");
+            obj.put("args", new JSONArray() {{
+                put(new JSONObject() {{
+                    put("class", Integer.class.getName());
+                    put("value", 3);
+                }});
+            }});
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        assertEquals(obj.toString(), jsonedCall);
     }
 
     public void testSomeJSON() {
