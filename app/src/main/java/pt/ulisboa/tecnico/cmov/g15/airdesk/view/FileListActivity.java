@@ -61,7 +61,6 @@ public class FileListActivity extends ActionBarActivity {
 
         List<AirDeskFile> files = mAirDesk.getWorkspaceFiles(mUserEmail, mWorkspaceName, mWorkspaceType);
 
-
         mListAdapter = new ListAdapter<AirDeskFile>(this, R.layout.file_item, files) {
             @Override
             public void initItemView(final AirDeskFile file, View view, final int position) {

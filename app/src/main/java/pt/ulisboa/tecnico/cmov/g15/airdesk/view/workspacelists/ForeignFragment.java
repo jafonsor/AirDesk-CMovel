@@ -49,7 +49,7 @@ public class ForeignFragment extends Fragment {
         mAirDesk = (AirDesk) getActivity().getApplication();
         ListView listView = (ListView) rootView.findViewById(R.id.foreign_workspaces_list);
 
-        List<ForeignWorkspace> elements = mAirDesk.getForeignWorkspaces();
+        List<ForeignWorkspace> elements = mAirDesk.searchWorkspaces();
 
         mListAdapter = new ListAdapter<ForeignWorkspace>(getActivity(), R.layout.foreign_workspace_item, elements) {
             @Override
@@ -106,7 +106,7 @@ public class ForeignFragment extends Fragment {
                             Log.e("error", e.getMessage());
                             Toast.makeText(getActivity(), "Error removing workspace", Toast.LENGTH_SHORT).show();
                         }
-                        mListAdapter.setItems(mAirDesk.getForeignWorkspaces());
+                        mListAdapter.setItems(mAirDesk.searchWorkspaces());
                         mListAdapter.notifyDataSetChanged();
                     }
                 })

@@ -291,6 +291,8 @@ public class AirDesk extends Application {
     public void inviteUser(String workspaceName, String userEmail) {
         OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
         workspace.inviteUser(userEmail);
+        //TODO delete this is temporary:
+        NetworkServiceClient.addForeignUser(user.getEmail());
     }
 
     public void changeUserTags(List<String> tags) {
