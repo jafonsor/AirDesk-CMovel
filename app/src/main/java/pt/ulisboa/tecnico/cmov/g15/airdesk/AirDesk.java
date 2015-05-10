@@ -192,8 +192,26 @@ public class AirDesk extends Application {
         fw.delete();
     }
 
-    public void searchWorkspaces() {
+    private boolean find(Object o, List objs) {
+        for(Object t : objs) {
+            if(t.equals(o))
+                return true;
+        }
+        return false;
+    }
+
+    public List<ForeignWorkspace> searchWorkspaces() {
         Map<String, List<String>> foreignWSMap = NetworkServiceClient.searchWorkspaces(getUser().getEmail(), getUser().getUserTags());
+
+        List<ForeignWorkspace> wsToRemove = new ArrayList<ForeignWorkspace>();
+        for(ForeignWorkspace fw : getForeignWorkspaces()) {
+            List<String> wsNames = foreignWSMap.get(fw.getName());
+            if(wsNames == null || !find(fw.getName(), wsNames)) {
+                wsToRemove.add(fw);
+            }
+        }
+        getForeignWorkspaces().removeAll(wsToRemove);
+
         List<ForeignWorkspace> wsListToAdd = new ArrayList<ForeignWorkspace>();
         for(Map.Entry<String, List<String>> entry : foreignWSMap.entrySet()) {
             String wsOwner = entry.getKey();
@@ -204,7 +222,7 @@ public class AirDesk extends Application {
                     long quota = NetworkServiceClient.getWorkspaceQuota(wsOwner, workspaceName);
                     ForeignWorkspace fw = getForeignWorkspaceByName(wsOwner, workspaceName);
                     // don't create a new workspace if the workspace already exists
-                    if (fw != null) {
+                    if (fw == null) {
                         fw = new ForeignWorkspace(getForeignUser(wsOwner), workspaceName, quota);
                         wsListToAdd.add(fw);
                     } else {
@@ -214,6 +232,7 @@ public class AirDesk extends Application {
             }
         };
         getForeignWorkspaces().addAll(wsListToAdd);
+        return getForeignWorkspaces();
     }
 
     public List<AirDeskFile> getWorkspaceFiles(String userEmail, String workspaceName, WorkspaceType workspaceType) {
@@ -258,13 +277,14 @@ public class AirDesk extends Application {
         ow.setTags(tags);
     }
 
-    public boolean toggleUserPermissions(String workspaceName, String userEmail, boolean oldStatus) {
+    public void toggleUserPermissions(String workspaceName, String userEmail, boolean oldStatus) {
         OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
-        return workspace.toggleUserPermissions(userEmail, oldStatus);
+        workspace.toggleUserPermissions(userEmail, oldStatus);
     }
 
     public List<AccessListItem> getWorkspaceAccessList(String workspaceName) {
         OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
+        //TODO remove the users that have left the network from the access list. keep those that were invited or blocked.
         return workspace.getAccessList();
     }
 

@@ -19,7 +19,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 public class NetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
     private static NetworkServiceServer networkServiceServer = new NetworkServiceServer();
-    private static List<String> userEmails;
+    private static List<String> userEmails = new ArrayList<String>();
 
     public NetworkServiceClient() {
         userEmails = new ArrayList<String>();
@@ -62,7 +62,11 @@ public class NetworkServiceClient {
     //TODO temporary
     public static void setAirDesk(AirDesk airDesk) {
         networkServiceServer.setAirDesk(airDesk);
-        userEmails.add(airDesk.getUser().getEmail());
+    }
+
+    //TODO temporary
+    public static void addForeignUser(String email) {
+        userEmails.add(email);
     }
 
     public static void removeWorkspace(OwnerWorkspace workspace) {
@@ -81,12 +85,10 @@ public class NetworkServiceClient {
 
     public static Map<String, List<String>> searchWorkspaces(String email, List<String> tags) {
         Map<String,List<String>> searchResult = new HashMap<String,List<String>>();
-        List<String> workspaceNames = networkServiceServer.searchWorkspacesS(email, tags);
-        List<String> foreignWorkspaces = new ArrayList<String>();
-        for(String workspaceName : workspaceNames) {
-            foreignWorkspaces.add(workspaceName);
+        for(String foreignEmail : userEmails) {
+            List<String> workspaceNames = networkServiceServer.searchWorkspacesS(email, tags);
+            searchResult.put(foreignEmail, workspaceNames);
         }
-        searchResult.put(email, foreignWorkspaces);
         return searchResult;
     }
 

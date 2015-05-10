@@ -183,6 +183,9 @@ public class NetworkServiceServer {
                 }
             }
         }
+
+
+
         return allowedWorkspacesR;
     }
 

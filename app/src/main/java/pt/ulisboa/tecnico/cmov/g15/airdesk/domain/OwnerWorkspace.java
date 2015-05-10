@@ -9,6 +9,7 @@ import java.util.List;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.InvalidQuotaException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AccessListItemNotFoundException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 
 /**
@@ -95,17 +96,29 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         return null;
     }
 
-    public boolean blockUserFromAccessList(AccessListItem itemToBlock) {
-        NetworkServiceClient.removeUserFromAccessList(this, itemToBlock.getUser());
+    public void blockUserFromAccessList(AccessListItem itemToBlock) {
+        // check if an item for the same user already exists.
+        // this avoids that more than one item exists for the same user
+        AccessListItem itemOnList = getAccessListItemByEmail(itemToBlock.getUser().getEmail());
+        if(itemOnList != null)
+            itemToBlock = itemOnList;
+        else
+            getAccessList().add(itemToBlock);
+
         itemToBlock.setAllowed(false);
-        return true;
     }
 
-    public boolean allowUserFromAccessList(AccessListItem itemToAllow) {
-        removeUsersFromAccessListExceptInvited();
+    public void allowUserFromAccessList(AccessListItem itemToAllow) {
+        // check if an item for the same user already exists.
+        // this avoids that more than one item exists for the same user
+        AccessListItem itemOnList = getAccessListItemByEmail(itemToAllow.getUser().getEmail());
+        if(itemOnList != null) {
+            itemToAllow = itemOnList;
+        } else {
+			getAccessList().add(itemToAllow);
+        }
 
         itemToAllow.setAllowed(true);
-        return true;
     }
 
     public boolean userInAccessList(String userEmail) {
@@ -126,16 +139,15 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         return false;
     }
 
-    public boolean toggleUserPermissions(String userEmail, boolean oldPermission) {
+    public void toggleUserPermissions(String userEmail, boolean oldPermission) {
         AccessListItem item = getAccessListItemByEmail(userEmail);
         if(item==null) {
-            Log.e("Error", "Could not find accesslist item by email: " + userEmail);
-            return false;
+            throw new AccessListItemNotFoundException(userEmail);
         }
         if(oldPermission) {
-            return blockUserFromAccessList(item);
+            blockUserFromAccessList(item);
         } else {
-            return allowUserFromAccessList(item);
+            allowUserFromAccessList(item);
         }
     }
 

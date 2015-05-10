@@ -88,13 +88,13 @@ public class EditAccessListActivity extends ActionBarActivity {
     }
 
     public void onClickAccessListButton(AccessListItem accessListItem, View v, int position) {
-        boolean status  = mAirDesk.toggleUserPermissions(mWorkspaceName, accessListItem.getUser().getEmail(), accessListItem.isAllowed());
-        if(status) {
+        try {
+            mAirDesk.toggleUserPermissions(mWorkspaceName, accessListItem.getUser().getEmail(), accessListItem.isAllowed());
             mListAdapter.setItems(mAirDesk.getWorkspaceAccessList(mWorkspaceName));
             mListAdapter.notifyDataSetChanged();
             Toast.makeText(getApplicationContext(), "User's permissions changed", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getApplicationContext(), "Could not change user permissions.", Toast.LENGTH_SHORT).show();
+        } catch(AirDeskException e) {
+            Toast.makeText(getApplicationContext(), "Could not change user permissions: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 

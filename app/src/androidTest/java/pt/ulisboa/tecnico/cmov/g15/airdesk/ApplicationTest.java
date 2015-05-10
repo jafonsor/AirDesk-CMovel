@@ -8,6 +8,7 @@ import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AccessListItem;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
@@ -41,17 +42,21 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
     long workpaceQuota = 2000L;
 
     public void setUp() {
+        FileSystemManager.deleteStorage();
         createApplication();
         airDesk = getApplication();
-        airDesk.setUser(new User(OWNERUSERNAME,OWNEREMAIL));
+
+
+        user = new User(OWNERUSERNAME,OWNEREMAIL);
+        airDesk.setUser(user);
 
         airDesk.reset();
-
-        user = new User("name","email");
         airDesk.setUser(user);
 
         List<String> tags = new ArrayList<String>();
         tags.add("hollyday");
+
+        user.setUserTags(tags);
 
         airDesk.createOwnerWorkspace("workspace", workpaceQuota, WorkspaceVisibility.PUBLIC, tags);
     }
@@ -61,9 +66,9 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
     public void testCreateForeignWorkspace() {
         int sizeForeignWorkspaceList = airDesk.getForeignWorkspaces().size();
         airDesk.createForeignWorkspace(new User(OWNERUSERNAME, OWNEREMAIL), "ForeignWorkspace1", workpaceQuota);
-        assertEquals("sizeWorskpaces wasn't incremented",sizeForeignWorkspaceList+1, airDesk.getForeignWorkspaces().size());
+        assertEquals("sizeWorskpaces wasn't incremented", sizeForeignWorkspaceList + 1, airDesk.getForeignWorkspaces().size());
         File dir = FileSystemManager.workspaceDir(OWNEREMAIL, "ForeignWorkspace1", WorkspaceType.FOREIGN);
-        assertTrue("Workspace was not created in storage",dir.exists());
+        assertTrue("Workspace was not created in storage", dir.exists());
     }
 
     public void testDeleteForeignWorkspace() {
@@ -94,9 +99,9 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         tags.add("tag2");
         int sizeOwnerWorkspaceList = airDesk.getOwnerWorkspaces().size();
         airDesk.createOwnerWorkspace("Workspace1", 200L, WorkspaceVisibility.PUBLIC, tags);
-        assertEquals("sizeWorskpaces wasn't incremented",sizeOwnerWorkspaceList+1, airDesk.getOwnerWorkspaces().size());
+        assertEquals("sizeWorskpaces wasn't incremented", sizeOwnerWorkspaceList + 1, airDesk.getOwnerWorkspaces().size());
         File dir = FileSystemManager.workspaceDir(OWNEREMAIL, "Workspace1", WorkspaceType.OWNER);
-        assertTrue("Workspace was not created in storage",dir.exists());
+        assertTrue("Workspace was not created in storage", dir.exists());
     }
 
     public void testDeleteOwnerWorkspace() {
@@ -218,25 +223,48 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         }
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        FileSystemManager.deleteStorage();
-        airDesk.reset();
-    }
-
     public void testSearchWorkspaces() {
         List<String> userTags = user.getUserTags();
         List<String> wrongTags = new ArrayList<String>() {{
             add("wrongTag");
         }};
+
+        airDesk.getForeignWorkspaces().clear();
+
         airDesk.createOwnerWorkspace("workspace2", 1000L, WorkspaceVisibility.PRIVATE, userTags);
-        airDesk.createOwnerWorkspace("workspace3", 1000L, WorkspaceVisibility.PUBLIC,  userTags);
-        airDesk.createOwnerWorkspace("workspace4", 1000L, WorkspaceVisibility.PUBLIC,  wrongTags);
+        airDesk.createOwnerWorkspace("workspace3", 1000L, WorkspaceVisibility.PUBLIC, userTags);
+        airDesk.createOwnerWorkspace("workspace4", 1000L, WorkspaceVisibility.PUBLIC, wrongTags);
+        airDesk.createOwnerWorkspace("workspace5", 1000L, WorkspaceVisibility.PUBLIC, userTags);
+        airDesk.createOwnerWorkspace("workspace6", 1000L, WorkspaceVisibility.PUBLIC, userTags);
+        airDesk.createOwnerWorkspace("workspace7", 1000L, WorkspaceVisibility.PRIVATE, wrongTags);
+
+        OwnerWorkspace ow1 = airDesk.getOwnerWorkspaceByName("workspace5");
+        ow1.allowUserFromAccessList(new AccessListItem(user));
+
+        OwnerWorkspace ow2 = airDesk.getOwnerWorkspaceByName("workspace6");
+        ow2.blockUserFromAccessList(new AccessListItem(user));
+
+        OwnerWorkspace ow3 = airDesk.getOwnerWorkspaceByName("workspace7");
+        AccessListItem invitedItem = new AccessListItem(user);
+        invitedItem.setInvited(true);
+        ow3.allowUserFromAccessList(invitedItem);
+
+
+        NetworkServiceClient.addForeignUser(OWNEREMAIL);
 
         airDesk.searchWorkspaces();
 
-        assertNull(airDesk.getForeignWorkspaceByName("email", "workspace2"));
-        assertNotNull(airDesk.getForeignWorkspaceByName("email", "workspace3"));
-        assertNull(airDesk.getForeignWorkspaceByName("email", "workspace4"));
+        assertNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace2"));
+        assertNotNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace3"));
+        assertNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace4"));
+        assertNotNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace5"));
+        assertNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace6"));
+        assertNotNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace7"));
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        FileSystemManager.deleteStorage();
+        airDesk.reset();
     }
 }
