@@ -92,6 +92,11 @@ public class NetworkServiceClient {
         return searchResult;
     }
 
+    public static List<String> searchFiles(String userEmail, String workspaceName) {
+        // get remote server by 'userEmail'
+        return networkServiceServer.getFileList(workspaceName);
+    }
+
     public static long getWorkspaceQuota(String ownerEmail, String workspaceName) {
         return networkServiceServer.getWorkspaceQuotaS(ownerEmail, workspaceName);
     }

@@ -189,6 +189,15 @@ public class NetworkServiceServer {
         return allowedWorkspacesR;
     }
 
+    public List<String> getFileList(String workspaceName) {
+        OwnerWorkspace ownerWorkspace = airDesk.getOwnerWorkspaceByName(workspaceName);
+        List<String> fileNames = new ArrayList<String>();
+        for(AirDeskFile file : ownerWorkspace.getFiles()) {
+            fileNames.add(file.getName());
+        }
+        return fileNames;
+    }
+
     // i don't know if when we add wifi to this the ownerEmail will be needed
     public long getWorkspaceQuotaS(String ownerEmail, String workspaceName) {
         OwnerWorkspace ow = airDesk.getOwnerWorkspaceByName(workspaceName);

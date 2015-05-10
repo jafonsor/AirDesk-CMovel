@@ -268,6 +268,22 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         assertNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace8"));
     }
 
+    public void testSearchFiles() {
+        String workspaceName = "workspaceMaria";
+        airDesk.createOwnerWorkspace(workspaceName, 1000L, WorkspaceVisibility.PUBLIC, user.getUserTags());
+
+        OwnerWorkspace ow = airDesk.getOwnerWorkspaceByName(workspaceName);
+        NetworkServiceClient.addForeignUser(OWNEREMAIL);
+        airDesk.searchWorkspaces();
+
+        AirDeskFile file = ow.createFileOnNetwork("new_file");
+
+        List<AirDeskFile> foundFiles = airDesk.getWorkspaceFiles(OWNEREMAIL, workspaceName, WorkspaceType.FOREIGN);
+
+        assertEquals(1, foundFiles.size());
+        assertEquals("new_file", foundFiles.get(0).getName());
+    }
+
     @Override
     protected void tearDown() throws Exception {
         FileSystemManager.deleteStorage();

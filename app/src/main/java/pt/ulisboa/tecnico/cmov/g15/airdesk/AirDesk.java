@@ -207,6 +207,7 @@ public class AirDesk extends Application {
         for(ForeignWorkspace fw : getForeignWorkspaces()) {
             List<String> wsNames = foreignWSMap.get(fw.getName());
             if(wsNames == null || !find(fw.getName(), wsNames)) {
+                fw.delete();
                 wsToRemove.add(fw);
             }
         }
@@ -224,6 +225,7 @@ public class AirDesk extends Application {
                     // don't create a new workspace if the workspace already exists
                     if (fw == null) {
                         fw = new ForeignWorkspace(getForeignUser(wsOwner), workspaceName, quota);
+                        fw.create();
                         wsListToAdd.add(fw);
                     } else {
                         fw.setQuota(fw.getQuota());
@@ -236,19 +238,39 @@ public class AirDesk extends Application {
     }
 
     public List<AirDeskFile> getWorkspaceFiles(String userEmail, String workspaceName, WorkspaceType workspaceType) {
-        Workspace workspace = null;
-        if (workspaceType==WorkspaceType.OWNER) {
-            workspace = getOwnerWorkspaceByName(workspaceName);
+        if (workspaceType == WorkspaceType.OWNER) {
+            OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
+            if(workspace == null)
+                throw new WorkspaceDoesNotExistException(workspaceName);
+            return workspace.getFiles();
         } else {
-            workspace = getForeignWorkspaceByName(userEmail, workspaceName);
-        }
+            ForeignWorkspace workspace = getForeignWorkspaceByName(userEmail, workspaceName);
+            if(workspace == null) {
+                throw new WorkspaceDoesNotExistException(workspaceName);
+            }
 
-        if (workspace == null) {
-            Log.e("bad error", "getWorkspaceFiles for " + userEmail + "," + workspaceName);
-            return null;
-        }
+            List<String> fileNames = NetworkServiceClient.searchFiles(userEmail, workspaceName);
 
-        return workspace.getFiles();
+            // remove files that were deleted
+            List<AirDeskFile> oldFiles = workspace.getFiles();
+            List<AirDeskFile> filesToRemove = new ArrayList<AirDeskFile>();
+            for(AirDeskFile oldFile : oldFiles) {
+                if(!find(oldFile.getName(),fileNames)) {
+                    oldFile.deleteNoNetwork();
+                    filesToRemove.add(oldFile);
+                }
+            }
+            oldFiles.removeAll(filesToRemove);
+
+            // create new ones
+            for(String fileName : fileNames) {
+                if(workspace.getFile(fileName) == null) {
+                    workspace.createFileNoNetwork(fileName);
+                }
+            }
+
+            return workspace.getFiles();
+        }
     }
 
     public void createOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
