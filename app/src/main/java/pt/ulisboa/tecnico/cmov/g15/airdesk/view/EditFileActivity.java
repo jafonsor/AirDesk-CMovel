@@ -64,15 +64,15 @@ public class EditFileActivity extends ActionBarActivity {
         try {
             mAirDesk.saveFileContent(mWorkspaceOwner, mWorkspaceName, mFileName, fileContentView.getText().toString(), mWorkspaceType);
             Intent intent = new Intent(this, FileListActivity.class);
+            intent.putExtra(FileListActivity.EXTRA_OWNER_EMAIL, mWorkspaceOwner);
             intent.putExtra(FileListActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
             intent.putExtra(FileListActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
             Toast.makeText(this, "File successfully saved.", Toast.LENGTH_SHORT).show();
             startActivity(intent);
+            finish();
         } catch (AirDeskException e){
             Log.e("exception", e.toString());
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-        } finally {
-            finish();
         }
     }
 }

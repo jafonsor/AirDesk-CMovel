@@ -106,7 +106,6 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
         EditText quotaText = (EditText) findViewById(R.id.workspace_quota_input);
         EditText tagsText  = (EditText) findViewById(R.id.workspace_tags_input);
 
-
         String workspaceName = nameText.getText().toString();
         if(workspaceName == null || workspaceName.isEmpty()) {
             Toast.makeText(this, "invalid name", Toast.LENGTH_SHORT).show();
@@ -132,24 +131,20 @@ public class CreateEditOwnerWorkspaceActivity extends ActionBarActivity {
             }
         }
 
-        boolean success;
         if(mWorkspace == null) {
             try {
                 mAirDesk.createOwnerWorkspace(workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
-                Toast.makeText(this, "workspace '" + workspaceName + "' created", Toast.LENGTH_SHORT).show();
             } catch(AirDeskException e) {
-                Toast.makeText(this, "There is already a workspace with that name.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
         } else {
-            success = mAirDesk.editOwnerWorkspace(workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
-            if(success) {
-                Toast.makeText(this, "settings saved", Toast.LENGTH_SHORT).show();
-
+            try{
+                mAirDesk.editOwnerWorkspace(workspaceName, workspaceQuota, workspaceVisibility, workspaceTags);
+            }catch(AirDeskException e){
+                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
             }
-            else
-                Toast.makeText(this, "settings not saved", Toast.LENGTH_SHORT).show();
         }
 
         this.setResult(0); //Destroy o swipe anterior

@@ -8,6 +8,7 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.InvalidQuotaException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 
 /**
@@ -37,14 +38,12 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         return visibility;
     }
 
-    public boolean setVisibility(WorkspaceVisibility newVisibility) {
+    public void setVisibility(WorkspaceVisibility newVisibility) {
         if(this.visibility != newVisibility) {
             this.visibility = newVisibility;
             removeUsersFromAccessListExceptInvited();
             NetworkServiceClient.refreshWorkspacesC();
-            return true;
         }
-        return true;
     }
 
     public List<String> getTags() {
@@ -69,12 +68,12 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         return true;
     }
 
-    public boolean setQuota(long newQuota) {
+    public void setQuota(long newQuota) throws InvalidQuotaException {
         if (newQuota >= this.workspaceUsage()) {
             this.quota = newQuota;
-            return NetworkServiceClient.changeQuota(this, newQuota);
+            NetworkServiceClient.changeQuota(this, newQuota);
         }
-        return false;
+        throw new InvalidQuotaException("Quota is invalid");
     }
 
     public boolean addUserToAccessList(String userEmail) {

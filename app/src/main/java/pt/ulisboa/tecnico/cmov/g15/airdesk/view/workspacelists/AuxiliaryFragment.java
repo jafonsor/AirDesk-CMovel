@@ -103,8 +103,8 @@ public class AuxiliaryFragment extends Fragment implements
 
     @Override
     public void onStop() {
-        getActivity().unbindService(mConnection);
-        mBound = false;
+        //getActivity().unbindService(mConnection);
+        //mBound = false;
         guiUpdateInitState(rootView);
         super.onStop();
     }

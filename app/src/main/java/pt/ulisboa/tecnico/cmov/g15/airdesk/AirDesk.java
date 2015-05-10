@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AnotherUserEditingFileException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.InvalidQuotaException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
@@ -222,15 +223,12 @@ public class AirDesk extends Application {
         fw.create();
     }
 
-    public boolean editOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
+    public void editOwnerWorkspace(String name, Long quota, WorkspaceVisibility visibility, List<String> tags)
+                throws InvalidQuotaException {
         OwnerWorkspace ow = getOwnerWorkspaceByName(name);
-        boolean changedQuota = ow.setQuota(quota);
-        boolean changedVisibility = ow.setVisibility(visibility);
-        boolean changedTags = ow.setTags(tags);
-
-        Log.i("info", "quota: " + changedQuota + ", visibility: " + changedVisibility + ", tags: " + changedTags);
-
-        return changedQuota && changedVisibility && changedTags;
+        ow.setQuota(quota);
+        ow.setVisibility(visibility);
+        ow.setTags(tags);
     }
 
     public boolean toggleUserPermissions(String workspaceName, String userEmail, boolean oldStatus) {

@@ -132,24 +132,17 @@ public class FileListActivity extends ActionBarActivity {
             Toast.makeText(this, "Invalid file name.", Toast.LENGTH_SHORT).show();
             // TO DO: check if there is already a file with that name
         } else {
-            if(mAirDesk.fileExists(mUserEmail, mWorkspaceName, fileName, mWorkspaceType)) {
-                Toast.makeText(this, "Already exists a file with that name.", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                try {
+            try {
                     mAirDesk.createFile(mUserEmail, mWorkspaceName, fileName, mWorkspaceType);
-                    Toast.makeText(this, "could not create file: Workspace full", Toast.LENGTH_SHORT).show();
-                } catch(AirDeskException e) {
                     Intent intent = new Intent(this, EditFileActivity.class);
                     intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_NAME, mWorkspaceName);
                     intent.putExtra(EditFileActivity.EXTRA_WORKSPACE_OWNER, mUserEmail);
                     intent.putExtra(EditFileActivity.EXTRA_FILE_NAME, fileName);
                     intent.putExtra(EditFileActivity.EXTRA_TYPE_OF_WORKSPACE, mWorkspaceType);
-                    // Toast.makeText(this, "File successfully created.", Toast.LENGTH_SHORT).show();
                     startActivity(intent);
+                } catch(AirDeskException e) {
+                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                 }
-            }
-
         }
     }
 }
