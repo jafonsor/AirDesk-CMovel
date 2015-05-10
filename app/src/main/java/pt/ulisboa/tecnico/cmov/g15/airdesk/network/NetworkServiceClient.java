@@ -71,6 +71,7 @@ public class NetworkServiceClient {
 
     public static void removeWorkspace(OwnerWorkspace workspace) {
         //TODO broadcast to accessList
+        String email = workspace.getOwner().getEmail();
         networkServiceServer.removeWorkspaceS(workspace);
     }
 

@@ -19,7 +19,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.Utils;
 /**
  * Created by MSC on 02/04/2015.
  */
-public class NetworkServiceServer {
+public class NetworkServiceServer implements NetworkServiceServerI {
 
     private AirDesk airDesk;
 
@@ -30,6 +30,15 @@ public class NetworkServiceServer {
         this.airDesk = airDesk;
     }
 
+    public AirDesk getAirDesk() {
+        return airDesk;
+    }
+
+    public void setAirDesk(AirDesk airDesk) {
+        this.airDesk = airDesk;
+    }
+
+    @Override
     public boolean notifyIntentionS(String workspaceName, String fileName, FileState intention, boolean force) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspaceName);
 
@@ -50,6 +59,7 @@ public class NetworkServiceServer {
     }
 
 
+    @Override
     public int getFileVersionS(Workspace workspace, AirDeskFile file) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
 
@@ -62,6 +72,7 @@ public class NetworkServiceServer {
     }
 
 
+    @Override
     public FileState getFileStateS(Workspace workspace, AirDeskFile file) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
 
@@ -74,6 +85,7 @@ public class NetworkServiceServer {
     }
 
 
+    @Override
     public String getFileS(String workspaceName, String fileName) {
         OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspaceName);
 
@@ -88,6 +100,7 @@ public class NetworkServiceServer {
     }
 
 
+    @Override
     public void sendFileS(String workspaceName, String fileName, String fileContent) {
         OwnerWorkspace workspace = airDesk.getOwnerWorkspaceByName(workspaceName);
 
@@ -100,6 +113,7 @@ public class NetworkServiceServer {
     }
 
 
+    @Override
     public boolean changeQuotaS(Workspace workspace, long quota) {
         //TODO Broadcast new quota --> all clients
         ForeignWorkspace ws = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName());
@@ -108,6 +122,7 @@ public class NetworkServiceServer {
         return ws.setQuota(quota);
     }
 
+    @Override
     public boolean checkTags(List<String> workspaceTags, List<String> userTags) {
         for (String wt : workspaceTags) {
             for (String us : userTags) {
@@ -117,6 +132,7 @@ public class NetworkServiceServer {
         return false;
     }
 
+    @Override
     public void inviteUserS(OwnerWorkspace workspace, User user) {
         ForeignWorkspace fw = Utils.OwnerToForeignWorkspace(workspace);
         fw.create();
@@ -126,6 +142,7 @@ public class NetworkServiceServer {
             this.airDesk.getForeignWorkspaces().add(fw);
     }
 
+    @Override
     public void removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
         if (airDesk.isForeignWorkspaceBlocked(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName()))
             return;
@@ -134,26 +151,16 @@ public class NetworkServiceServer {
         airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
     }
 
-    public AirDesk getAirDesk() {
-        return airDesk;
-    }
-
-    public void setAirDesk(AirDesk airDesk) {
-        this.airDesk = airDesk;
-    }
-
+    @Override
     public void deleteFileS(String workspaceName, String fileName) {
         AirDeskFile f;
         OwnerWorkspace ow = airDesk.getOwnerWorkspaceByName(workspaceName);
-        if(ow == null)
-           throw new WorkspaceDoesNotExistException(workspaceName);
+        if (ow == null)
+            throw new WorkspaceDoesNotExistException(workspaceName);
         ow.deleteFile(fileName, WorkspaceType.OWNER);
     }
 
-    public void refreshWorkspacesS() {
-        getAirDesk().searchWorkspaces();
-    }
-
+    @Override
     public List<String> searchWorkspacesS(String clientEmail, List<String> clientTags) {
         List<String> allowedWorkspacesR = new ArrayList<String>();
         for (OwnerWorkspace workspace : airDesk.getOwnerWorkspaces()) {
@@ -179,6 +186,7 @@ public class NetworkServiceServer {
         return allowedWorkspacesR;
     }
 
+    @Override
     public List<String> getFileList(String workspaceName) {
         OwnerWorkspace ownerWorkspace = airDesk.getOwnerWorkspaceByName(workspaceName);
         List<String> fileNames = new ArrayList<String>();
@@ -189,6 +197,7 @@ public class NetworkServiceServer {
     }
 
     // i don't know if when we add wifi to this the ownerEmail will be needed
+    @Override
     public long getWorkspaceQuotaS(String ownerEmail, String workspaceName) {
         OwnerWorkspace ow = airDesk.getOwnerWorkspaceByName(workspaceName);
         if(ow == null)
