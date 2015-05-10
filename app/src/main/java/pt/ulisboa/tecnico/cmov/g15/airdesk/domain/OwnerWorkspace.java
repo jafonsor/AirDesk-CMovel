@@ -84,7 +84,6 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         AccessListItem item = new AccessListItem(new User(userEmail));
         item.setInvited(true);
 
-        NetworkServiceClient.inviteUser(this, item.getUser());
         if(getAccessListItemByEmail(userEmail) == null)
             getAccessList().add(item);
     }

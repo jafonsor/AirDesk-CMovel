@@ -171,8 +171,8 @@ public class NetworkServiceServer {
             if (workspace.userInAccessList(clientEmail)) {
                 if (workspace.userHasPermissions(clientEmail)) {
                     allowedWorkspacesR.add(workspace.getName());
-                    continue;
-                } else break;
+                }
+                continue;
             }
 
             if (workspace.getVisibility() == WorkspaceVisibility.PUBLIC) {
