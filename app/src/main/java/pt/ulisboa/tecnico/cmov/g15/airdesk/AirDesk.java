@@ -185,7 +185,7 @@ public class AirDesk extends Application {
     public void deleteForeignWorkspace(String userEmail, String workspaceName) {
         ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, workspaceName);
         if (fw == null) {
-            throw new WorkspaceDoesNotExistException(workspaceName);
+            return; // it might have been already removed
         }
         if(!getForeignWorkspaces().remove(fw)) {
             Log.e("bad error", "could not remove from list: " + workspaceName);
