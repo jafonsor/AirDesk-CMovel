@@ -52,13 +52,13 @@ public class NetworkServiceClient {
 
     public static int getFileVersion(Workspace workspace, AirDeskFile file) {
         NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
-        return fileOwnerServer.getFileVersionS(workspace, file);
+        return fileOwnerServer.getFileVersionS(workspace.getName(), file.getName());
     }
 
 
     public static FileState getFileState(Workspace workspace, AirDeskFile file) {
         NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
-        return fileOwnerServer.getFileStateS(workspace, file);
+        return fileOwnerServer.getFileStateS(workspace.getName(), file.getName());
     }
 
 
@@ -71,11 +71,6 @@ public class NetworkServiceClient {
     public static void sendFile(Workspace workspace, String fileName, String fileContent) {
         NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
         fileOwnerServer.sendFileS(workspace.getName(), fileName, fileContent);
-    }
-
-    public static void inviteUser(OwnerWorkspace workspace, User user) {
-        NetworkServiceServerI invitedUserServer = getUserServer(user);
-        invitedUserServer.inviteUserS(workspace, user);
     }
 
     //TODO temporary
@@ -121,5 +116,11 @@ public class NetworkServiceClient {
     public static long getWorkspaceQuota(String ownerEmail, String workspaceName) {
         NetworkServiceServerI workspaceOwnerServer = servers.get(ownerEmail);
         return workspaceOwnerServer.getWorkspaceQuotaS(ownerEmail, workspaceName);
+    }
+
+    public static void notifyWorkspaceDeleted(String ownerEmail, String workspaceName) {
+        for(NetworkServiceServerI server : servers.values()) {
+            server.removeWorkspaceS(ownerEmail, workspaceName);
+        }
     }
 }

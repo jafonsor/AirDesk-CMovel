@@ -20,10 +20,6 @@ public class RemoteClientSide implements NetworkServiceServerI {
         this.communicator = communicator;
     }
 
-    // this method will not be needed when we start to use sockets
-    private String getResponse() {
-        return "something just to compile";
-    }
     private Object remoteInvocation(String methodName, Object... args ) {
         String jsonCall = RemoteJSONLib.createJsonCall(methodName, args);
         communicator.send(jsonCall);
@@ -43,57 +39,52 @@ public class RemoteClientSide implements NetworkServiceServerI {
     }
 
     @Override
-    public int getFileVersionS(Workspace workspace, AirDeskFile file) {
-        return (int) remoteInvocation("getFileVersionS");
+    public int getFileVersionS(String workspaceName, String fileName) {
+        return (int) remoteInvocation("getFileVersionS", workspaceName, fileName);
     }
 
     @Override
-    public FileState getFileStateS(Workspace workspace, AirDeskFile file) {
-        return (FileState) remoteInvocation("getFileStateS");
+    public FileState getFileStateS(String workspaceName, String fileName) {
+        return (FileState) remoteInvocation("getFileStateS", workspaceName, fileName);
     }
 
     @Override
     public String getFileS(String workspaceName, String fileName) {
-        return (String) remoteInvocation("getFileS");
+        return (String) remoteInvocation("getFileS", workspaceName, fileName);
     }
 
     @Override
     public void sendFileS(String workspaceName, String fileName, String fileContent) {
-        remoteInvocation("sendFileS");
+        remoteInvocation("sendFileS", workspaceName, fileName, fileContent);
     }
 
     @Override
     public boolean checkTags(List<String> workspaceTags, List<String> userTags) {
-        return (boolean) remoteInvocation("checkTags");
+        return (boolean) remoteInvocation("checkTags", workspaceTags, userTags);
     }
 
     @Override
-    public void inviteUserS(OwnerWorkspace workspace, User user) {
-        remoteInvocation("inviteUserS");
-    }
-
-    @Override
-    public void removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
-        remoteInvocation("removeWorkspaceS");
+    public void removeWorkspaceS(String userEmail, String workspaceName) {
+        remoteInvocation("removeWorkspaceS", userEmail, workspaceName);
     }
 
     @Override
     public void deleteFileS(String workspaceName, String fileName) {
-        remoteInvocation("deleteFileS");
+        remoteInvocation("deleteFileS", workspaceName, fileName);
     }
 
     @Override
     public List<String> searchWorkspacesS(String clientEmail, List<String> clientTags) {
-        return null;
+        return (List<String>)remoteInvocation("searchWorkspace", clientEmail, clientTags);
     }
 
     @Override
     public List<String> getFileList(String workspaceName) {
-        return null;
+        return (List<String>)remoteInvocation("getFileList", workspaceName);
     }
 
     @Override
     public long getWorkspaceQuotaS(String ownerEmail, String workspaceName) {
-        return 0;
+        return (long)remoteInvocation("getWorkspaceQuotaS", ownerEmail, workspaceName);
     }
 }

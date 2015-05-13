@@ -12,8 +12,10 @@ import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskCommunicationException;
 
 /**
  * Created by joao on 10-05-2015.
@@ -42,6 +44,47 @@ public class RemoteJSONLibTest extends TestCase {
                 put(new JSONObject() {{
                     put("class", Integer.class.getName());
                     put("value", 3);
+                }});
+            }});
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        assertEquals(obj.toString(), jsonedCall);
+    }
+
+    public void testGenerateMethodCallStringArg() throws JSONException {
+        List<String> list1 = new ArrayList<String>() {{
+            add("testString1");
+            add("testString2");
+        }};
+        List<String> list2 = new ArrayList<String>() {{
+            add("testString3");
+            add("testString4");
+        }};
+        final int arg3 = 5;
+        String jsonedCall = RemoteJSONLib.createJsonCall("method", list1, list2, arg3);
+
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("methodName", "method");
+            obj.put("args", new JSONArray() {{
+                put(new JSONObject() {{
+                    put("class", "array");
+                    put("value", new JSONArray() {{
+                        put((Object)"testString1");
+                        put((Object)"testString2");
+                    }});
+                }});
+                put(new JSONObject() {{
+                    put("class", "array");
+                    put("value", new JSONArray() {{
+                        put((Object)"testString3");
+                        put((Object)"testString4");
+                    }});
+                }});
+                put(new JSONObject() {{
+                    put("class", Integer.class.getName());
+                    put("value", arg3);
                 }});
             }});
         } catch (JSONException e) {
@@ -134,6 +177,36 @@ public class RemoteJSONLibTest extends TestCase {
         assertEquals(FileState.IDLE,  resultIdle);
         assertEquals(FileState.READ,  resultRead);
         assertEquals(FileState.WRITE, resultWrite);
+    }
+
+    public void testGenerateException() throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("methodName", "method");
+        obj.put("exception", new JSONObject() {{
+            put("class", AirDeskCommunicationException.class.getName());
+            put("stack-trace", "STACK-TRACE");
+        }});
+
+        try {
+            RemoteJSONLib.generateReturnFromJson(obj.toString());
+            assertTrue(false);
+        } catch (AirDeskCommunicationException e) {
+            assertEquals(AirDeskCommunicationException.class.getName() + ":STACK-TRACE\n", e.toString());
+        }
+    }
+
+    public void testInvokeMethodInt() throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("methodName", "method");
+        obj.put("args", new JSONArray() {{
+            put(new JSONObject() {{
+                put("class", Integer.class.getName());
+                put("value", 3);
+            }});
+        }});
+
+        int result = (int)RemoteJSONLib.makeInvocationFromJson(testInstance, obj.toString());
+        assertEquals(3,result);
     }
 
     public void testSomeJSON() {
