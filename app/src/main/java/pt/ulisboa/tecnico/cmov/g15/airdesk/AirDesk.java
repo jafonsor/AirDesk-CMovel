@@ -29,6 +29,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.InvalidQuotaException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
 
 
 /**
@@ -46,8 +47,8 @@ public class AirDesk extends Application {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
         blockedWorkspaces = new ArrayList<ForeignWorkspace>();
+        NetworkServiceClient.init();
         //TODO temporary
-        NetworkServiceClient.setAirDesk(this);
     }
 
     private Map<String, User> foreignUsers = new HashMap<String, User>();
@@ -101,7 +102,6 @@ public class AirDesk extends Application {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
         blockedWorkspaces = new ArrayList<ForeignWorkspace>();
-        NetworkServiceClient.setAirDesk(this);
     }
 
     public User getUser() {
@@ -110,6 +110,7 @@ public class AirDesk extends Application {
 
     public void setUser(User user) {
         this.user = user;
+        NetworkServiceClient.addNetworkServiceServer(user.getEmail(), new NetworkServiceServer(this));
     }
 
     public List<OwnerWorkspace> getOwnerWorkspaces() {
@@ -220,15 +221,12 @@ public class AirDesk extends Application {
             for(String workspaceName : workspaces) {
                 if (!isForeignWorkspaceBlocked(wsOwner, workspaceName)) {
                     // don't add blocked workspaces
-                    long quota = NetworkServiceClient.getWorkspaceQuota(wsOwner, workspaceName);
                     ForeignWorkspace fw = getForeignWorkspaceByName(wsOwner, workspaceName);
                     // don't create a new workspace if the workspace already exists
                     if (fw == null) {
-                        fw = new ForeignWorkspace(getForeignUser(wsOwner), workspaceName, quota);
+                        fw = new ForeignWorkspace(getForeignUser(wsOwner), workspaceName);
                         fw.create();
                         wsListToAdd.add(fw);
-                    } else {
-                        fw.setQuota(fw.getQuota());
                     }
                 }
             }
@@ -282,8 +280,8 @@ public class AirDesk extends Application {
         ow.create();
     }
 
-    public void createForeignWorkspace(User ownerWorkspace, String workspaceName, Long quota) {
-        ForeignWorkspace fw = new ForeignWorkspace(ownerWorkspace, workspaceName, quota);
+    public void createForeignWorkspace(User ownerWorkspace, String workspaceName) {
+        ForeignWorkspace fw = new ForeignWorkspace(ownerWorkspace, workspaceName);
         if (getForeignWorkspaceByName(ownerWorkspace.getEmail(),workspaceName) != null) {
             throw new WorkspaceAlreadyExistsException(workspaceName);
         }
@@ -313,8 +311,6 @@ public class AirDesk extends Application {
     public void inviteUser(String workspaceName, String userEmail) {
         OwnerWorkspace workspace = getOwnerWorkspaceByName(workspaceName);
         workspace.inviteUser(userEmail);
-        //TODO delete this is temporary:
-        NetworkServiceClient.addForeignUser(user.getEmail());
     }
 
     public void changeUserTags(List<String> tags) {

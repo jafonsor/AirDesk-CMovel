@@ -1,17 +1,12 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes;
 
-import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Objects;
 
-import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServerI;
 
 /**
@@ -19,7 +14,11 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServerI;
  */
 public class RemoteClientSide implements NetworkServiceServerI {
 
+    RemoteCommunicatorI communicator;
 
+    public RemoteClientSide(RemoteCommunicatorI communicator) {
+        this.communicator = communicator;
+    }
 
     // this method will not be needed when we start to use sockets
     private String getResponse() {
@@ -27,11 +26,15 @@ public class RemoteClientSide implements NetworkServiceServerI {
     }
     private Object remoteInvocation(String methodName, Object... args ) {
         String jsonCall = RemoteJSONLib.createJsonCall(methodName, args);
-        // send jsonCall
-        // wait for repsonse
-        String response = getResponse();
+        communicator.send(jsonCall);
+        String response = communicator.receive();
         Object result = RemoteJSONLib.generateReturnFromJson(response);
         return result;
+    }
+
+    @Override
+    public String getEmail() {
+        return (String) remoteInvocation("getString");
     }
 
     @Override
@@ -57,11 +60,6 @@ public class RemoteClientSide implements NetworkServiceServerI {
     @Override
     public void sendFileS(String workspaceName, String fileName, String fileContent) {
         remoteInvocation("sendFileS");
-    }
-
-    @Override
-    public boolean changeQuotaS(Workspace workspace, long quota) {
-        return (boolean) remoteInvocation("changeQuotaS");
     }
 
     @Override

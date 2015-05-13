@@ -9,8 +9,8 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
  */
 public class ForeignWorkspace extends Workspace {
 
-    public ForeignWorkspace(User owner, String name, long quota) {
-        super(owner, name, quota);
+    public ForeignWorkspace(User owner, String name) {
+        super(owner, name);
     }
 
     @Override
@@ -18,15 +18,15 @@ public class ForeignWorkspace extends Workspace {
         return false;
     }
 
+    @Override
+    public long getQuota() {
+        return NetworkServiceClient.getWorkspaceQuota(getOwner().getEmail(), getName());
+    }
+
     /*
     method create to change quota in foreign workspaces when
     the owner changes the workspace quota
      */
-
-    public boolean setQuota(long newQuota) {
-        this.quota = newQuota;
-        return true;
-    }
 
     @Override
     public WorkspaceType getType() {

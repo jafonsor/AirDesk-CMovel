@@ -66,14 +66,14 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
 
     public void testCreateForeignWorkspace() {
         int sizeForeignWorkspaceList = airDesk.getForeignWorkspaces().size();
-        airDesk.createForeignWorkspace(new User(OWNERUSERNAME, OWNEREMAIL), "ForeignWorkspace1", workpaceQuota);
+        airDesk.createForeignWorkspace(new User(OWNERUSERNAME, OWNEREMAIL), "ForeignWorkspace1");
         assertEquals("sizeWorskpaces wasn't incremented", sizeForeignWorkspaceList + 1, airDesk.getForeignWorkspaces().size());
         File dir = FileSystemManager.workspaceDir(OWNEREMAIL, "ForeignWorkspace1", WorkspaceType.FOREIGN);
         assertTrue("Workspace was not created in storage", dir.exists());
     }
 
     public void testDeleteForeignWorkspace() {
-        airDesk.createForeignWorkspace(new User(OWNERUSERNAME, OWNEREMAIL), "workspace", workpaceQuota);
+        airDesk.createForeignWorkspace(new User(OWNERUSERNAME, OWNEREMAIL), "workspace");
         airDesk.deleteForeignWorkspace(OWNEREMAIL, "workspace");
         File dir = FileSystemManager.workspaceDir(OWNEREMAIL, "workspace", WorkspaceType.FOREIGN);
         assertFalse(dir.exists());
@@ -140,7 +140,7 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
 
     // -- Foreign file
     public void testCreateForeignFile() {
-        airDesk.createForeignWorkspace(new User(OWNERUSERNAME, OWNEREMAIL), "workspace", workpaceQuota);
+        airDesk.createForeignWorkspace(new User(OWNERUSERNAME, OWNEREMAIL), "workspace");
         airDesk.createFile(OWNEREMAIL, "workspace", "new_file", WorkspaceType.FOREIGN);
         assertTrue(airDesk.fileExists(OWNEREMAIL, "workspace", "new_file", WorkspaceType.FOREIGN));
         assertTrue(airDesk.fileExists(OWNEREMAIL, "workspace", "new_file", WorkspaceType.OWNER));
@@ -255,9 +255,6 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         ow4.inviteUser(OWNEREMAIL);
         ow4.blockUserFromAccessList(ow4.getAccessListItemByEmail(OWNEREMAIL));
 
-
-        NetworkServiceClient.addForeignUser(OWNEREMAIL);
-
         airDesk.searchWorkspaces();
 
         assertNull(airDesk.getForeignWorkspaceByName(OWNEREMAIL, "workspace2"));
@@ -274,7 +271,6 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         airDesk.createOwnerWorkspace(workspaceName, 1000L, WorkspaceVisibility.PUBLIC, user.getUserTags());
 
         OwnerWorkspace ow = airDesk.getOwnerWorkspaceByName(workspaceName);
-        NetworkServiceClient.addForeignUser(OWNEREMAIL);
         airDesk.searchWorkspaces();
 
         airDesk.createFile(OWNEREMAIL, workspaceName, "new_file", WorkspaceType.OWNER);
@@ -296,7 +292,6 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         String workspaceName = "workspaceJajão";
         airDesk.createOwnerWorkspace(workspaceName, 1000L, WorkspaceVisibility.PUBLIC, user.getUserTags());
 
-        NetworkServiceClient.addForeignUser(OWNEREMAIL);
         airDesk.searchWorkspaces();
 
         airDesk.createFile(OWNEREMAIL, workspaceName, "new_file", WorkspaceType.FOREIGN);
@@ -318,8 +313,6 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         String workspaceName = "workspaceJajão";
         airDesk.createOwnerWorkspace(workspaceName, 1000L, WorkspaceVisibility.PUBLIC, user.getUserTags());
 
-
-        NetworkServiceClient.addForeignUser(OWNEREMAIL);
         airDesk.searchWorkspaces();
 
         airDesk.createFile(OWNEREMAIL, workspaceName, "new_file", WorkspaceType.FOREIGN);
@@ -348,6 +341,41 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
 
     }
 
+    public void testSaveForeignFileThatExceedsQuota() {
+        String workspaceName = "workspaceJajãoZinho";
+        airDesk.createOwnerWorkspace(workspaceName, 1000L, WorkspaceVisibility.PUBLIC, user.getUserTags());
+
+        airDesk.searchWorkspaces();
+
+        airDesk.createFile(OWNEREMAIL, workspaceName, "new_file1", WorkspaceType.FOREIGN);
+        airDesk.createFile(OWNEREMAIL, workspaceName, "new_file2", WorkspaceType.FOREIGN);
+        ForeignWorkspace fw = airDesk.getForeignWorkspaceByName(OWNEREMAIL, workspaceName);
+
+        AirDeskFile ownerFile = airDesk.getOwnerWorkspaceByName(workspaceName).getFile("new_file");
+        AirDeskFile foreignFile = fw.getFile("new_file");
+
+        assertEquals(1000L, fw.getQuota());
+
+        StringBuilder contentBuilder = new StringBuilder();
+        for(long i = 0; i < 1000L; i++) {
+            contentBuilder.append('a');
+        }
+        String fileContent = contentBuilder.toString();
+
+        airDesk.saveFileContent(OWNEREMAIL, workspaceName, "new_file1", fileContent, WorkspaceType.FOREIGN);
+        try {
+            airDesk.saveFileContent(OWNEREMAIL, workspaceName, "new_file2", "a", WorkspaceType.FOREIGN);
+            assertTrue(false);
+        } catch(AirDeskException e) {
+            assertTrue(true);
+        }
+
+        OwnerWorkspace ow = airDesk.getOwnerWorkspaceByName(workspaceName);
+        ow.setQuota(1001L);
+        // if it throws exception it fails the test
+        airDesk.saveFileContent(OWNEREMAIL, workspaceName, "new_file2", "a", WorkspaceType.FOREIGN);
+    }
+
     public void testSearchFilesHisOwnFiles() {
         String workspaceName = "workspaceMickey";
         airDesk.createOwnerWorkspace(workspaceName, 1000L, WorkspaceVisibility.PUBLIC, user.getUserTags());
@@ -371,8 +399,6 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         String workspaceName = "workspaceJajãozão";
         airDesk.createOwnerWorkspace(workspaceName, 1000L, WorkspaceVisibility.PUBLIC, user.getUserTags());
 
-
-        NetworkServiceClient.addForeignUser(OWNEREMAIL);
         airDesk.searchWorkspaces();
 
         airDesk.createFile(OWNEREMAIL, workspaceName, "new_file", WorkspaceType.FOREIGN);

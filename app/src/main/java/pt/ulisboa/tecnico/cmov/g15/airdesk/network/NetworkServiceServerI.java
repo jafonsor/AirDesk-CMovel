@@ -13,6 +13,8 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
  * Created by joao on 10-05-2015.
  */
 public interface NetworkServiceServerI {
+    String getEmail();
+
     boolean notifyIntentionS(String workspaceName, String fileName, FileState intention, boolean force);
 
     int getFileVersionS(Workspace workspace, AirDeskFile file);
@@ -22,8 +24,6 @@ public interface NetworkServiceServerI {
     String getFileS(String workspaceName, String fileName);
 
     void sendFileS(String workspaceName, String fileName, String fileContent);
-
-    boolean changeQuotaS(Workspace workspace, long quota);
 
     boolean checkTags(List<String> workspaceTags, List<String> userTags);
 

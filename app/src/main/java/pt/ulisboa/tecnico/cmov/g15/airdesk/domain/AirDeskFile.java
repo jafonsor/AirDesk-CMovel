@@ -116,7 +116,7 @@ public class AirDeskFile implements Serializable {
 
         incrementVersion();
         setSize(contentSize);
-        NetworkServiceClient.sendFile(getWorkspace().getName(), this.getName(), content);
+        NetworkServiceClient.sendFile(getWorkspace(), this.getName(), content);
         FileSystemManager.setFileContent(getPath(), content);
         setState(FileState.IDLE);
     }
@@ -139,7 +139,7 @@ public class AirDeskFile implements Serializable {
 
     public String read() {
         if (NetworkServiceClient.getFileVersion(getWorkspace(), this) > getVersion())
-            writeNoNetwork(NetworkServiceClient.getFile(getWorkspace().getName(), this.getName()));
+            writeNoNetwork(NetworkServiceClient.getFile(getWorkspace(), this.getName()));
 
         return FileSystemManager.getFileContent(getPath());
 

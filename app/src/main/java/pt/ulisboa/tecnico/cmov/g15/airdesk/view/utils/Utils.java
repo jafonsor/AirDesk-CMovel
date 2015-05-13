@@ -35,7 +35,7 @@ public class Utils {
     }
 
     public static ForeignWorkspace OwnerToForeignWorkspace(OwnerWorkspace ow){
-        ForeignWorkspace fw = new ForeignWorkspace(ow.getOwner(), ow.getName(), ow.getQuota());
+        ForeignWorkspace fw = new ForeignWorkspace(ow.getOwner(), ow.getName());
         fw.setFiles(new ArrayList<AirDeskFile>(ow.getFiles()));
         fw.setPath(ow.getPath());
         return fw;

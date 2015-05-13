@@ -12,93 +12,114 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteClientSide;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteCommunicatorI;
 
 /**
  * Created by MSC on 05/04/2015.
  */
 public class NetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
-    private static NetworkServiceServer networkServiceServer = new NetworkServiceServer();
-    private static List<String> userEmails = new ArrayList<String>();
+    private static Map<String, NetworkServiceServerI> servers;
 
-    public NetworkServiceClient() {
-        userEmails = new ArrayList<String>();
+    public static void init() {
+        servers = new HashMap<String, NetworkServiceServerI>();
+    }
+
+    public static void addNetworkServiceServer(String userEmail, NetworkServiceServerI server) {
+        servers.put(userEmail, server);
+    }
+
+    public static void addNewElementOffNetwork(RemoteCommunicatorI communicator) {
+        NetworkServiceServerI server = new RemoteClientSide(communicator);
+        String serverEmail = server.getEmail();
+        servers.put(serverEmail, server);
+    }
+
+    private static NetworkServiceServerI getWorkspaceOwnerServer(Workspace workspace) {
+        return servers.get(workspace.getOwner().getEmail());
+    }
+
+    private static NetworkServiceServerI getUserServer(User user) {
+        return servers.get(user.getEmail());
     }
 
     public static boolean notifyIntention(Workspace workspace, AirDeskFile file, FileState intention, boolean force) {
-        return networkServiceServer.notifyIntentionS(workspace.getName(), file.getName(), intention, force);
+        NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
+        return fileOwnerServer.notifyIntentionS(workspace.getName(), file.getName(), intention, force);
     }
 
 
     public static int getFileVersion(Workspace workspace, AirDeskFile file) {
-        return networkServiceServer.getFileVersionS(workspace, file);
+        NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
+        return fileOwnerServer.getFileVersionS(workspace, file);
     }
 
 
     public static FileState getFileState(Workspace workspace, AirDeskFile file) {
-        return networkServiceServer.getFileStateS(workspace, file);
+        NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
+        return fileOwnerServer.getFileStateS(workspace, file);
     }
 
 
-    public static String getFile(String workspaceName, String fileName) {
-        return networkServiceServer.getFileS(workspaceName, fileName);
+    public static String getFile(Workspace workspace, String fileName) {
+        NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
+        return fileOwnerServer.getFileS(workspace.getName(), fileName);
     }
 
 
-    public static void sendFile(String workspaceName, String fileName, String fileContent) {
-        networkServiceServer.sendFileS(workspaceName, fileName, fileContent);
-    }
-
-
-    public static boolean changeQuota(Workspace workspace, long quota) {
-        //TODO Broadcast new quota --> all clients except it self
-        return networkServiceServer.changeQuotaS(workspace, quota);
+    public static void sendFile(Workspace workspace, String fileName, String fileContent) {
+        NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
+        fileOwnerServer.sendFileS(workspace.getName(), fileName, fileContent);
     }
 
     public static void inviteUser(OwnerWorkspace workspace, User user) {
-        networkServiceServer.inviteUserS(workspace, user);
+        NetworkServiceServerI invitedUserServer = getUserServer(user);
+        invitedUserServer.inviteUserS(workspace, user);
     }
 
     //TODO temporary
-    public static void setAirDesk(AirDesk airDesk) {
+    /*public static void setAirDesk(AirDesk airDesk) {
         networkServiceServer.setAirDesk(airDesk);
-    }
+    }*/
 
-    //TODO temporary
-    public static void addForeignUser(String email) {
-        userEmails.add(email);
-    }
-
+    // this method is no longer used. the workspaces are refreshed on the foreign workspace activity
+    /*
     public static void removeWorkspace(OwnerWorkspace workspace) {
         //TODO broadcast to accessList
         String email = workspace.getOwner().getEmail();
         networkServiceServer.removeWorkspaceS(workspace);
-    }
+    }*/
 
+    // this method is no longer used. the workspaces are refreshed on the foreign workspace activity
+    /*
     public static void removeUserFromAccessList(OwnerWorkspace ownerWorkspace, User user) {
         networkServiceServer.removeWorkspaceS(ownerWorkspace);
     }
+    */
 
     public static void deleteFile(Workspace workspace, AirDeskFile airDeskFile) {
-        //TODO broadcast to accessList
-        networkServiceServer.deleteFileS(workspace.getName(), airDeskFile.getName());
+        NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
+        fileOwnerServer.deleteFileS(workspace.getName(), airDeskFile.getName());
     }
 
     public static Map<String, List<String>> searchWorkspaces(String email, List<String> tags) {
         Map<String,List<String>> searchResult = new HashMap<String,List<String>>();
-        for(String foreignEmail : userEmails) {
-            List<String> workspaceNames = networkServiceServer.searchWorkspacesS(email, tags);
+        for(String foreignEmail : servers.keySet()) {
+            NetworkServiceServerI workspaceOwnerServer = servers.get(foreignEmail);
+            List<String> workspaceNames = workspaceOwnerServer.searchWorkspacesS(email, tags);
             searchResult.put(foreignEmail, workspaceNames);
         }
         return searchResult;
     }
 
     public static List<String> searchFiles(String userEmail, String workspaceName) {
-        // get remote server by 'userEmail'
-        return networkServiceServer.getFileList(workspaceName);
+        NetworkServiceServerI fileOwnerServer = servers.get(userEmail);
+        return fileOwnerServer.getFileList(workspaceName);
     }
 
     public static long getWorkspaceQuota(String ownerEmail, String workspaceName) {
-        return networkServiceServer.getWorkspaceQuotaS(ownerEmail, workspaceName);
+        NetworkServiceServerI workspaceOwnerServer = servers.get(ownerEmail);
+        return workspaceOwnerServer.getWorkspaceQuotaS(ownerEmail, workspaceName);
     }
 }

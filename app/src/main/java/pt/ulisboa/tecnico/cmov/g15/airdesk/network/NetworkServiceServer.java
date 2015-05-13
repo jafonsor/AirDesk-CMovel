@@ -23,8 +23,7 @@ public class NetworkServiceServer implements NetworkServiceServerI {
 
     private AirDesk airDesk;
 
-    public NetworkServiceServer() {
-    }
+    public NetworkServiceServer() {}
 
     public NetworkServiceServer(AirDesk airDesk) {
         this.airDesk = airDesk;
@@ -36,6 +35,11 @@ public class NetworkServiceServer implements NetworkServiceServerI {
 
     public void setAirDesk(AirDesk airDesk) {
         this.airDesk = airDesk;
+    }
+
+    @Override
+    public String getEmail() {
+        return airDesk.getUser().getEmail();
     }
 
     @Override
@@ -110,16 +114,6 @@ public class NetworkServiceServer implements NetworkServiceServerI {
 
         f.incrementVersion();
         f.writeNoNetwork(fileContent);
-    }
-
-
-    @Override
-    public boolean changeQuotaS(Workspace workspace, long quota) {
-        //TODO Broadcast new quota --> all clients
-        ForeignWorkspace ws = airDesk.getForeignWorkspaceByName(workspace.getOwner().getEmail(), workspace.getName());
-
-        if (ws == null) return true;
-        return ws.setQuota(quota);
     }
 
     @Override

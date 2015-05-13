@@ -16,12 +16,15 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
  * Created by diogo on 03-04-2015.
  */
 public class OwnerWorkspace extends Workspace implements Serializable {
+
+    private long quota;
     private List<AccessListItem> accessList;
     private WorkspaceVisibility visibility;
     private List<String> tags;
 
     public OwnerWorkspace(User owner, String name, Long quota, WorkspaceVisibility visibility, List<String> tags) {
-        super(owner, name, quota);
+        super(owner, name);
+        this.quota = quota;
         this.visibility = visibility;
         this.tags = tags;
         this.accessList = new ArrayList<AccessListItem>();
@@ -67,12 +70,15 @@ public class OwnerWorkspace extends Workspace implements Serializable {
         return true;
     }
 
+    @Override
+    public long getQuota() { return this.quota; }
+
     public void setQuota(long newQuota) throws InvalidQuotaException {
         if (newQuota >= this.workspaceUsage()) {
             this.quota = newQuota;
-            NetworkServiceClient.changeQuota(this, newQuota);
+        } else {
+            throw new InvalidQuotaException("Quota is invalid");
         }
-        throw new InvalidQuotaException("Quota is invalid");
     }
 
     public boolean addUserToAccessList(String userEmail) {
@@ -158,7 +164,6 @@ public class OwnerWorkspace extends Workspace implements Serializable {
     @Override
     public void delete() {
         super.delete();
-        NetworkServiceClient.removeWorkspace(this);
     }
 
     @Override

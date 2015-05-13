@@ -21,7 +21,6 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
  * Created by MSC on 02/04/2015.
  */
 public abstract class Workspace implements Serializable {
-    protected long quota;
     private User owner;
     private String name;
     private List<AirDeskFile> files;
@@ -31,11 +30,10 @@ public abstract class Workspace implements Serializable {
         files = new ArrayList<AirDeskFile>();
     }
 
-    public Workspace(User owner, String name, long quota) {
+    public Workspace(User owner, String name) {
         this();
         this.owner = owner;
         this.name = name;
-        this.quota = quota;
     }
 
     public void create() {
@@ -61,9 +59,7 @@ public abstract class Workspace implements Serializable {
         this.name = name;
     }
 
-    public long getQuota() {
-        return quota;
-    }
+    public abstract long getQuota();
 
     public List<AirDeskFile> getFiles() {
         return files;
