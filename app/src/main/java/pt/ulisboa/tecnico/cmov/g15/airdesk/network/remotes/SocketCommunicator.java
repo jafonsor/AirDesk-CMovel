@@ -42,7 +42,9 @@ public class SocketCommunicator implements RemoteCommunicatorI {
         StringBuilder sb = new StringBuilder();
         try {
             sockIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            Log.d("future", "i'm ready to read lines");
             while ((st = sockIn.readLine()) != null) {
+                Log.d("future", "line received: " + st);
                 if(st.equals(MSG_TERMINATOR)) break;
                 sb.append(st);
                 sb.append("\n");

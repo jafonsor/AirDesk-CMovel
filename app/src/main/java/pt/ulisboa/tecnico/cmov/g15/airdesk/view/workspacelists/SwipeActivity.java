@@ -36,17 +36,17 @@ public class SwipeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workspaces_list);
 
-        startManagerService = false;
+        startManagerService = true;
 
         if(savedInstanceState!=null){
             startManagerService = savedInstanceState.getBoolean(WIFI_P2P_MANAGER_SERVICE);
         }
 
-        if(startManagerService) {
-            startWifiP2pManagerService();
-            WifiProviderI wifiProvider = new WifiProviderServer();
 
-            RemoteServerSide.initRemoteServer(wifiProvider, new NetworkServiceServer((AirDesk) getApplication()));
+        if(startManagerService) {
+           startWifiP2pManagerService();
+           WifiProviderI wifiProvider = new WifiProviderServer();
+           RemoteServerSide.initRemoteServer(wifiProvider, new NetworkServiceServer((AirDesk) getApplication()));
         }
 
         MyAdapter mAdapter = new MyAdapter(getSupportFragmentManager());
