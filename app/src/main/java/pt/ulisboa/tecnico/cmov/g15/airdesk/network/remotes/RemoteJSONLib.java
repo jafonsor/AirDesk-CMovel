@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,15 +11,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceType;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.JsonCallException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.JsonExceptionStringifyingException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.JsonInvocationException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.JsonResultGenerationException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.JsonResultStringifyingException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.JsonServerCallException;
 
 /**
@@ -42,7 +44,7 @@ public class RemoteJSONLib {
             JSONArray argArray = new JSONArray();
             for(Object o : args) {
                 JSONObject argObj = new JSONObject();
-                argObj.put("class", getClassName(o.getClass()));
+                argObj.put("class", jsonedClassName(o.getClass()));
                 argObj.put("value", convertToArrayIfNeeded(o));
                 argArray.put(argObj);
             }
@@ -50,10 +52,12 @@ public class RemoteJSONLib {
         } catch (JSONException e) {
             throw new JsonCallException(e.toString());
         }
-        return obj.toString();
+        String res = obj.toString();
+        Log.e("json", "createJsonCall: " + res);
+        return res;
     }
 
-    private static String getClassName(Class<?> clazz) {
+    private static String jsonedClassName(Class<?> clazz) {
         if(List.class.isAssignableFrom(clazz)) {
             return "array";
         } else {
@@ -77,19 +81,20 @@ public class RemoteJSONLib {
         }
 
         returning lists. lists are allways of strings
-        { methodName: "<name>",
+        {
           return: { class: "array"
                     value: JSONArray },
         }
 
         exception return
-        { methodName: "<name>",
+        {
           exception: { class: "<class name>"
-                       stack-trace: "<stack-trace>" }
+                       message: "<message>" }
         }
      */
 
     public static Object generateReturnFromJson(String response) throws AirDeskException {
+        Log.e("json", "generateReturnFromJson: " + response);
         Object result = null;
         try {
             JSONObject obj = new JSONObject(response);
@@ -101,8 +106,8 @@ public class RemoteJSONLib {
                 JSONObject obj = new JSONObject(response);
                 JSONObject jsonException = obj.getJSONObject("exception");
                 String exceptionClassName = jsonException.getString("class");
-                String exceptionStackTrace = jsonException.getString("stack-trace");
-                createAndThrowException(exceptionClassName, exceptionStackTrace);
+                String exceptionMessage   = jsonException.getString("message");
+                createAndThrowException(exceptionClassName, exceptionMessage);
             } catch (JSONException e2) {
                 throw new JsonResultGenerationException(e2);
             }
@@ -184,7 +189,7 @@ public class RemoteJSONLib {
                 JSONObject argObj = jsonArgsArray.getJSONObject(i);
                 String className = argObj.getString("class");
 
-                Class<?> argClazz = toPrimitive(Class.forName(className));
+                Class<?> argClazz = toPrimitive(Class.forName(unJsonClassName(className)));
                 argTypes[i] = argClazz;
 
                 Object parsedValue = createValueFromClassName(className, argObj);
@@ -208,6 +213,14 @@ public class RemoteJSONLib {
         return invocationResult;
     }
 
+    private static String unJsonClassName(String className) {
+        if(className.equals("array")) {
+            return List.class.getName();
+        } else {
+            return className;
+        }
+    }
+
     private static Class<?> toPrimitive(Class<?> clazz) {
         if (clazz == Integer.class) {
             return int.class;
@@ -224,13 +237,36 @@ public class RemoteJSONLib {
         return clazz;
     }
 
-    public static String generateJsonFromResult(Object result) {
-
-        return null;
+    public static String generateJsonFromResult(final Object result) {
+        try {
+            JSONObject jsonedObj = new JSONObject() {{
+                put("return", new JSONObject() {{
+                    put("class", jsonedClassName(result.getClass()));
+                    put("value", convertToArrayIfNeeded(result));
+                }});
+            }};
+            String res = jsonedObj.toString();
+            Log.e("json", "generateJsonFromResult: " + res);
+            return res;
+        } catch(JSONException e) {
+            throw new JsonResultStringifyingException(e);
+        }
     }
 
-    public static String generateJsonFromException(AirDeskException e) {
-        return null;
+    public static String generateJsonFromException(final AirDeskException e) {
+        try {
+            JSONObject jsonedObj = new JSONObject() {{
+                put("exception", new JSONObject() {{
+                    put("class", e.getClass().getName());
+                    put("message", e.getMessage());
+                }});
+            }};
+            String res = jsonedObj.toString();
+            Log.e("json", "generateJsonFromException: " + res);
+            return res;
+        } catch(JSONException e2) {
+            throw new JsonExceptionStringifyingException(e2);
+        }
     }
 }
 

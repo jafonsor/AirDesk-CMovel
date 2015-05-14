@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceFullException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteServerSide;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.ForeignFragment;
 
@@ -46,6 +47,7 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         FileSystemManager.deleteStorage();
         createApplication();
         airDesk = getApplication();
+        airDesk.init();
 
 
         user = new User(OWNERUSERNAME,OWNEREMAIL);
@@ -418,5 +420,6 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
     protected void tearDown() throws Exception {
         FileSystemManager.deleteStorage();
         airDesk.reset();
+        RemoteServerSide.closeServer();
     }
 }

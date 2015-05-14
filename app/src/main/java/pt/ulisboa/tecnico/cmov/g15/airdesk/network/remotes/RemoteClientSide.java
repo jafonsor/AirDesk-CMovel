@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes;
 
+import android.util.Log;
+
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
@@ -21,6 +23,7 @@ public class RemoteClientSide implements NetworkServiceServerI {
     }
 
     private Object remoteInvocation(String methodName, Object... args ) {
+        Log.e("json", "remoteCall: " + methodName);
         String jsonCall = RemoteJSONLib.createJsonCall(methodName, args);
         communicator.send(jsonCall);
         String response = communicator.receive();

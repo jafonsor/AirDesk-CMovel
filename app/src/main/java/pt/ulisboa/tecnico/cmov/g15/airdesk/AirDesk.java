@@ -30,9 +30,17 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsExce
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
+
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteServerSide;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderI;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderServer;
+
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.LocalCommunicator;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteClientSide;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteCommunicatorI;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteServerSide;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.LocalWifiProvider;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderI;
 
 
 /**
@@ -46,12 +54,22 @@ public class AirDesk extends Application {
     private List<ForeignWorkspace> foreignWorkspaces;
     private List<ForeignWorkspace> blockedWorkspaces;
 
+    RemoteClientSide clientSide;
     public AirDesk() {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
         blockedWorkspaces = new ArrayList<ForeignWorkspace>();
         NetworkServiceClient.init();
+
         //TODO temporary
+    }
+
+    public void init() {
+    // local initializations. to remove when using wifi direct
+        RemoteCommunicatorI localCommunicator = new LocalCommunicator();
+        WifiProviderI localProvider = new LocalWifiProvider(localCommunicator);
+        clientSide = new RemoteClientSide(localCommunicator);
+        RemoteServerSide.initRemoteServer(localProvider, new NetworkServiceServer());
     }
 
     private Map<String, User> foreignUsers = new HashMap<String, User>();
@@ -113,14 +131,11 @@ public class AirDesk extends Application {
 
     public void setUser(User user) {
         this.user = user;
-        NetworkServiceClient.addNetworkServiceServer(user.getEmail(), new NetworkServiceServer(this));
+
 
         WifiProviderI wifiProvider = new WifiProviderServer();
 
         RemoteServerSide.initRemoteServer(wifiProvider, new NetworkServiceServer());
-
-
-        NetworkServiceClient.addNewElementOffNetwork();
     }
 
     public List<OwnerWorkspace> getOwnerWorkspaces() {

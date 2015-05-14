@@ -2,6 +2,9 @@ package pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskCommunicationException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.ServerAlreadyRunningException;
@@ -13,6 +16,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderI;
  */
 public class RemoteServerSide {
     static Thread connectionWaiterThread = null;
+    static List<RemoteServerSide> servers = new ArrayList<>();
 
     // to be called to initialize the server. no instance of NetworkServiceSErver should be called outside this class
     public static void initRemoteServer(final WifiProviderI wifiProvider, final NetworkServiceServerI server) {
@@ -22,18 +26,28 @@ public class RemoteServerSide {
         connectionWaiterThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    while (true) {
-                        RemoteCommunicatorI socket = wifiProvider.acceptConnection();
-                        RemoteServerSide remoteServer = new RemoteServerSide(socket, server);
-                        remoteServer.listenRemoteCalls();
-                    }
-                } catch(AirDeskCommunicationException e) {
-                    Log.e("RemoteServerSide", "communication exception on accept: " + e.getMessage());
+            try {
+                while (!connectionWaiterThread.isInterrupted()) {
+                    RemoteCommunicatorI socket = wifiProvider.acceptConnection();
+                    RemoteServerSide remoteServer = new RemoteServerSide(socket, server);
+                    servers.add(remoteServer);
+                    remoteServer.listenRemoteCalls();
                 }
+            } catch(AirDeskCommunicationException e) {
+                Log.e("RemoteServerSide", "communication exception on accept: " + e.getMessage());
+            }
             }
         });
         connectionWaiterThread.start();
+    }
+
+    public static void closeServer() {
+        connectionWaiterThread.interrupt();
+        connectionWaiterThread = null;
+        for(RemoteServerSide s: servers) {
+            s.closeServerInstance();
+        }
+        servers.clear();
     }
 
     private RemoteCommunicatorI socket;
@@ -45,27 +59,31 @@ public class RemoteServerSide {
         this.server = server;
     }
 
+    public void closeServerInstance() {
+        remoteCallListener.interrupt();
+    }
+
     public void listenRemoteCalls() {
         remoteCallListener =  new Thread(new Runnable() {
             @Override
             public void run() {
-                Object result;
-                String jsonedCall;
-                String jsonedResult;
-                try {
-                    while(true) {
-                        jsonedCall = socket.receive();
-                        try {
-                            result = RemoteJSONLib.makeInvocationFromJson(server, jsonedCall);
-                            jsonedResult = RemoteJSONLib.generateJsonFromResult(result);
-                        } catch(AirDeskException e) {
-                            jsonedResult = RemoteJSONLib.generateJsonFromException(e);
-                        }
-                        socket.send(jsonedResult);
+            Object result;
+            String jsonedCall;
+            String jsonedResult;
+            try {
+                while(!remoteCallListener.isInterrupted()) {
+                    jsonedCall = socket.receive();
+                    try {
+                        result = RemoteJSONLib.makeInvocationFromJson(server, jsonedCall);
+                        jsonedResult = RemoteJSONLib.generateJsonFromResult(result);
+                    } catch(AirDeskException e) {
+                        jsonedResult = RemoteJSONLib.generateJsonFromException(e);
                     }
-                } catch (AirDeskCommunicationException e) {
-                    Log.e("RemoteServerSide", "communication exception on call: " + e.getMessage());
+                    socket.send(jsonedResult);
                 }
+            } catch (AirDeskCommunicationException e) {
+                Log.e("RemoteServerSide", "communication exception on call: " + e.getMessage());
+            }
             }
         });
         remoteCallListener.start();
