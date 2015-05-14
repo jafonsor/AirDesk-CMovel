@@ -185,7 +185,7 @@ public class AirDesk extends Application {
     public void deleteForeignWorkspace(String userEmail, String workspaceName) {
         ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, workspaceName);
         if (fw == null) {
-            throw new WorkspaceDoesNotExistException(workspaceName);
+            return; // it might have been already removed
         }
         if(!getForeignWorkspaces().remove(fw)) {
             Log.e("bad error", "could not remove from list: " + workspaceName);
@@ -319,16 +319,17 @@ public class AirDesk extends Application {
         searchWorkspaces();
     }
 
-    public boolean blockForeignWorkspace(String userEmail, String foreignWorkspaceName) {
+    public void blockForeignWorkspace(String userEmail, String foreignWorkspaceName) {
         ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, foreignWorkspaceName);
         if (fw == null) {
-            Log.e("Error", "blocking a foreign workspace that doesn't exist");
-            return false;
+            throw new WorkspaceDoesNotExistException(foreignWorkspaceName);
         }
-        if (!isForeignWorkspaceBlocked(userEmail, foreignWorkspaceName))
-            return getBlockedWorkspaces().add(fw);
-        else
-            return true;
+        if (!isForeignWorkspaceBlocked(userEmail, foreignWorkspaceName)) {
+            fw = getForeignWorkspaceByName(userEmail, foreignWorkspaceName);
+            fw.delete();
+            getForeignWorkspaces().remove(fw);
+            getBlockedWorkspaces().add(fw);
+        }
     }
 
     public boolean isOwner(String userEmail) {

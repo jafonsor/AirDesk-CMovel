@@ -164,6 +164,7 @@ public class OwnerWorkspace extends Workspace implements Serializable {
     @Override
     public void delete() {
         super.delete();
+        NetworkServiceClient.notifyWorkspaceDeleted(getOwner().getEmail(), getName());
     }
 
     @Override

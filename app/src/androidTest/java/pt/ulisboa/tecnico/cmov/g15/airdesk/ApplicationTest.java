@@ -103,6 +103,13 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         assertEquals("sizeWorskpaces wasn't incremented", sizeOwnerWorkspaceList + 1, airDesk.getOwnerWorkspaces().size());
         File dir = FileSystemManager.workspaceDir(OWNEREMAIL, "Workspace1", WorkspaceType.OWNER);
         assertTrue("Workspace was not created in storage", dir.exists());
+
+        try {
+            airDesk.createOwnerWorkspace("Workspace1", 200L, WorkspaceVisibility.PUBLIC, tags);
+            assertTrue(false);
+        } catch(WorkspaceFullException e) {
+            assertTrue(true);
+        }
     }
 
     public void testDeleteOwnerWorkspace() {

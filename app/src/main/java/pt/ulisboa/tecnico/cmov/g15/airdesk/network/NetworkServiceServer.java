@@ -64,11 +64,11 @@ public class NetworkServiceServer implements NetworkServiceServerI {
 
 
     @Override
-    public int getFileVersionS(Workspace workspace, AirDeskFile file) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
+    public int getFileVersionS(String workspaceName, String fileName) {
+        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspaceName);
 
         if (ws != null) {
-            AirDeskFile f = ws.getFile(file.getName());
+            AirDeskFile f = ws.getFile(fileName);
             return f.getVersion();
         }
 
@@ -77,15 +77,15 @@ public class NetworkServiceServer implements NetworkServiceServerI {
 
 
     @Override
-    public FileState getFileStateS(Workspace workspace, AirDeskFile file) {
-        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspace.getName());
+    public FileState getFileStateS(String workspaceName, String fileName) {
+        OwnerWorkspace ws = airDesk.getOwnerWorkspaceByName(workspaceName);
 
         if (ws != null) {
-            AirDeskFile f = ws.getFile(file.getName());
+            AirDeskFile f = ws.getFile(fileName);
             return f.getState();
+        } else {
+            throw new WorkspaceDoesNotExistException(workspaceName);
         }
-
-        return null;
     }
 
 
@@ -127,22 +127,8 @@ public class NetworkServiceServer implements NetworkServiceServerI {
     }
 
     @Override
-    public void inviteUserS(OwnerWorkspace workspace, User user) {
-        ForeignWorkspace fw = Utils.OwnerToForeignWorkspace(workspace);
-        fw.create();
-        if (airDesk.isForeignWorkspaceBlocked(fw.getOwner().getEmail(), fw.getName()))
-            return;
-        if (user.equals(airDesk.getUser()))
-            this.airDesk.getForeignWorkspaces().add(fw);
-    }
-
-    @Override
-    public void removeWorkspaceS(OwnerWorkspace ownerWorkspace) {
-        if (airDesk.isForeignWorkspaceBlocked(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName()))
-            return;
-        if (airDesk.getOwnerWorkspaceByName(ownerWorkspace.getName()) == null)
-            return;
-        airDesk.deleteForeignWorkspace(ownerWorkspace.getOwner().getEmail(), ownerWorkspace.getName());
+    public void removeWorkspaceS(String userEmail, String workspaceName) {
+        airDesk.deleteForeignWorkspace(userEmail, workspaceName);
     }
 
     @Override

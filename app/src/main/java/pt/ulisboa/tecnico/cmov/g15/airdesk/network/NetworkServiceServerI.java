@@ -17,19 +17,15 @@ public interface NetworkServiceServerI {
 
     boolean notifyIntentionS(String workspaceName, String fileName, FileState intention, boolean force);
 
-    int getFileVersionS(Workspace workspace, AirDeskFile file);
+    int getFileVersionS(String workspaceName, String fileName);
 
-    FileState getFileStateS(Workspace workspace, AirDeskFile file);
+    FileState getFileStateS(String workspaceName, String fileName);
 
     String getFileS(String workspaceName, String fileName);
 
     void sendFileS(String workspaceName, String fileName, String fileContent);
 
     boolean checkTags(List<String> workspaceTags, List<String> userTags);
-
-    void inviteUserS(OwnerWorkspace workspace, User user);
-
-    void removeWorkspaceS(OwnerWorkspace ownerWorkspace);
 
     void deleteFileS(String workspaceName, String fileName);
 
@@ -39,4 +35,6 @@ public interface NetworkServiceServerI {
 
     // i don't know if when we add wifi to this the ownerEmail will be needed
     long getWorkspaceQuotaS(String ownerEmail, String workspaceName);
+
+    void removeWorkspaceS(String userEmail, String workspaceName);
 }
