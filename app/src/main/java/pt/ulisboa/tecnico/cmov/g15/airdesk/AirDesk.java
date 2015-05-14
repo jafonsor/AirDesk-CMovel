@@ -131,11 +131,6 @@ public class AirDesk extends Application {
 
     public void setUser(User user) {
         this.user = user;
-
-
-        WifiProviderI wifiProvider = new WifiProviderServer();
-
-        RemoteServerSide.initRemoteServer(wifiProvider, new NetworkServiceServer());
     }
 
     public List<OwnerWorkspace> getOwnerWorkspaces() {

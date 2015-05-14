@@ -12,6 +12,10 @@ import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteServerSide;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderI;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderServer;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.EditFileActivity;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.WifiP2pManagerService;
@@ -38,8 +42,12 @@ public class SwipeActivity extends FragmentActivity {
             startManagerService = savedInstanceState.getBoolean(WIFI_P2P_MANAGER_SERVICE);
         }
 
-        if(startManagerService)
+        if(startManagerService) {
             startWifiP2pManagerService();
+            WifiProviderI wifiProvider = new WifiProviderServer();
+
+            RemoteServerSide.initRemoteServer(wifiProvider, new NetworkServiceServer((AirDesk) getApplication()));
+        }
 
         MyAdapter mAdapter = new MyAdapter(getSupportFragmentManager());
 
