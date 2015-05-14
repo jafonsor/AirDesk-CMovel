@@ -22,12 +22,24 @@ public class SwipeActivity extends FragmentActivity {
     public final static String EXTRA_FILE_NAME
             = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.WorkspaceListActivity.FILE_NAME";
 
+    public final static String WIFI_P2P_MANAGER_SERVICE
+            = "pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.SwipeActivity.WIFI_P2P_MANAGER_SERVICE";
+
+    private boolean startManagerService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workspaces_list);
 
-        startWifiP2pManagerService();
+        startManagerService = false;
+
+        if(savedInstanceState!=null){
+            startManagerService = savedInstanceState.getBoolean(WIFI_P2P_MANAGER_SERVICE);
+        }
+
+        if(startManagerService)
+            startWifiP2pManagerService();
 
         MyAdapter mAdapter = new MyAdapter(getSupportFragmentManager());
 
@@ -82,6 +94,11 @@ public class SwipeActivity extends FragmentActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         AirDesk airDesk = (AirDesk) getApplication();
         airDesk.backup();
+
+        savedInstanceState.putBoolean(WIFI_P2P_MANAGER_SERVICE, startManagerService);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     // Start the service
@@ -93,5 +110,4 @@ public class SwipeActivity extends FragmentActivity {
     public void stopWifiP2pManagerService() {
         stopService(new Intent(this, WifiP2pManagerService.class));
     }
-
 }

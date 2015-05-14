@@ -30,6 +30,9 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsExce
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteServerSide;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderI;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderServer;
 
 
 /**
@@ -111,6 +114,13 @@ public class AirDesk extends Application {
     public void setUser(User user) {
         this.user = user;
         NetworkServiceClient.addNetworkServiceServer(user.getEmail(), new NetworkServiceServer(this));
+
+        WifiProviderI wifiProvider = new WifiProviderServer();
+
+        RemoteServerSide.initRemoteServer(wifiProvider, new NetworkServiceServer());
+
+
+        NetworkServiceClient.addNewElementOffNetwork();
     }
 
     public List<OwnerWorkspace> getOwnerWorkspaces() {
