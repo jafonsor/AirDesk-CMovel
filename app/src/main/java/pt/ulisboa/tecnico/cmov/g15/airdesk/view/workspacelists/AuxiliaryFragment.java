@@ -135,6 +135,8 @@ public class AuxiliaryFragment extends Fragment implements
             getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             mBound = true;
 
+
+
             Log.d("future", "WIFI ON");
 
             // spawn the chat server background task

@@ -18,11 +18,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteCommunicatorI;
  */
 public class NetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
-    private static Map<String, NetworkServiceServerI> servers;
-
-    public static void init() {
-        servers = new HashMap<String, NetworkServiceServerI>();
-    }
+    private static Map<String, NetworkServiceServerI> servers = new HashMap<String, NetworkServiceServerI>();
 
     public static void addNetworkServiceServer(String userEmail, NetworkServiceServerI server) {
         servers.put(userEmail, server);

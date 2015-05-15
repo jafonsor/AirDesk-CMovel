@@ -58,7 +58,6 @@ public class AirDesk extends Application {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
         blockedWorkspaces = new ArrayList<ForeignWorkspace>();
-        NetworkServiceClient.init();
 
         //TODO temporary
     }
