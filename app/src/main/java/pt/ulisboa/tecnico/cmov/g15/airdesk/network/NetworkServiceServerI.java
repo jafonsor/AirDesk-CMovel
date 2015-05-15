@@ -36,5 +36,7 @@ public interface NetworkServiceServerI {
     // i don't know if when we add wifi to this the ownerEmail will be needed
     long getWorkspaceQuotaS(String ownerEmail, String workspaceName);
 
-    void removeWorkspaceS(String userEmail, String workspaceName);
+    void workspaceRemovedS(String userEmail, String workspaceName);
+
+    void fileRemovedS(String userEmail, String workspaceName, String fileName);
 }

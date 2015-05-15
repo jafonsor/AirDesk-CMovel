@@ -39,6 +39,8 @@ public class RemoteJSONLibTest extends TestCase {
         public FileState fileStateMethod(FileState state) {
             return state;
         }
+
+        public void voidMethod() { }
     }
 
     TestClass testInstance;
@@ -52,18 +54,23 @@ public class RemoteJSONLibTest extends TestCase {
         String jsonedCall = RemoteJSONLib.createJsonCall("method", 3);
 
         JSONObject obj = new JSONObject();
-        try {
-            obj.put("methodName", "method");
-            obj.put("args", new JSONArray() {{
-                put(new JSONObject() {{
-                    put("class", Integer.class.getName());
-                    put("value", 3);
-                }});
+        obj.put("methodName", "method");
+        obj.put("args", new JSONArray() {{
+            put(new JSONObject() {{
+                put("class", Integer.class.getName());
+                put("value", 3);
             }});
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        }});
         assertEquals(obj.toString(), jsonedCall);
+    }
+
+    public void testGenerateJsonNull() throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("return", new JSONObject() {{
+            put("class", "null");
+        }});
+        String jsonedResult = RemoteJSONLib.generateJsonFromResult(null);
+        assertEquals(jsonedResult, obj.toString());
     }
 
     public void testGenerateMethodCallStringArg() throws JSONException {
@@ -209,6 +216,20 @@ public class RemoteJSONLibTest extends TestCase {
         }
     }
 
+    public void testGenerateNull() throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("return", new JSONObject() {{
+            put("class", "null");
+        }});
+
+        try {
+            Object result = RemoteJSONLib.generateReturnFromJson(obj.toString());
+            assertEquals(null, result);
+        } catch (AirDeskCommunicationException e) {
+            assertTrue(false);
+        }
+    }
+
     public void testInvokeMethodInt() throws JSONException {
         JSONObject obj = new JSONObject();
         obj.put("methodName", "method");
@@ -267,7 +288,13 @@ public class RemoteJSONLibTest extends TestCase {
 
     public void testFileStateMethodInvocation() {
         String jsonCall = RemoteJSONLib.createJsonCall("fileStateMethod", FileState.IDLE);
-        WorkspaceType result = (WorkspaceType)RemoteJSONLib.makeInvocationFromJson(testInstance, jsonCall);
-        assertEquals(WorkspaceType.OWNER, result);
+        FileState result = (FileState)RemoteJSONLib.makeInvocationFromJson(testInstance, jsonCall);
+        assertEquals(FileState.IDLE, result);
+    }
+
+    public void testVoidMethodInvocation() {
+        String jsonCall = RemoteJSONLib.createJsonCall("voidMethod");
+        Object result = RemoteJSONLib.makeInvocationFromJson(testInstance, jsonCall);
+        assertEquals(null, result);
     }
 }

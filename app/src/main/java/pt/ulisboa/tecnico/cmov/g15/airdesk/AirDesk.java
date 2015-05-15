@@ -54,7 +54,6 @@ public class AirDesk extends Application {
     private List<ForeignWorkspace> foreignWorkspaces;
     private List<ForeignWorkspace> blockedWorkspaces;
 
-    RemoteClientSide clientSide;
     public AirDesk() {
         ownerWorkspaces = new ArrayList<OwnerWorkspace>();
         foreignWorkspaces = new ArrayList<ForeignWorkspace>();
@@ -64,12 +63,8 @@ public class AirDesk extends Application {
         //TODO temporary
     }
 
-    public void init() {
+    public void init(RemoteCommunicatorI communicatorI) {
     // local initializations. to remove when using wifi direct
-        RemoteCommunicatorI localCommunicator = new LocalCommunicator();
-        WifiProviderI localProvider = new LocalWifiProvider(localCommunicator);
-        clientSide = new RemoteClientSide(localCommunicator);
-        RemoteServerSide.initRemoteServer(localProvider, new NetworkServiceServer());
     }
 
     private Map<String, User> foreignUsers = new HashMap<String, User>();
@@ -131,11 +126,6 @@ public class AirDesk extends Application {
 
     public void setUser(User user) {
         this.user = user;
-
-
-        WifiProviderI wifiProvider = new WifiProviderServer();
-
-        RemoteServerSide.initRemoteServer(wifiProvider, new NetworkServiceServer());
     }
 
     public List<OwnerWorkspace> getOwnerWorkspaces() {
@@ -210,7 +200,7 @@ public class AirDesk extends Application {
     public void deleteForeignWorkspace(String userEmail, String workspaceName) {
         ForeignWorkspace fw = getForeignWorkspaceByName(userEmail, workspaceName);
         if (fw == null) {
-            return; // it might have been already removed
+            throw new WorkspaceDoesNotExistException(workspaceName); // it might have been already removed
         }
         if(!getForeignWorkspaces().remove(fw)) {
             Log.e("bad error", "could not remove from list: " + workspaceName);
@@ -434,6 +424,7 @@ public class AirDesk extends Application {
     }
 
     public void deleteFile(String ownerEmail, String workspaceName, String fileName, WorkspaceType mWorkspaceType) {
+        Log.e("deleteFile", "file on airdesk: " + fileName);
         Workspace w = null;
         if(mWorkspaceType == WorkspaceType.FOREIGN) {
             w = getForeignWorkspaceByName(ownerEmail, workspaceName);
@@ -483,9 +474,14 @@ public class AirDesk extends Application {
                 return true;
             }
         }
+    }
 
+    public void workspaceWasRemoved(String userEmail, String workspaceName) {
+        //TODO close activity that is showing this workspace
+    }
 
-
+    public void fileWasDeleted(String userEmail, String workspaceName, String fileName) {
+        //TODO close activity that is showing this file
     }
 
 }

@@ -15,7 +15,9 @@ public class LocalWifiProvider implements WifiProviderI {
     @Override
     public RemoteCommunicatorI acceptConnection() {
         if(communicator != null) {
-            return communicator;
+            RemoteCommunicatorI result = communicator;
+            communicator = null;
+            return result;
         } else {
             while(true) {
                 int a = 1;

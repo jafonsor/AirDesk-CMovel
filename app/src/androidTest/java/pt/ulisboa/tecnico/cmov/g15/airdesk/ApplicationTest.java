@@ -19,10 +19,16 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.WorkspaceVisibility;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.FileDoesNotExistsException;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.WorkspaceFullException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.LocalCommunicator;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteCommunicatorI;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteServerSide;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.LocalWifiProvider;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderI;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.storage.FileSystemManager;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.workspacelists.ForeignFragment;
 
@@ -46,15 +52,21 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
     public void setUp() {
         FileSystemManager.deleteStorage();
         createApplication();
+        //airDesk.reset();
         airDesk = getApplication();
-        airDesk.init();
-
-
         user = new User(OWNERUSERNAME,OWNEREMAIL);
         airDesk.setUser(user);
 
-        airDesk.reset();
-        airDesk.setUser(user);
+        LocalCommunicator communicatorClient = new LocalCommunicator();
+        LocalCommunicator communicatorServer = new LocalCommunicator();
+        communicatorClient.setOtherEnd(communicatorServer);
+        communicatorServer.setOtherEnd(communicatorClient);
+
+        WifiProviderI localProvider = new LocalWifiProvider(communicatorServer);
+        RemoteServerSide.initRemoteServer(localProvider, new NetworkServiceServer(airDesk));
+
+        NetworkServiceClient.addNewElementOffNetwork(communicatorClient);
+
 
         List<String> tags = new ArrayList<String>();
         tags.add("hollyday");
@@ -109,7 +121,7 @@ public class ApplicationTest extends ApplicationTestCase<AirDesk> {
         try {
             airDesk.createOwnerWorkspace("Workspace1", 200L, WorkspaceVisibility.PUBLIC, tags);
             assertTrue(false);
-        } catch(WorkspaceFullException e) {
+        } catch(WorkspaceAlreadyExistsException e) {
             assertTrue(true);
         }
     }

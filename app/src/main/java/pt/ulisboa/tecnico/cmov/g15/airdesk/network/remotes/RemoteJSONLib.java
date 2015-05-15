@@ -53,7 +53,6 @@ public class RemoteJSONLib {
             throw new JsonCallException(e.toString());
         }
         String res = obj.toString();
-        Log.e("json", "createJsonCall: " + res);
         return res;
     }
 
@@ -100,6 +99,8 @@ public class RemoteJSONLib {
             JSONObject obj = new JSONObject(response);
             JSONObject jsonReturn = obj.getJSONObject("return");
             String returnClassName = jsonReturn.getString("class");
+            if(returnClassName.equals("null"))
+                return null;
             result = createValueFromClassName(returnClassName, jsonReturn);
         } catch (JSONException e) {
             try {
@@ -206,7 +207,7 @@ public class RemoteJSONLib {
         } catch (NoSuchMethodException e) {
             throw new JsonInvocationException(e);
         } catch (InvocationTargetException e) {
-            throw new JsonInvocationException(e);
+            throw new RuntimeException(e.getTargetException());
         } catch (IllegalAccessException e) {
             throw new JsonInvocationException(e);
         }
@@ -239,14 +240,23 @@ public class RemoteJSONLib {
 
     public static String generateJsonFromResult(final Object result) {
         try {
-            JSONObject jsonedObj = new JSONObject() {{
-                put("return", new JSONObject() {{
-                    put("class", jsonedClassName(result.getClass()));
-                    put("value", convertToArrayIfNeeded(result));
-                }});
-            }};
+
+            JSONObject jsonedObj = null;
+            if (result != null) {
+                jsonedObj = new JSONObject() {{
+                    put("return", new JSONObject() {{
+                        put("class", jsonedClassName(result.getClass()));
+                        put("value", convertToArrayIfNeeded(result));
+                    }});
+                }};
+            } else {
+                jsonedObj = new JSONObject() {{
+                    put("return", new JSONObject() {{
+                        put("class", "null");
+                    }});
+                }};
+            }
             String res = jsonedObj.toString();
-            Log.e("json", "generateJsonFromResult: " + res);
             return res;
         } catch(JSONException e) {
             throw new JsonResultStringifyingException(e);
@@ -262,7 +272,6 @@ public class RemoteJSONLib {
                 }});
             }};
             String res = jsonedObj.toString();
-            Log.e("json", "generateJsonFromException: " + res);
             return res;
         } catch(JSONException e2) {
             throw new JsonExceptionStringifyingException(e2);

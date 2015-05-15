@@ -23,17 +23,20 @@ public class RemoteClientSide implements NetworkServiceServerI {
     }
 
     private Object remoteInvocation(String methodName, Object... args ) {
-        Log.e("json", "remoteCall: " + methodName);
+        Log.e("json", "client.remoteCall: " + methodName);
         String jsonCall = RemoteJSONLib.createJsonCall(methodName, args);
+        Log.e("json", "client.createJsonCall: " + jsonCall);
         communicator.send(jsonCall);
+        Log.e("json", "client.waiting return");
         String response = communicator.receive();
+        Log.e("json", "client.receivedResult: " + response);
         Object result = RemoteJSONLib.generateReturnFromJson(response);
         return result;
     }
 
     @Override
     public String getEmail() {
-        return (String) remoteInvocation("getString");
+        return (String) remoteInvocation("getEmail");
     }
 
     @Override
@@ -67,8 +70,8 @@ public class RemoteClientSide implements NetworkServiceServerI {
     }
 
     @Override
-    public void removeWorkspaceS(String userEmail, String workspaceName) {
-        remoteInvocation("removeWorkspaceS", userEmail, workspaceName);
+    public void workspaceRemovedS(String userEmail, String workspaceName) {
+        remoteInvocation("workspaceRemovedS", userEmail, workspaceName);
     }
 
     @Override
@@ -78,7 +81,7 @@ public class RemoteClientSide implements NetworkServiceServerI {
 
     @Override
     public List<String> searchWorkspacesS(String clientEmail, List<String> clientTags) {
-        return (List<String>)remoteInvocation("searchWorkspace", clientEmail, clientTags);
+        return (List<String>)remoteInvocation("searchWorkspacesS", clientEmail, clientTags);
     }
 
     @Override
@@ -89,5 +92,10 @@ public class RemoteClientSide implements NetworkServiceServerI {
     @Override
     public long getWorkspaceQuotaS(String ownerEmail, String workspaceName) {
         return (long)remoteInvocation("getWorkspaceQuotaS", ownerEmail, workspaceName);
+    }
+
+    @Override
+    public void fileRemovedS(String ownerEmail, String workspaceName, String fileName) {
+        remoteInvocation("fileRemovedS", ownerEmail, workspaceName, fileName);
     }
 }

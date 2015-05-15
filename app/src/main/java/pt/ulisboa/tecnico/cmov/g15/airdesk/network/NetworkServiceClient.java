@@ -1,14 +1,12 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.network;
 
-import java.util.ArrayList;
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.AirDeskFile;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.ForeignWorkspace;
-import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.OwnerWorkspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.User;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.Workspace;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
@@ -16,7 +14,7 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteClientSide;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteCommunicatorI;
 
 /**
- * Created by MSC on 05/04/2015.
+ * Created by MSC on 05/04/2015..
  */
 public class NetworkServiceClient {
     //TODO when WIFIDirect is implemented, use its handler
@@ -31,6 +29,7 @@ public class NetworkServiceClient {
     }
 
     public static void addNewElementOffNetwork(RemoteCommunicatorI communicator) {
+        Log.e("json", "networkclient.new connection");
         NetworkServiceServerI server = new RemoteClientSide(communicator);
         String serverEmail = server.getEmail();
         servers.put(serverEmail, server);
@@ -83,19 +82,20 @@ public class NetworkServiceClient {
     public static void removeWorkspace(OwnerWorkspace workspace) {
         //TODO broadcast to accessList
         String email = workspace.getOwner().getEmail();
-        networkServiceServer.removeWorkspaceS(workspace);
+        networkServiceServer.workspaceRemovedS(workspace);
     }*/
 
     // this method is no longer used. the workspaces are refreshed on the foreign workspace activity
     /*
     public static void removeUserFromAccessList(OwnerWorkspace ownerWorkspace, User user) {
-        networkServiceServer.removeWorkspaceS(ownerWorkspace);
+        networkServiceServer.workspaceRemovedS(ownerWorkspace);
     }
     */
 
     public static void deleteFile(Workspace workspace, AirDeskFile airDeskFile) {
         NetworkServiceServerI fileOwnerServer = getWorkspaceOwnerServer(workspace);
         fileOwnerServer.deleteFileS(workspace.getName(), airDeskFile.getName());
+        Log.e("deleteFile", "file remotly deleted: " + airDeskFile.getName());
     }
 
     public static Map<String, List<String>> searchWorkspaces(String email, List<String> tags) {
@@ -120,7 +120,14 @@ public class NetworkServiceClient {
 
     public static void notifyWorkspaceDeleted(String ownerEmail, String workspaceName) {
         for(NetworkServiceServerI server : servers.values()) {
-            server.removeWorkspaceS(ownerEmail, workspaceName);
+            server.workspaceRemovedS(ownerEmail, workspaceName);
+        }
+    }
+
+    public static void notifyFileDeleted(String ownerEmail, String workspaceName, String fileName) {
+        for(Map.Entry<String, NetworkServiceServerI> entry: servers.entrySet()) {
+            Log.e("deleteFile", "NSC.notify " + entry.getKey() + " to delete: " + fileName);
+            entry.getValue().fileRemovedS(ownerEmail, workspaceName, fileName);
         }
     }
 }

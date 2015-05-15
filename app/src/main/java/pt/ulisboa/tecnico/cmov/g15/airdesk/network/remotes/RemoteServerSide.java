@@ -29,6 +29,7 @@ public class RemoteServerSide {
             try {
                 while (!connectionWaiterThread.isInterrupted()) {
                     RemoteCommunicatorI socket = wifiProvider.acceptConnection();
+                    Log.e("json", "server.new client connection");
                     RemoteServerSide remoteServer = new RemoteServerSide(socket, server);
                     servers.add(remoteServer);
                     remoteServer.listenRemoteCalls();
@@ -72,14 +73,19 @@ public class RemoteServerSide {
             String jsonedResult;
             try {
                 while(!remoteCallListener.isInterrupted()) {
+                    Log.e("json", "server.waiting for call");
                     jsonedCall = socket.receive();
+                    Log.e("json", "server.received call: " + jsonedCall);
                     try {
                         result = RemoteJSONLib.makeInvocationFromJson(server, jsonedCall);
+                        Log.e("json", "server.toString of invocation result: " + result);
                         jsonedResult = RemoteJSONLib.generateJsonFromResult(result);
                     } catch(AirDeskException e) {
                         jsonedResult = RemoteJSONLib.generateJsonFromException(e);
                     }
+                    Log.e("json", "server.will send result: " + jsonedResult);
                     socket.send(jsonedResult);
+                    Log.e("json", "server.sent result: " + jsonedResult);
                 }
             } catch (AirDeskCommunicationException e) {
                 Log.e("RemoteServerSide", "communication exception on call: " + e.getMessage());

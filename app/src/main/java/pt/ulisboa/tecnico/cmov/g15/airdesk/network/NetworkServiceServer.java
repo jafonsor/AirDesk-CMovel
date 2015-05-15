@@ -127,8 +127,8 @@ public class NetworkServiceServer implements NetworkServiceServerI {
     }
 
     @Override
-    public void removeWorkspaceS(String userEmail, String workspaceName) {
-        airDesk.deleteForeignWorkspace(userEmail, workspaceName);
+    public void workspaceRemovedS(String userEmail, String workspaceName) {
+        airDesk.workspaceWasRemoved(userEmail, workspaceName);
     }
 
     @Override
@@ -183,5 +183,10 @@ public class NetworkServiceServer implements NetworkServiceServerI {
         if(ow == null)
             throw new WorkspaceDoesNotExistException(workspaceName);
         return ow.getQuota();
+    }
+    
+    @Override
+    public void fileRemovedS(String userEmail, String workspaceName, String fileName) {
+        airDesk.fileWasDeleted(userEmail, workspaceName, fileName);
     }
 }

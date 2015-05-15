@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.g15.airdesk.domain;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 import pt.ulisboa.tecnico.cmov.g15.airdesk.domain.enums.FileState;
@@ -89,10 +91,14 @@ public class AirDeskFile implements Serializable {
         if(workspaceType == WorkspaceType.FOREIGN) {
             //Delete remotely
             try {
+                Log.e("deleteFile", "remoteDelete: " + getName());
                 NetworkServiceClient.deleteFile(getWorkspace(), this);
             } catch (AirDeskException e) {
                 throw new RemoteDeleteAirDeskFileException(this.getName());
             }
+        } else {
+            Log.e("deleteFile", "notifyDelete: " + getName());
+            NetworkServiceClient.notifyFileDeleted(getWorkspace().getOwner().getEmail(), getWorkspace().getName(), getName());
         }
 
         //Delete locally

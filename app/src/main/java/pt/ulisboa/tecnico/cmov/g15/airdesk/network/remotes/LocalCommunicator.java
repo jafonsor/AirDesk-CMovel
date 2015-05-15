@@ -13,21 +13,28 @@ import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.AirDeskException;
  */
 public class LocalCommunicator implements RemoteCommunicatorI {
     List<String> msgs = new LinkedList<String>();
+    LocalCommunicator otherEnd = null;
 
-    @Override
-    public synchronized void send(String msg) throws AirDeskException {
-        Log.e("json", "send: " + msg);
+    public void setOtherEnd(LocalCommunicator otherEnd) {
+        this.otherEnd = otherEnd;
+    }
+
+    public void stashMessage(String msg) {
         msgs.add(msg);
     }
 
     @Override
-    public synchronized String receive() throws AirDeskException {
+    public void send(String msg) throws AirDeskException {
+        otherEnd.stashMessage(msg);
+    }
+
+    @Override
+    public String receive() throws AirDeskException {
         while(msgs.size() <= 0) {
             ; // do nothing
         }
         String str = msgs.get(0);
         msgs.remove(0);
-        Log.e("json", "receive: " + str);
         return str;
     }
 }
