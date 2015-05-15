@@ -42,6 +42,9 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteCommunicatorI;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.SocketCommunicator;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.SimWifiP2pBroadcastReceiver;
 
 public class AuxiliaryFragment extends Fragment implements
@@ -132,9 +135,11 @@ public class AuxiliaryFragment extends Fragment implements
             getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             mBound = true;
 
+            Log.d("future", "WIFI ON");
+
             // spawn the chat server background task
-            new IncommingCommTask().executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR);
+            //new IncommingCommTask().executeOnExecutor(
+                    //AsyncTask.THREAD_POOL_EXECUTOR);
 
             guiUpdateDisconnectedState(rootView);
         }
@@ -177,8 +182,8 @@ public class AuxiliaryFragment extends Fragment implements
         public void onClick(View v) {
             rootView.findViewById(R.id.idConnectButton).setEnabled(false);
             new OutgoingCommTask().executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR,
-                    mTextInput.getText().toString());
+               AsyncTask.THREAD_POOL_EXECUTOR,
+               mTextInput.getText().toString());
         }
     };
 
@@ -202,11 +207,11 @@ public class AuxiliaryFragment extends Fragment implements
         @Override
         public void onClick(View v) {
             rootView.findViewById(R.id.idSendButton).setEnabled(false);
-            try {
-                mCliSocket.getOutputStream().write( (mTextInput.getText().toString()+"\n").getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+           // try {
+             //   mCliSocket.getOutputStream().write( (mTextInput.getText().toString()+"\n").getBytes());
+            //} catch (IOException e) {
+             //   e.printStackTrace();
+            //}
             mTextInput.setText("");
             rootView.findViewById(R.id.idSendButton).setEnabled(true);
             rootView.findViewById(R.id.idDisconnectButton).setEnabled(true);
@@ -291,17 +296,24 @@ public class AuxiliaryFragment extends Fragment implements
         @Override
         protected String doInBackground(String... params) {
             try {
+                Log.d("future", "I will create a new client socket");
                 mCliSocket = new SimWifiP2pSocket(params[0],
                         Integer.parseInt(getString(R.string.port)));
+
+                RemoteCommunicatorI rem = new SocketCommunicator(mCliSocket);
+                NetworkServiceClient.addNewElementOffNetwork(rem);
+                Log.d("future","New Client Socket created");
             } catch (UnknownHostException e) {
+                Log.d("future", "Unknown Host:" + e.getMessage());
                 return "Unknown Host:" + e.getMessage();
             } catch (IOException e) {
+                Log.d("future","IO error:" + e.getMessage());
                 return "IO error:" + e.getMessage();
             }
             return null;
         }
 
-        @Override
+        /*@Override
         protected void onPostExecute(String result) {
             if (result != null) {
                 mTextOutput.setText(result);
@@ -311,7 +323,7 @@ public class AuxiliaryFragment extends Fragment implements
                 mComm = new ReceiveCommTask();
                 mComm.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mCliSocket);
             }
-        }
+        }*/
     }
 
     public class ReceiveCommTask extends AsyncTask<SimWifiP2pSocket, String, Void> {
