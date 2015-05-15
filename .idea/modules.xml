@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AirDesk.iml" filepath="$PROJECT_DIR$/AirDesk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/airdesk-cmovel.iml" filepath="$PROJECT_DIR$/airdesk-cmovel.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

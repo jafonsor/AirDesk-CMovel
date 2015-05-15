@@ -43,9 +43,14 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.AirDesk;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceClient;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.NetworkServiceServer;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteCommunicatorI;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteServerSide;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.SocketCommunicator;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderI;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.network.wifi.WifiProviderServer;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.SimWifiP2pBroadcastReceiver;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.view.utils.WifiP2pManagerService;
 
 public class AuxiliaryFragment extends Fragment implements
         PeerListListener, GroupInfoListener {
@@ -135,7 +140,10 @@ public class AuxiliaryFragment extends Fragment implements
             getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             mBound = true;
 
-
+            AirDesk airDesk = (AirDesk)getActivity().getApplication();
+            airDesk.startService(new Intent(airDesk, WifiP2pManagerService.class));
+            WifiProviderI wifiProvider = new WifiProviderServer();
+            RemoteServerSide.initRemoteServer(wifiProvider, new NetworkServiceServer(airDesk));
 
             Log.d("future", "WIFI ON");
 
@@ -283,7 +291,6 @@ public class AuxiliaryFragment extends Fragment implements
         protected void onProgressUpdate(SimWifiP2pSocket... values) {
             mCliSocket = values[0];
             mComm = new ReceiveCommTask();
-
             mComm.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mCliSocket);
         }
     }

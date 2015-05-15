@@ -45,8 +45,7 @@ public class SwipeActivity extends FragmentActivity {
 
         if(startManagerService) {
            startWifiP2pManagerService();
-           WifiProviderI wifiProvider = new WifiProviderServer();
-           RemoteServerSide.initRemoteServer(wifiProvider, new NetworkServiceServer((AirDesk) getApplication()));
+
         }
 
         MyAdapter mAdapter = new MyAdapter(getSupportFragmentManager());
@@ -111,7 +110,7 @@ public class SwipeActivity extends FragmentActivity {
 
     // Start the service
     public void startWifiP2pManagerService() {
-        startService(new Intent(this, WifiP2pManagerService.class));
+
     }
 
     // Stop the service

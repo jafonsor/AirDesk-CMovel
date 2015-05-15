@@ -6,13 +6,13 @@ import java.io.IOException;
 
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
+import pt.ulisboa.tecnico.cmov.g15.airdesk.R;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.exceptions.ServerSocketException;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.RemoteCommunicatorI;
 import pt.ulisboa.tecnico.cmov.g15.airdesk.network.remotes.SocketCommunicator;
 
 public class WifiProviderServer implements WifiProviderI {
-
-    SimWifiP2pSocketServer mSrvSocket = null;
+    SimWifiP2pSocketServer mSrvSocket;
 
     public WifiProviderServer() {
         try {
